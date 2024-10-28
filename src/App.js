@@ -17,9 +17,9 @@ function App() {
         >
           Learn React
         </a>
-      </header>
+      </header> 
     </div>
-  );
+  ); 
 } 
 
 export default App;
