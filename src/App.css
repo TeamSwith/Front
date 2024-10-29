@@ -15,6 +15,7 @@
 
 .App-link {
   color: #61dafb;
+}
 
 @font-face {
   font-family: 'CustomFont';
@@ -24,7 +25,6 @@
 }
 
 body {
-  font-family: 'CustomFont'
+  font-family: 'CustomFont';
 
-}
 }
