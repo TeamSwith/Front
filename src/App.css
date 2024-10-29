@@ -15,4 +15,15 @@
 
 .App-link {
   color: #61dafb;
+
+@font-face {
+  font-family: 'CustomFont';
+  src: url('./assets/BMDOHYEON_ttf.ttf') format('truetype'); 
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: 'CustomFont'
+
 }
