@@ -1,6 +1,5 @@
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import logo from './logo.svg';
 import MainPage from './pages/MainPage';
 import CreateStudy from './pages/CreateStudy';
 import ManageStudy from './pages/ManageStudy';
@@ -16,11 +15,11 @@ const App = () => {
         </nav>
       </header>
       <main className="p-4">
-        <Routes>
+      <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/create-study" element={<CreateStudy />} />
           <Route path="/manage-study" element={<ManageStudy />} />
-        </Routes>
+      </Routes>
       </main>
     </Router>
   );
