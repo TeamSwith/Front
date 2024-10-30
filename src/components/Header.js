@@ -6,7 +6,7 @@ import bellIcon from '../assets/bell.png';
 
 const Header = () => {
     return (
-        <header className="bg-[#8CC29E] text-white p-4 flex justify-between items-center px-10">
+        <header className="fixed top-0 left-0 w-full z-10 bg-[#8CC29E] text-white p-4 flex justify-between items-center px-10">
         {/* 왼쪽: 로고와 네비게이션 링크 */}
         <div className="flex items-center space-x-4">
           {/* 로고 (메인 페이지로 이동) */}
