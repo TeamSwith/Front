@@ -23,7 +23,7 @@ const Header = () => {
 
         {/* 오른쪽: My Page 및 알람 버튼 */}
         <div className="flex space-x-4">
-        <button className="bg-white text-black px-4 py-2 rounded-2xl hover:bg-gray-200 flex items-center space-x-2">
+        <button className="bg-white text-black px-4 py-2 rounded-full hover:bg-gray-200 flex items-center space-x-2">
         <img src={accountIcon} alt="" className="w-5 h-5" />
         <span>My Page</span>
         </button>
