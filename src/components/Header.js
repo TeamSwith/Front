@@ -25,11 +25,11 @@ const Header = () => {
         <div className="flex space-x-4">
         <button className="bg-white text-black px-4 py-2 rounded-full hover:bg-gray-200 flex items-center space-x-2">
         <img src={accountIcon} alt="" className="w-5 h-5" />
-        <span>My Page</span>
+        <span>Login</span>
         </button>
-        <button className="flex items-center">
+        {/* <button className="flex items-center">
           <img src={bellIcon} alt="알람" className="w-6 h-6" />
-        </button>
+        </button> */}
         </div>
         </header>
     );
