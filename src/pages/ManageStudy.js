@@ -1,34 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import Calendar from 'react-calendar';
+import "react-calendar/dist/Calendar.css";
+import speakerIcon from "../assets/speaker.png";
+import editIcon from "../assets/edit.png";
+import './ManageStudy.css';
 
 const ManageStudy = () => {
-  const [studies, setStudies] = useState([
-    { id: 1, name: '스터디 1', description: '스터디 1에 대한 설명' },
-    { id: 2, name: '스터디 2', description: '스터디 2에 대한 설명' },
-  ]);
+  const [value, onChange] = useState(new Date());
+  const marqueeTextRef = useRef(null);
+  const marqueeContainerRef = useRef(null);
+  const [isOverflowing, setIsOverflowing] = useState(false);
 
-  const handleDelete = (id) => {
-    setStudies(studies.filter((study) => study.id !== id));
-  };
+  useEffect(() => {
+    if (marqueeTextRef.current && marqueeContainerRef.current) {
+      setIsOverflowing(marqueeTextRef.current.scrollWidth > marqueeContainerRef.current.clientWidth);
+    }
+  }, [marqueeTextRef, marqueeContainerRef]);
 
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">스터디 관리</h1>
-      <ul className="space-y-4">
-        {studies.map((study) => (
-          <li key={study.id} className="border p-4 rounded flex justify-between items-center">
-            <div>
-              <h2 className="text-lg font-semibold">{study.name}</h2>
-              <p>{study.description}</p>
-            </div>
-            <button
-              onClick={() => handleDelete(study.id)}
-              className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+    <div className="pl-[200px] pr-[200px] py-20">
+      <div className="w-full bg-[#F2F2F2] text-[#4B4B4B] text-[14px] py-2 mb-4 flex items-center justify-between rounded-2xl overflow-hidden">
+        <div className="flex items-center">
+          <img src={speakerIcon} alt="Speaker Icon" className="w-6 h-6 mr-3 ml-4" />
+          <div className="marquee-container flex-grow mr-4" ref={marqueeContainerRef}>
+            <span
+              className={`marquee-text ${isOverflowing ? 'animate-marquee' : ''}`}
+              ref={marqueeTextRef}
             >
-              삭제
-            </button>
-          </li>
-        ))}
-      </ul>
+              중요한 공지사항입니다. 중요한 공지사항입니다.중요한 공지사항입니다.중요한 공지사항입니다.중요한 공지사항입니다.
+            </span>
+          </div>
+        </div>
+        <img src={editIcon} alt="Edit Icon" className="w-5 h-5 cursor-pointer mr-4 flex-shrink-0" />
+      </div>
+
+      <Calendar 
+        onChange={onChange} 
+        value={value}
+        className="p-6" 
+      />
     </div>
   );
 };
