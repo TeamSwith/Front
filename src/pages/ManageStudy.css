@@ -2,17 +2,18 @@
     overflow: hidden; /* 텍스트가 박스를 벗어나는 부분 숨기기 */
     white-space: nowrap; /* 텍스트가 한 줄로 유지되도록 설정 */
     width: 100%;
+
   }
   
-  .marquee-text {
+.marquee-text {
     display: inline-block;
   }
 
-  .animate-marquee {
+.animate-marquee {
     animation: scroll-left 10s linear infinite;
   }
   
-  @keyframes scroll-left {
+@keyframes scroll-left {
     0% {
         transform: translateX(100%);
       }
