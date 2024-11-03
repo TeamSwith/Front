@@ -3,6 +3,7 @@ import Calendar from 'react-calendar';
 import "react-calendar/dist/Calendar.css";
 import speakerIcon from "../assets/speaker.png";
 import editIcon from "../assets/edit.png";
+import personIcon from "../assets/person.png";
 import './ManageStudy.css';
 
 const ManageStudy = () => {
@@ -27,12 +28,24 @@ const ManageStudy = () => {
               className={`marquee-text ${isOverflowing ? 'animate-marquee' : ''}`}
               ref={marqueeTextRef}
             >
-              중요한 공지사항입니다. 중요한 공지사항입니다.중요한 공지사항입니다.중요한 공지사항입니다.중요한 공지사항입니다.
+              중요한 공지사항입니다. 중요한 공지사항입니다.중요한 공지사항입니다. 공지사항입니다.중요한 공지사항입니다.
             </span>
           </div>
         </div>
         <img src={editIcon} alt="Edit Icon" className="w-5 h-5 cursor-pointer mr-4 flex-shrink-0" />
       </div>
+
+      <div className="flex items-center">
+        <img src={personIcon} alt="인원수" className="w-7 h-7 ml-3 mb-4" /> 
+          <span className='text-[#5B5B5B] mb-3'>
+            6 
+            {/*인원수에 따라 조정될 예정 */}
+          </span>
+          <span className='text-2xl ml-3 mb-3'>
+            C++의 황제가 될 거야
+          </span>
+      </div>
+      
 
       <Calendar 
         onChange={onChange} 
