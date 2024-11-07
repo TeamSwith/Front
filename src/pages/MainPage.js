@@ -5,28 +5,48 @@ import backgroundImage from '../assets/BackGround.png';
 const MainPage = () => {
   return (
     <div
-
-    style={{
+      style={{
         backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: 'cover',       // 배경 이미지가 화면을 가득 채우도록 설정
-        backgroundPosition: 'center',  // 이미지가 중앙에 오도록 설정
-        backgroundRepeat: 'no-repeat', // 반복 없이 한 번만 표시
-        minHeight: '100vh',            // 화면 전체 높이 설정
-        margin: 0,                     
-        padding: 0,
       }}
-    
-    className="p-8 text-center">
-      <h1 className="text-3xl font-bold mb-4">스터디 관리 서비스</h1>
-      <p className="mb-8">스터디를 효율적으로 관리하고 참여할 수 있는 플랫폼입니다.</p>
-      <div className="space-x-4">
-        <Link to="/create-study" className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-          스터디 생성
+      className="w-w-screen h-screen min-h-screen bg-cover bg-center text-white flex flex-col justify-between overflow-hidden"
+    >  <div className="pt-[330px] text-left" 
+    style={{
+        paddingLeft: 'clamp(50px, 10vw, 150px)',
+      }}>
+        <h1 className="mb-4" style={{ fontSize: 'clamp(1.8rem, 4vw, 3.3rem)' }}>여러분의 스터디를 직접 만들고,<br />함께 성장하세요.</h1>
+        <p className="mb-2" style={{ fontSize: 'clamp(18px, 2vw, 28px)' }}>스터디 생성하기</p>
+        <p className="mb-8 text-[#D6D6D6]" style={{ fontSize: 'clamp(10px, 1.5vw, 16px)' }}>스터디를 생성하면, 자동으로 관리 페이지가 제공됩니다. <br />
+        주제, 시간, 장소 등을 설정하고, 공지사항, 출석 체크, 과제 관리 등 <br />
+        다양한 기능을 통해 체계적으로 스터디를 운영할 수 있습니다. </p>
+        <p className="text-xl mb-2">스터디 관리하기</p>
+        <p className="mb-8 text-[#D6D6D6]" style={{ fontSize: 'clamp(10px, 1.5vw, 16px)' }}>참여 중인 스터디의 일정, 출석, 공지사항 등을 실시간으로 관리하세요. <br />
+        한눈에 확인하고, 자동으로 업데이트되는 정보를 통해  <br />
+        스터디를 효율적으로 운영할 수 있습니다. </p>
+      </div>
+
+      <div className="absolute bottom-0 right-0 flex flex-col items-end space-y-7 pb-20 z-20"
+        style={{
+          paddingRight: 'clamp(50px, 10vw, 150px)',
+}}>
+
+        <Link to="/create-study" className="bg-white bg-opacity-90 text-black rounded-3xl hover:bg-opacity-100 hover:bg-gray-100 flex items-center justify-center max-w-full max-h-full" style={{
+            fontSize: 'clamp(23px, 2vw, 33px)',
+            width: 'clamp(200px, 25vw, 400px)', 
+            height: 'clamp(90px, 10vw, 110px)',
+            textShadow: '1px 1px 2px rgba(0, 0, 0, 0.3)',
+  }}>
+          스터디 생성하기
         </Link>
-        <Link to="/manage-study" className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
-          스터디 관리
+        <Link to="/manage-study" className="bg-white bg-opacity-90 text-black rounded-3xl hover:bg-opacity-100 hover:bg-gray-100 flex items-center justify-center max-w-full max-h-full" style={{
+            fontSize: 'clamp(23px, 2vw, 33px)',
+            width: 'clamp(200px, 25vw, 400px)', 
+            height: 'clamp(90px, 10vw, 110px)',
+            textShadow: '1px 1px 2px rgba(0, 0, 0, 0.2)',
+  }}>
+            스터디 관리하기
         </Link>
       </div>
+      
     </div>
   );
 };
