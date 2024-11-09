@@ -1,3 +1,60 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* 메인페이지 반응형 픽셀 지정 나중에 css파일로 따로 뺄 예정 */
+
+@media (max-width: 400px) {
+    .small-screen-text {
+      font-size: 1.4rem !important; /* 원하는 작은 크기로 조정 */
+      line-height: 1.4 !important; /* 텍스트 간격 조정 */
+    }
+  }
+
+/* 헤더 414px 이하에서 로그인 텍스트 숨기기 */
+@media (max-width: 414px) {
+    .login-button {
+        padding-left: 6px;
+        padding-right: 6px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+      }
+    .hidden-on-small {
+      display: none !important;
+    }
+}  
+
+@media (max-width: 420px) {
+    .pl-5-mobile {
+        padding-left: 20px;
+    }
+    .px-margin {
+        position: relative;
+        left: 20px; /* 오른쪽 여백을 강제로 줄이기 위해 이동 */
+    }
+}  
+
+@media (max-width: 600px) {
+    .pt-mobile {
+        padding-top: 200px;
+    }
+}  
+
+@media (max-height: 790px) {
+    .button-container {
+        position: static !important; /* absolute 위치 무시 */
+        flex-direction: row !important; /* 가로 정렬 */
+        justify-content: center !important; /* 중앙 정렬 */
+        gap: 10px !important; /* 버튼 간 간격 */
+        padding-right: 0 !important; /* 오른쪽 여백 제거 */
+        padding-bottom: 60px !important; /* 버튼과 아래 콘텐츠 사이의 여백 */
+        margin-top: 10px !important; /* 위쪽 여백 추가 */
+    }
+
+    .custom-button {
+        width: 150px !important;  /* 작은 화면에서 더 작은 너비 */
+        height: 60px !important;  /* 작은 화면에서 더 작은 높이 */
+        font-size: 14px !important;  /* 텍스트 크기 줄이기 */
+        padding: 0.5rem 1rem !important;
+    }
+}

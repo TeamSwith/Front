@@ -4,7 +4,7 @@ import logo from '../assets/swithLogo.png';
 const Footer = () => {
   return (
     <footer
-      className="bg-[#818E8B] text-white mt-8"
+      className="bg-[#818E8B] text-white"
       style={{ height: '180px' }} // 푸터 높이 조정
     >
       <div className="flex flex-col sm:flex-row justify-center sm:justify-between items-center h-full p-12">

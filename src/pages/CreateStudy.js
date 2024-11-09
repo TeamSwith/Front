@@ -26,7 +26,7 @@ const CreateStudy = () => {
   };
 
   return (
-    <div className="max-w-5.5xl mx-auto px-0 pt-2 space-y-2">
+    <div className="max-w-5.5xl mx-auto px-0 pt-24 space-y-2 mb-8">
       
       <Banner className="mb-2 sm:mb-4" />
       
