@@ -13,6 +13,28 @@ const ManageStudy = () => {
   const marqueeTextRef = useRef(null);
   const marqueeContainerRef = useRef(null);
   const [isOverflowing, setIsOverflowing] = useState(false);
+  const [activeTab, setActiveTab] = useState('schedule');
+
+  // 과제 관련 상태 관리 (추후 api 호출)
+  const [tasks, setTasks] = useState([
+    { id: 1, label: '과제 1', checked: false },
+    { id: 2, label: '과제 2', checked: false },
+    { id: 3, label: '과제 3', checked: false },
+    { id: 4, label: '과제 4', checked: false },
+  ]);
+  // 체크박스 상태 변경 함수
+  const handleCheckboxChange = (id) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.id === id ? { ...task, checked: !task.checked } : task
+      )
+    );
+  };
+  // 체크된 항목의 비율을 계산
+  const checkedCount = tasks.filter((task) => task.checked).length;
+  const totalTasks = tasks.length;
+  const progressPercentage = (checkedCount / totalTasks) * 100;
+
 
   useEffect(() => {
     if (marqueeTextRef.current && marqueeContainerRef.current) {
@@ -86,6 +108,30 @@ const ManageStudy = () => {
     
 
         <div className="bg-[#F7F9F2] flex-grow p-6 rounded-lg  shadow-lg mb-4 md:mb-0 mt-4 md:mt-0">
+
+          <div className="flex space-x-4 mb-4">
+            <button
+              onClick={() => setActiveTab('schedule')}
+              className={`text-lg font-semibold px-4 py-2 rounded-lg ${
+                activeTab === 'schedule' ? 'bg-[#8CC29E] text-white' : 'bg-gray-200 text-gray-600'
+              }`}
+            >
+              Schedule
+            </button>
+            <button
+              onClick={() => setActiveTab('information')}
+              className={`text-lg font-semibold px-4 py-2 rounded-lg ${
+                activeTab === 'information' ? 'bg-[#8CC29E] text-white' : 'bg-gray-200 text-gray-600'
+              }`}
+            >
+              Information
+            </button>
+          </div>
+
+          {activeTab === 'schedule' ? (
+
+
+        <div>
           <h2 className="text-lg font-semibold text-[#4B4B4B] mb-4 flex justify-between">
             XXXX.XX.XX Study Schedule
             <div className="flex space-x-3">
@@ -100,11 +146,60 @@ const ManageStudy = () => {
           <p className="text-[#4B4B4B] mb-4">
             장소:
           </p>
+          <hr className="border-t-[2px] border-gray-300 mb-2" />
+          <div className="p-6">
+            {/* 과제 텍스트와 게이지 바 컨테이너 */}
+            <div className="flex items-center mb-4 space-x-4">
+              <p className="text-lg text-[#4B4B4B] mr-4">과제</p>
+              <div className="w-[200px] h-4 bg-gray-300 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-[#8CC29E] rounded-full transition-width duration-300"
+                  style={{ width: `${progressPercentage}%` }}
+                ></div>
+              </div>
+
+              <span className="text-[#5B5B5B]">
+                {Math.round(progressPercentage)}%
+              </span>
+
+            </div>
+            {/* 체크박스 리스트 */}
+            <div>
+              {tasks.map((task) => (
+                <div key={task.id} className="flex items-center mb-2.5">
+                  <input
+                    type="checkbox"
+                    checked={task.checked}
+                    onChange={() => handleCheckboxChange(task.id)}
+                    className="mr-2"
+                  />
+                  <label className="text-[#4B4B4B]">{task.label}</label>
+                </div>
+              ))}
+            </div>
+          </div>
           <hr className="border-t-[2px] border-gray-300 mb-4" />
+
           <p className="text-[#4B4B4B] mb-4">
-            과제
+            Task Feedback
           </p>
         </div>
+
+        ) : (
+          // Information 탭 내용
+          <div>
+            <h2 className="text-lg font-semibold text-[#4B4B4B] mb-4">
+              Information
+            </h2>
+            <p className="text-[#4B4B4B]">
+              이 탭에서는 정보와 관련된 내용이 표시됩니다. 다른 정보를 보여줄 수 있습니다.
+            </p>
+          </div>
+        )}
+
+        </div>
+
+
       </div>
         
 
