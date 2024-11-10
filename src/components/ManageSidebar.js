@@ -1,6 +1,7 @@
 import React from 'react';
 import editIcon from "../assets/edit.png";
 import trashIcon from "../assets/Trash.png";
+import ManageComments from './ManageComments'; //임의의 피드백 데이터
 
 const ManageSidebar = ({ activeTab, setActiveTab, progressPercentage, tasks, handleCheckboxChange }) => {
   return (
@@ -83,26 +84,9 @@ const ManageSidebar = ({ activeTab, setActiveTab, progressPercentage, tasks, han
           </div>
           <hr className="border-t-[2px] border-gray-300 mb-4" />
 
-          <p className="text-[#4B4B4B] mb-4">
-            Task Feedback
-          </p>
-            <div className="flex items-center mb-2">
-                <textarea
-                type="text"
-                className="flex-grow border border-gray-300 rounded-lg p-3 h-20 resize-none overflow-auto"
-                placeholder="댓글을 입력하세요"
-                //value={newComment}
-                //onChange={(e) => setNewComment(e.target.value)}
-                />
-            </div>
-            <div className="flex justify-end">
-                <button
-                    //onClick={handleAddComment}
-                    className="bg-[#8CC29E] text-white text-[14px] px-4 py-1.5 rounded-lg"
-                    >
-                    등록
-                </button>
-            </div>
+          <ManageComments />
+
+          
         </div>
 
         ) : (
