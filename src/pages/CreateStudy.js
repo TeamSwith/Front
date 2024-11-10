@@ -147,14 +147,14 @@ const CreateStudy = () => {
             <button
               type="button"
               onClick={handleCreateStudy}
-              className="w-full sm:w-40 h-12 rounded-xl bg-[#91DDAB] text-white rounded-lg shadow-lg focus:outline-none transition duration-300 text-sm sm:text-base"
+              className="w-full sm:w-40 h-12 rounded-xl bg-[#91DDAB] text-white rounded-lg shadow-lg hover:bg-[#7BAE8D] focus:outline-none transition duration-300 text-sm sm:text-base"
             >
               생성 하기
             </button>
             <button
               type="button"
               onClick={() => setCommunicationLink('')} // 취소 버튼 동작 설정 (예: 입력 필드 초기화)
-              className="w-full sm:w-40 h-12 rounded-xl bg-[#EFF9F2] text-[#91DDAB] rounded-lg shadow-lg focus:outline-none transition duration-300 text-sm sm:text-base"
+              className="w-full sm:w-40 h-12 rounded-xl bg-[#EFF9F2] text-[#91DDAB] rounded-lg shadow-lg hover:bg-gray-200 focus:outline-none transition duration-300 text-sm sm:text-base"
             >
               취소
             </button>

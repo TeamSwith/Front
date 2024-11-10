@@ -47,7 +47,6 @@ const MainPage = () => {
             스터디 관리하기
         </Link>
       </div>
-      
     </div>
   );
 };

@@ -4,6 +4,12 @@
 
 /* 메인페이지 반응형 픽셀 지정 나중에 css파일로 따로 뺄 예정 */
 
+@media (max-width: 375px) {
+    .max-small-screen-text {
+      font-size: 0.7rem; /* text-xs와 유사한 크기 */
+    }
+  }
+
 @media (max-width: 400px) {
     .small-screen-text {
       font-size: 1.4rem !important; /* 원하는 작은 크기로 조정 */
@@ -12,7 +18,7 @@
   }
 
 /* 헤더 414px 이하에서 로그인 텍스트 숨기기 */
-@media (max-width: 414px) {
+@media (max-width: 467px) {
     .login-button {
         padding-left: 6px;
         padding-right: 6px;

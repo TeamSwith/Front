@@ -8,6 +8,9 @@ module.exports = {
       maxWidth: {
         '5.5xl': '1200px',
       },
+      spacing: {
+        '18': '4.5rem', // 4.5rem은 약 72px로, mt-18에 해당
+      },
     },
   },
   plugins: [],
