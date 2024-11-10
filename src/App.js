@@ -2,6 +2,7 @@ import './App.css';
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import MainPage from './pages/MainPage';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 import CreateStudy from './pages/CreateStudy';
 import ManageStudy from './pages/ManageStudy';
 import Header from './components/Header';
@@ -69,6 +70,7 @@ const App = () => {
         <main className="flex-grow overflow-hidden">
           <Routes>
             <Route path="/" element={<MainPage />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route 
               path="/create-study" 
               element={
