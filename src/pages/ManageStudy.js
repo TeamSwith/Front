@@ -2,11 +2,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import Calendar from 'react-calendar';
 import "react-calendar/dist/Calendar.css";
 import ManageSidebar from "../components/ManageSidebar";
+import EditSidebar from "../components/EditSIdebar";
 import speakerIcon from "../assets/speaker.png";
 import editIcon from "../assets/edit.png";
 import personIcon from "../assets/person.png";
 import './ManageStudy.css';
-
 
 const ManageStudy = () => {
   const [value, onChange] = useState(new Date());
@@ -14,6 +14,33 @@ const ManageStudy = () => {
   const marqueeContainerRef = useRef(null);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const [activeTab, setActiveTab] = useState('schedule');
+  const [isEditing, setIsEditing] = useState(false);
+
+// Edit 버튼 클릭 시 편집 모드로 전환
+const handleEditClick = () => {
+  setIsEditing(true); 
+};
+
+  //calander 날짜 선택
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [scheduleData, setScheduleData] = useState(null);
+  // 추후 API로 대체할 임의 데이터
+  const fetchScheduleData = (date) => {
+    return {
+      date: date.toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      }).replace(/-/g, '.'),
+      time: '오후 2:00 - 오후 4:00',
+      location: '온라인 화상회의',
+    };
+  };
+  // 날짜가 변경될 때마다 새로운 스케줄 데이터를 불러오기
+  useEffect(() => {
+    const newScheduleData = fetchScheduleData(selectedDate);
+    setScheduleData(newScheduleData);
+  }, [selectedDate]);
 
   // 과제 관련 상태 관리 (추후 api 호출)
   const [tasks, setTasks] = useState([
@@ -87,8 +114,8 @@ const ManageStudy = () => {
         
           <div className="flex-shrink-0">
             <Calendar 
-              onChange={onChange} 
-              value={value}
+              onChange={setSelectedDate}
+              value={selectedDate}
               className="p-6" 
               formatDay={(locale, date) => date.toLocaleString('en', { day: 'numeric' })}
               view={null}
@@ -105,13 +132,26 @@ const ManageStudy = () => {
           </div>
         </div>
 
+        {isEditing ? (
+          <EditSidebar 
+          scheduleData={scheduleData}
+          tasks={tasks}
+          handleCheckboxChange={handleCheckboxChange}
+          setIsEditing={setIsEditing}
+          /> 
+          // 편집 모드일 때 EditSidebar 렌더링
+          ) : (
         <ManageSidebar
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           progressPercentage={progressPercentage}
           tasks={tasks}
           handleCheckboxChange={handleCheckboxChange}
+          selectedDate={selectedDate}
+          scheduleData={scheduleData}
+          onEditClick={handleEditClick} // Edit 버튼 클릭 함수 전달
         />
+        )}
       </div>
         
     </div>
