@@ -1,0 +1,81 @@
+.marquee-container {
+    overflow: hidden; /* 텍스트가 박스를 벗어나는 부분 숨기기 */
+    white-space: nowrap; /* 텍스트가 한 줄로 유지되도록 설정 */
+    width: 100%;
+
+  }
+  
+.marquee-text {
+    display: inline-block;
+  }
+
+.animate-marquee {
+    animation: scroll-left 13s linear infinite;
+  }
+  
+@keyframes scroll-left {
+    0% {
+        transform: translateX(100%);
+      }
+    100% {
+        transform: translateX(-100%);
+      }
+  }
+
+  /* 캘린더 배경 색상 */
+.react-calendar {
+  background-color: #F7F9F2; /* 배경 색상 */
+  border: none; /* 외곽선 제거 */
+  font-family: 'YourCustomFont';
+  width: 400px;
+  max-width: 400px;
+  height: 450px;
+  border-radius: 5%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.react-calendar__tile {
+  font-size: 1rem; /* 타일 내 텍스트 크기 조정 */
+  padding: 1rem; /* 타일의 여백 조정 */
+  font-weight: bold;
+}
+
+
+.react-calendar__tile--now {
+  background-color: #8CC29E; /* 오늘 날짜 색상 */
+  color: white; /* 글자 색상 */
+  border-radius: 50%;
+}
+
+.react-calendar__tile--active {
+  background-color: #12921E; /* 선택 날짜 색상 */
+  color: white; /* 글자 색상 */
+  border-radius: 50%;
+}
+
+.react-calendar__month-view__weekdays__weekday{
+  color: #5B5B5B;
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.react-calendar__month-view__weekdays__weekday abbr {
+  text-decoration: none; /* 점선 제거 */
+  border-bottom: none;
+}
+
+/* 요일 및 월 표시 텍스트 스타일 */
+.react-calendar__navigation__label, .react-calendar__navigation button {
+  font-size: 1.3rem; /* 요일 및 월 텍스트 크기 */
+  font-weight: bold; /* 텍스트 굵기 */
+  background: none !important; /* 클릭 시 배경색 제거 */
+  color: inherit; /* 텍스트 색상 유지 */
+  box-shadow: none; /* 클릭 시 그림자 제거 */
+}
+
+
+
+.react-calendar__tile:hover {
+    background-color: #12921E; /* 호버 시 색상 */
+}
