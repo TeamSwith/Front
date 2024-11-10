@@ -1,4 +1,4 @@
-import React from 'react';
+/* import React from 'react';
 
 const Modal = ({ isOpen, onClose, onSubmit }) => {
   const [studyId, setStudyId] = React.useState('');
@@ -35,4 +35,4 @@ const Modal = ({ isOpen, onClose, onSubmit }) => {
   );
 };
 
-export default Modal;
+export default Modal; */

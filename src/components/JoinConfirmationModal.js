@@ -1,17 +1,9 @@
-// src/components/LogoutConfirmationModal.js
 import React from 'react';
 import Modal from 'react-modal';
 import logo from '../assets/swithLogo.png';
 import cancelIcon from '../assets/Cancel.png';
 
-Modal.setAppElement('#root'); // 애플리케이션의 루트 요소 설정
-
-const LogoutConfirmationModal = ({ isOpen, onClose, onLogout }) => {
-
-  const handleConfirmLogout = () => {
-    onLogout();  // 로그아웃 상태로 변경
-    onClose();   // 모달 닫기
-  };
+const JoinConfirmationModal = ({ isOpen, onClose, onConfirm }) => {
 
   return (
     <Modal
@@ -22,11 +14,11 @@ const LogoutConfirmationModal = ({ isOpen, onClose, onLogout }) => {
     >
       <img src={cancelIcon} alt="닫기" onClick={onClose} className="absolute top-4 right-4 w-4 h-4 cursor-pointer" />
       <img src={logo} alt="Swith Logo" className="mx-auto h-12 md:h-16 mb-4 md:mb-6" />
-      <h2 className="text-xl md:text-2xl font-bold mb-2 md:mb-3 whitespace-normal break-keep">로그아웃 하시겠습니까?</h2>
-      <p className="text-sm md:text-lg text-[#5B5B5B] mb-4 md:mb-6 whitespace-normal break-keep">언제든 다시 스터디를 시작할 수 있습니다</p>
+      <h2 className="text-xl md:text-2xl font-bold mb-2 md:mb-3 whitespace-normal break-keep">스터디를 가입하시겠습니까?</h2>
+      <p className="text-sm md:text-lg text-[#5B5B5B] mb-4 md:mb-6 whitespace-normal break-keep">해당 스터디는 가입되어있지 않습니다</p>
       <div className="flex justify-center gap-6">
         <button
-          onClick={handleConfirmLogout}
+          onClick={onConfirm}
           className="bg-[#91DDAB] text-white w-full sm:w-28 h-12 rounded-xl shadow-lg hover:bg-[#7BAE8D]"
         >
           네
@@ -42,4 +34,4 @@ const LogoutConfirmationModal = ({ isOpen, onClose, onLogout }) => {
   );
 };
 
-export default LogoutConfirmationModal;
+export default JoinConfirmationModal;

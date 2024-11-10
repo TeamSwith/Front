@@ -1,3 +1,4 @@
+import Modal from 'react-modal';
 import './App.css';
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
@@ -12,6 +13,8 @@ import MyPageModal from './components/MyPageModal';
 import LogoutConfirmationModal from './components/LogoutConfirmationModal';
 import DeleteAccountModal from './components/DeleteAccountModal';
 import AccountDeletedModal from './components/AccountDeletedModal';
+
+Modal.setAppElement('#root');
 
 const App = () => {
 

@@ -5,7 +5,33 @@ import accountIcon from '../assets/account_circle.png';
 import bellIcon from '../assets/bell.png'; 
 import MyPageModal from '../components/MyPageModal';
 
-const Header = ({ openLoginModal, isLoggedIn, openMyPageModal, isMyPageModalOpen, closeMyPageModal, openLogoutConfirmation }) => {
+const Header = ({ 
+  openLoginModal, 
+  openCreateStudyModal, 
+  openStudyManagementModal, // 스터디 관리 모달 열기 함수 추가
+  isLoggedIn, 
+  openMyPageModal, 
+  isMyPageModalOpen, 
+  closeMyPageModal, 
+  openLogoutConfirmation, 
+}) => {
+    
+  const handleCreateStudyClick = () => {
+      if (isLoggedIn) {
+        openCreateStudyModal(); // 로그인된 상태에서는 생성하기 모달
+      } else {
+        openLoginModal(); // 로그인되지 않은 상태에서는 로그인 모달
+      }
+    };
+
+    const handleManageStudyClick = () => {
+      if (isLoggedIn) {
+        openStudyManagementModal(); // 로그인된 상태에서는 스터디 관리 모달
+      } else {
+        openLoginModal(); // 로그인되지 않은 상태에서는 로그인 모달
+      }
+    };
+
     return (
         <header className="fixed top-0 left-0 w-full z-10 bg-[#8CC29E] text-white p-4 flex justify-between items-center px-4 sm:px-10">
         {/* 왼쪽: 로고와 네비게이션 링크 */}
@@ -17,8 +43,20 @@ const Header = ({ openLoginModal, isLoggedIn, openMyPageModal, isMyPageModalOpen
 
           {/* 네비게이션 링크 */}
           <nav className="flex space-x-4">
-            <Link to="/create-study" className="text-sm sm:text-base lg:text-lg hover:text-gray-100 mt-2 max-small-screen-text">스터디 생성</Link>
-            <Link to="/manage-study" className="text-sm sm:text-base lg:text-lg hover:text-gray-100 mt-2 max-small-screen-text">스터디 관리</Link>
+            <button
+              onClick={handleCreateStudyClick} // 스터디 생성 버튼 클릭 이벤트
+              className="text-sm sm:text-base lg:text-lg hover:text-gray-100 mt-2 max-small-screen-text"
+            >
+              스터디 생성
+            </button>
+            <button
+              onClick={handleManageStudyClick} // 스터디 관리 버튼 클릭 이벤트
+              className="text-sm sm:text-base lg:text-lg hover:text-gray-100 mt-2 max-small-screen-text"
+            >
+              스터디 관리
+            </button>
+            {/*<Link to="/create-study" className="text-sm sm:text-base lg:text-lg hover:text-gray-100 mt-2 max-small-screen-text">스터디 생성</Link>*/}
+            {/*<Link to="/manage-study" className="text-sm sm:text-base lg:text-lg hover:text-gray-100 mt-2 max-small-screen-text">스터디 관리</Link>*/}
           </nav>
         </div>
 
