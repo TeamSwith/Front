@@ -8,7 +8,7 @@ const ManageComments = () => {
       id: 1,
       username: '오믈렛',
       content: 'C++ 강의 수강 마감 금일까지 입니다. 오늘 안으로 수강 부탁드립니다. 시간 확인, 잊지 말아주세요!',
-      date: '2024.10.02 19:25',
+      date: '2024.10.05 19:25',
       profileImage: userImage,
     },
     {

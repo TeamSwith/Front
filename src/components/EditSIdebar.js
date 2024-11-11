@@ -1,11 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import xIcon from "../assets/X.png";
 import timeIcon from "../assets/timeEdit.png";
 import locationIcon from "../assets/location.png";
+import MapDropdown from './MapDropdown';
 
 const EditSidebar = ({ scheduleData, tasks, handleCheckboxChange, setIsEditing }) => {
+
+  const [isMapOpen, setIsMapOpen] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [address, setAddress] = useState('');
+  const [selectedPlaceName, setSelectedPlaceName] = useState("");
+
+  const handleLocationSelect = (location, placeName, addr) => {
+    setSelectedLocation(location);
+    setSelectedPlaceName(placeName); 
+    setAddress(addr); 
+    setIsMapOpen(false); // 지도 드롭다운 닫기
+  };
+
   return (
-    <div className="w-full">
+    <div className="relative w-full">
         <div className="flex flex-col w-full flex-grow bg-[#F7F9F2] p-6 rounded-lg shadow-lg mb-4 md:mb-0 mt-4 md:mt-0">
             <div>
                 <div className="flex justify-between items-center mb-4">
@@ -19,12 +33,26 @@ const EditSidebar = ({ scheduleData, tasks, handleCheckboxChange, setIsEditing }
                 <div className="flex justify-between items-center mb-2">
                     <p className="text-[#4B4B4B]">
                         <strong>시간:</strong> {scheduleData.time}</p>
-                    <img src={timeIcon} ali="time edit" className="w-6 h-6 cursor-pointer" />
+                    <img src={timeIcon} alt="time edit" className="w-6 h-6 cursor-pointer" />
                 </div>
+        <div className="relative mb-2">
                 <div className="flex justify-between items-center mb-2">
-                    <p className="text-[#4B4B4B] mb-2"><strong>장소:</strong> {scheduleData.location}</p>
-                    <img src={locationIcon} ali="location edit" className="w-6 h-6 cursor-pointer" />
+                    <p className="text-[#4B4B4B] mb-2"><strong>장소:</strong> {address ? `${address} ${selectedPlaceName}` : ""}
+                    </p>
+                    <img
+                        src={locationIcon}
+                        alt="location edit"
+                        className="w-6 h-6 cursor-pointer"
+                        onClick={() => setIsMapOpen((prev) => !prev)} // 지도 드롭다운 열기/닫기
+                    />
                 </div>
+        {/* 지도 드롭다운 */}
+        {isMapOpen && (
+            <div className="absolute top-full right-0 mt-2 flex justify-end w-full">
+              <MapDropdown onSelectLocation={handleLocationSelect} />
+            </div> )}
+        </div>
+
 
             <hr className="border-t-[2px] border-gray-300 mb-2" />
             <div className="p-6">
