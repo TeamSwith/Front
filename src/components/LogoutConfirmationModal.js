@@ -1,5 +1,6 @@
 // src/components/LogoutConfirmationModal.js
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Modal from 'react-modal';
 import logo from '../assets/swithLogo.png';
 import cancelIcon from '../assets/Cancel.png';
@@ -8,9 +9,11 @@ Modal.setAppElement('#root'); // 애플리케이션의 루트 요소 설정
 
 const LogoutConfirmationModal = ({ isOpen, onClose, onLogout }) => {
 
+  const navigate = useNavigate();
   const handleConfirmLogout = () => {
     onLogout();  // 로그아웃 상태로 변경
     onClose();   // 모달 닫기
+    navigate('/'); // 메인 페이지로 이동
   };
 
   return (

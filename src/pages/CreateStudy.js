@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Banner from '../components/Banner'; // 배너 컴포넌트 임포트
 
 const CreateStudy = () => {
@@ -17,6 +17,8 @@ const CreateStudy = () => {
   const [communicationLink, setCommunicationLink] = useState(''); // 소통 수단
   const [isEditingStudyLink, setIsEditingStudyLink] = useState(false); // 입력 모드 상태
 
+  const navigate = useNavigate();
+
   // location에서 받은 initialStudyId로 studyId 상태 업데이트
   useEffect(() => {
     if (initialStudyId) {
@@ -29,9 +31,16 @@ const CreateStudy = () => {
   };
 
   const handleCreateStudy = () => {
-    alert(`스터디 "${studyName}"가 생성되었습니다!`);
-    setStudyName('');
-    //setDescription('');
+    navigate('/study-creation-complete', {
+      state: {
+        studyId,
+        studyName,
+        studyTopic,
+        participants,
+        studyPeriod,
+        communicationLink
+      }
+    });
   };
 
   return (
@@ -162,7 +171,7 @@ const CreateStudy = () => {
             </button>
             <button
               type="button"
-              onClick={() => setCommunicationLink('')} // 취소 버튼 동작 설정 (예: 입력 필드 초기화)
+              onClick={() => navigate('/')}
               className="w-full sm:w-40 h-12 rounded-xl bg-[#EFF9F2] text-[#91DDAB] rounded-lg shadow-lg hover:bg-gray-200 focus:outline-none transition duration-300 text-sm sm:text-base"
             >
               취소

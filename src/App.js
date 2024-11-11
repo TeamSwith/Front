@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'r
 import MainPage from './pages/MainPage';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import CreateStudy from './pages/CreateStudy';
+import StudyCreationComplete from './pages/StudyCreationComplete';
 import ManageStudy from './pages/ManageStudy';
 import Header from './components/Header';
 import Footer from './components/Footer'; 
@@ -82,6 +83,7 @@ const App = () => {
                   </RequireLogin>
                 }  
             />
+            <Route path="/study-creation-complete" element={<StudyCreationComplete />} />
             <Route 
               path="/manage-study" 
               element={
