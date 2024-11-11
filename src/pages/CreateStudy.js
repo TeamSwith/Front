@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Banner from '../components/Banner'; // 배너 컴포넌트 임포트
-import Modal from '../components/Modal'; // 모달 컴포넌트 임포트
 
 const CreateStudy = () => {
+
+  const location = useLocation();
+  const { studyId: initialStudyId } = location.state || {};
+
   const [studyName, setStudyName] = useState('');
-  // const [description, setDescription] = useState('');
   const [isEditingStudyName, setIsEditingStudyName] = useState(false); // 입력 모드 상태
   const [studyId, setStudyId] = useState(''); // 스터디 아이디
   const [studyTopic, setStudyTopic] = useState(''); // 스터디 주제
@@ -13,16 +16,31 @@ const CreateStudy = () => {
   const [studyPeriod, setStudyPeriod] = useState(''); // 스터디 기간
   const [communicationLink, setCommunicationLink] = useState(''); // 소통 수단
   const [isEditingStudyLink, setIsEditingStudyLink] = useState(false); // 입력 모드 상태
-  const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열림 상태
+
+  const navigate = useNavigate();
+
+  // location에서 받은 initialStudyId로 studyId 상태 업데이트
+  useEffect(() => {
+    if (initialStudyId) {
+      setStudyId(initialStudyId);
+    }
+  }, [initialStudyId]);
 
   const handleParticipantChange = (action) => {
     setParticipants((prev) => (action === 'increment' ? prev + 1 : Math.max(prev - 1, 1))); // 최소 1명 유지
   };
 
   const handleCreateStudy = () => {
-    alert(`스터디 "${studyName}"가 생성되었습니다!`);
-    setStudyName('');
-    //setDescription('');
+    navigate('/study-creation-complete', {
+      state: {
+        studyId,
+        studyName,
+        studyTopic,
+        participants,
+        studyPeriod,
+        communicationLink
+      }
+    });
   };
 
   return (
@@ -33,13 +51,13 @@ const CreateStudy = () => {
       <div className="p-4 sm:p-6 rounded-lg">
         <div className="flex justify-between items-center mt-2 sm:mt-1 mb-5 sm:mb-4">
           <h1 className="text-lg sm:text-xl font-bold">스터디 설정 및 정보 입력</h1>
-          <button
+          {/*<button
             type="button"
             onClick={() => setIsModalOpen(true)}
-            className="text-xs sm:text-sm px-3 py-2 bg-[#8CC29E] text-white rounded hover:bg-[#7BAE8D]"
+            className="text-xs sm:text-snm px-3 py-2 bg-[#8CC29E] text-white rounded hover:bg-[#7BAE8D]"
           >
             스터디 아이디 입력하기
-          </button>
+          </button>*/}
         </div>
 
         <form className="space-y-2 sm:space-y-5">
@@ -147,22 +165,20 @@ const CreateStudy = () => {
             <button
               type="button"
               onClick={handleCreateStudy}
-              className="w-full sm:w-40 h-12 rounded-xl bg-[#91DDAB] text-white rounded-lg shadow-lg focus:outline-none transition duration-300 text-sm sm:text-base"
+              className="w-full sm:w-40 h-12 rounded-xl bg-[#91DDAB] text-white rounded-lg shadow-lg hover:bg-[#7BAE8D] focus:outline-none transition duration-300 text-sm sm:text-base"
             >
               생성 하기
             </button>
             <button
               type="button"
-              onClick={() => setCommunicationLink('')} // 취소 버튼 동작 설정 (예: 입력 필드 초기화)
-              className="w-full sm:w-40 h-12 rounded-xl bg-[#EFF9F2] text-[#91DDAB] rounded-lg shadow-lg focus:outline-none transition duration-300 text-sm sm:text-base"
+              onClick={() => navigate('/')}
+              className="w-full sm:w-40 h-12 rounded-xl bg-[#EFF9F2] text-[#91DDAB] rounded-lg shadow-lg hover:bg-gray-200 focus:outline-none transition duration-300 text-sm sm:text-base"
             >
               취소
             </button>
           </div>
         </form>
       </div>
-
-    <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSubmit={setStudyId} />
   </div>
   );
 };
