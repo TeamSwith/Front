@@ -1,15 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
+import { fetchNotice, updateNotice } from '../api/Notice';
 import Calendar from 'react-calendar';
 import "react-calendar/dist/Calendar.css";
 import ManageSidebar from "../components/ManageSidebar";
 import EditSidebar from "../components/EditSIdebar";
 import speakerIcon from "../assets/speaker.png";
 import editIcon from "../assets/edit.png";
+import checkIcon from "../assets/Check.png"
 import personIcon from "../assets/person.png";
 import './ManageStudy.css';
 
 const ManageStudy = () => {
-  const [value, onChange] = useState(new Date());
+  const queryClient = useQueryClient();
+  //const [value, onChange] = useState(new Date());
   const marqueeTextRef = useRef(null);
   const marqueeContainerRef = useRef(null);
   const [isOverflowing, setIsOverflowing] = useState(false);
@@ -36,6 +40,46 @@ const handleEditClick = () => {
       location: '온라인 화상회의',
     };
   };
+
+  //Notice
+  const { data: notice } = useQuery({
+    queryKey: ['notice'],
+    queryFn: fetchNotice,
+  });
+
+  useEffect(() => {
+    if (marqueeTextRef.current && marqueeContainerRef.current && notice) {
+      setIsOverflowing(marqueeTextRef.current.scrollWidth > marqueeContainerRef.current.clientWidth);
+    }
+  }, [notice, marqueeTextRef, marqueeContainerRef]);
+
+  //update Notice
+  const [isEditingNotice, setIsEditingNotice] = useState(false);
+  const [newNotice, setNewNotice] = useState('');
+
+  const { mutate: editNotice } = useMutation({
+    mutationFn: updateNotice,
+    onSuccess: () => {
+      queryClient.invalidateQueries(['notice']);
+      setIsEditingNotice(false);
+    },
+    onError: (error) => {
+      console.error('Failed to update notice:', error);
+    },
+  });
+
+  const handleEditNoticeClick = () => {
+    setIsEditingNotice(true);
+    setNewNotice(notice?.notice || '');
+  };
+
+  const handleSaveNotice = async () => {
+    if (newNotice.trim()) {
+      editNotice({ notice: newNotice.trim() });
+    }
+  };
+
+
   // 날짜가 변경될 때마다 새로운 스케줄 데이터를 불러오기
   useEffect(() => {
     const newScheduleData = fetchScheduleData(selectedDate);
@@ -75,17 +119,32 @@ const handleEditClick = () => {
         <div className="flex items-center">
           <img src={speakerIcon} alt="Speaker Icon" className="w-6 h-6 mr-3 ml-4" />
           <div className="marquee-container mr-4 " ref={marqueeContainerRef}>
-            <span
-              className={`marquee-text ${isOverflowing ? 'animate-marquee' : ''}`}
-              ref={marqueeTextRef}
-            >
-              중요한 공지사항입니다. 중요한 공지사항입니다.중요한 공지........
-            </span>
+
+            {isEditingNotice ? (
+              <input
+                type="text"
+                value={newNotice}
+                onChange={(e) => setNewNotice(e.target.value)}
+              />
+            ) : (
+              <span
+                className={`marquee-text ${isOverflowing ? 'animate-marquee' : ''}`}
+                ref={marqueeTextRef}
+              >
+                {notice?.notice || '공지사항이 없습니다.'}
+              </span>
+            )}
           </div>
         </div>
         
         <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-          <img src={editIcon} alt="Edit Icon" className="w-5 h-5 cursor-pointer" />
+        {isEditingNotice ? (
+          <img src={checkIcon} alt="Check Icon" className="w-5 h-5 cursor-pointer" 
+          onClick={handleSaveNotice}/>
+        ) : (
+          <img src={editIcon} alt="Edit Icon" className="w-5 h-5 cursor-pointer" 
+          onClick={handleEditNoticeClick}/>
+        )}
         </div>
       </div>
 
