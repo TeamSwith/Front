@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
+import { fetchSchedule } from '../api/Study';
 import { fetchNotice, updateNotice } from '../api/Notice';
 import Calendar from 'react-calendar';
 import "react-calendar/dist/Calendar.css";
@@ -20,6 +21,7 @@ const ManageStudy = () => {
   const [activeTab, setActiveTab] = useState('schedule');
   const [isEditing, setIsEditing] = useState(false);
 
+
 // Edit 버튼 클릭 시 편집 모드로 전환
 const handleEditClick = () => {
   setIsEditing(true); 
@@ -27,18 +29,22 @@ const handleEditClick = () => {
 
   //calander 날짜 선택
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [scheduleData, setScheduleData] = useState(null);
-  // 추후 API로 대체할 임의 데이터
-  const fetchScheduleData = (date) => {
-    return {
-      date: date.toLocaleDateString('ko-KR', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-      }).replace(/-/g, '.'),
-      time: '오후 2:00 - 오후 4:00',
-      location: '온라인 화상회의',
-    };
+  const [userId, setUserId] = useState(1); //!!동적으로 수정되어야함
+
+  //스터디 일정 데이터 가져오기
+  const { data: scheduleData } = useQuery({
+    queryKey: ['schedule', userId, selectedDate],
+    queryFn: () => fetchSchedule(userId, selectedDate.toISOString().split('T')[0]), // 날짜를 API 형식으로 변환
+    enabled: !!selectedDate, // 날짜가 선택되었을 때만 실행
+    staleTime: 5 * 60 * 1000, // 캐싱 유효시간 (5분)
+  });
+
+  const handleCreateSchedule = () => {
+    console.log(`Creating schedule for date: ${selectedDate.toISOString().split('T')[0]}`);
+  }
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
   };
 
   //Notice
@@ -79,12 +85,14 @@ const handleEditClick = () => {
     }
   };
 
-
+{ /*
   // 날짜가 변경될 때마다 새로운 스케줄 데이터를 불러오기
   useEffect(() => {
     const newScheduleData = fetchScheduleData(selectedDate);
     setScheduleData(newScheduleData);
   }, [selectedDate]);
+*/}
+
 
   // 과제 관련 상태 관리 (추후 api 호출)
   const [tasks, setTasks] = useState([
@@ -108,10 +116,11 @@ const handleEditClick = () => {
 
 
   useEffect(() => {
-    if (marqueeTextRef.current && marqueeContainerRef.current) {
+    if (notice && marqueeTextRef.current && marqueeContainerRef.current) {
       setIsOverflowing(marqueeTextRef.current.scrollWidth > marqueeContainerRef.current.clientWidth);
     }
-  }, [marqueeTextRef, marqueeContainerRef]);
+  }, [notice, marqueeTextRef, marqueeContainerRef]);
+  
 
   return (
     <div className="xl:pl-[320px] xl:pr-[320px] lg:pl-[150px] lg:pr-[150px] px-[30px] py-[90px]">
@@ -148,6 +157,7 @@ const handleEditClick = () => {
         </div>
       </div>
 
+      <div className="flex flex-col justify-center w-full">
       <div className="flex items-center max-w-md w-full pt-3">
         <img src={personIcon} alt="인원수" className="w-7 h-7 ml-3 mb-4" /> 
           <span className='text-[#5B5B5B] mb-3'>
@@ -161,7 +171,7 @@ const handleEditClick = () => {
 
       
       
-      <div className="flex flex-row md:flex-row md:space-x-4 w-full">
+      <div className="flex flex-wrap flex-row md:flex-row md:space-x-4 w-full">
 
         <div className="flex flex-col">
 
@@ -191,6 +201,8 @@ const handleEditClick = () => {
           </div>
         </div>
 
+        <div className="w-full md:w-auto flex justify-center">
+        <div className = "w-full max-w-[400px] flex flex-col items-center">
         {isEditing ? (
           <EditSidebar 
           scheduleData={scheduleData}
@@ -208,9 +220,13 @@ const handleEditClick = () => {
           handleCheckboxChange={handleCheckboxChange}
           selectedDate={selectedDate}
           scheduleData={scheduleData}
-          onEditClick={handleEditClick} // Edit 버튼 클릭 함수 전달
+          onEditClick={handleEditClick} 
+          onCreateClick={handleCreateSchedule}
         />
         )}
+      </div>
+      </div>
+      </div>
       </div>
         
     </div>

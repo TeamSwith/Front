@@ -1,9 +1,11 @@
 import React from 'react';
 import editIcon from "../assets/edit.png";
 import trashIcon from "../assets/Trash.png";
+import addIcon from "../assets/add.png";
+import noSchedule from "../assets/noSchedule.png"
 import ManageComments from './ManageComments'; //임의의 피드백 데이터
 
-const ManageSidebar = ({ activeTab, setActiveTab, progressPercentage, tasks, handleCheckboxChange, selectedDate, scheduleData, onEditClick,}) => {
+const ManageSidebar = ({ activeTab, setActiveTab, progressPercentage, tasks, handleCheckboxChange, selectedDate, scheduleData = { time: '', location: '' } , onEditClick, }) => {
   return (
 
     <div className="flex flex-col w-full flex-grow">
@@ -30,7 +32,7 @@ const ManageSidebar = ({ activeTab, setActiveTab, progressPercentage, tasks, han
         <div className="bg-[#F7F9F2] flex-grow p-6 rounded-lg shadow-lg mb-4 md:mb-0 mt-4 md:mt-0">
 
         {activeTab === 'schedule' ? (
-            scheduleData ? (
+            selectedDate && scheduleData.data ? (
                 <div>
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-lg font-semibold text-[#4B4B4B]">
@@ -45,7 +47,6 @@ const ManageSidebar = ({ activeTab, setActiveTab, progressPercentage, tasks, han
                     <hr className="border-t-[2px] border-gray-300 mb-4" />
                     <p className="text-[#4B4B4B] mb-2"><strong>시간:</strong> {scheduleData.time}</p>
                     <p className="text-[#4B4B4B] mb-2"><strong>장소:</strong> {scheduleData.location}</p>
-                    <p className="text-[#4B4B4B]">{scheduleData.description}</p>
                     
                     <hr className="border-t-[2px] border-gray-300 mb-2" />
                     <div className="p-6">
@@ -81,7 +82,26 @@ const ManageSidebar = ({ activeTab, setActiveTab, progressPercentage, tasks, han
                     <ManageComments />
                 </div>
             ) : (
-                <p className="text-gray-500">해당 날짜의 스케줄이 없습니다.</p>
+            <div>
+                <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-lg font-semibold text-[#4B4B4B]">
+                        {scheduleData.date} Study Schedule
+                        </h2>
+                        <div className="flex space-x-3">
+                            <img src={addIcon} alt="Edit Icon" className="w-6 h-6 cursor-pointer"
+                            //onClick={onEditClick} 
+                            />
+                            
+                        </div>
+                        
+                    </div>
+                    <hr className="border-t-[2px] border-gray-300 mb-4" />
+
+                    <div className= "flex flex-col items-center justify-center w-full">
+                    <img src={noSchedule} alt="" className="w-[150px] h-[150px] mt-[100px] mb-3" />
+                    <p className="text-gray-500">예정된 스케줄이 없습니다.</p>
+                    </div>
+            </div>
             )
             ) : (
             // Information 탭 내용
