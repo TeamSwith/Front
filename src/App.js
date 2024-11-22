@@ -14,6 +14,7 @@ import MyPageModal from './components/MyPageModal';
 import LogoutConfirmationModal from './components/LogoutConfirmationModal';
 import DeleteAccountModal from './components/DeleteAccountModal';
 import AccountDeletedModal from './components/AccountDeletedModal';
+import LoginCallback from './pages/LoginCallback'; // LoginCallback 페이지 추가
 
 Modal.setAppElement('#root');
 
@@ -37,7 +38,7 @@ const App = () => {
   const openAccountDeletedModal = () => setIsAccountDeletedModalOpen(true);
   const closeAccountDeletedModal = () => setIsAccountDeletedModalOpen(false);
 
-  const handleLogin = () => { setIsLoggedIn(true); closeLoginModalHandler(); };
+  // const handleLogin = () => { setIsLoggedIn(true); closeLoginModalHandler(); };
   const handleLogout = () => { setIsLoggedIn(false); closeLogoutConfirmation(); closeMyPageModalHandler(); };
   const handleConfirmDelete = () => {
     // 탈퇴 처리를 위한 함수 호출 (API 호출 등)
@@ -74,6 +75,7 @@ const App = () => {
         <main className="flex-grow overflow-hidden">
           <Routes>
             <Route path="/" element={<MainPage />} />
+            <Route path="/api/oauth/kakao" element={<LoginCallback />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route 
               path="/create-study" 
@@ -96,7 +98,7 @@ const App = () => {
         </main>
         <Footer isLoggedIn={isLoggedIn} openDeleteAccountModal={openDeleteAccountModal} /> 
 
-        <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModalHandler} onLogin={handleLogin} />
+        <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModalHandler} />
         <MyPageModal isOpen={isMyPageModalOpen} onClose={closeMyPageModalHandler} onLogout={openLogoutConfirmation} />
         <LogoutConfirmationModal isOpen={isLogoutConfirmationOpen} onClose={closeLogoutConfirmation} onConfirmLogout={handleLogout} />
         <DeleteAccountModal isOpen={isDeleteAccountModalOpen} onClose={closeDeleteAccountModal} onConfirmDelete={handleConfirmDelete} />
