@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-export const fetchSchedule = async (id, date, time, location) => {
+export const fetchSchedule = async (id, studyId, date, time, location) => {
     try {
-      const { data } = await axios.get('http://localhost:8080/api/group/${id}/study/1', {
-        params: { id },
+      const { data } = await axios.get(`http://localhost:8080/api/group/${id}/study/${studyId}`, {
+        params: { id, studyId },
         date,
         time,
         location,
