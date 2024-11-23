@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '../assets/swithLogo.png';          
 import accountIcon from '../assets/account_circle.png'; 
@@ -6,16 +6,23 @@ import bellIcon from '../assets/bell.png';
 import MyPageModal from '../components/MyPageModal';
 
 const Header = ({ 
+  isLoggedIn, // 상위에서 전달받은 isLoggedIn
+  setIsLoggedIn, // 상위에서 전달받은 setIsLoggedIn
   openLoginModal, 
   openCreateStudyModal, 
-  openStudyManagementModal, // 스터디 관리 모달 열기 함수 추가
-  isLoggedIn, 
+  openStudyManagementModal,
   openMyPageModal, 
   isMyPageModalOpen, 
   closeMyPageModal, 
-  openLogoutConfirmation, 
 }) => {
-    
+
+/*  useEffect(() => {
+    // 로그인된 상태 확인: 토큰이 로컬스토리지에 있으면 로그인된 상태
+    if (localStorage.getItem('accessToken')) {
+      setIsLoggedIn(true);
+    }
+  }, []); // 컴포넌트가 처음 렌더링 될 때 한 번 실행
+*/    
   const handleCreateStudyClick = () => {
       if (isLoggedIn) {
         openCreateStudyModal(); // 로그인된 상태에서는 생성하기 모달
@@ -55,8 +62,6 @@ const Header = ({
             >
               스터디 관리
             </button>
-            {/*<Link to="/create-study" className="text-sm sm:text-base lg:text-lg hover:text-gray-100 mt-2 max-small-screen-text">스터디 생성</Link>*/}
-            {/*<Link to="/manage-study" className="text-sm sm:text-base lg:text-lg hover:text-gray-100 mt-2 max-small-screen-text">스터디 관리</Link>*/}
           </nav>
         </div>
 
@@ -78,7 +83,7 @@ const Header = ({
           <img src={bellIcon} alt="알람" className="w-6 h-6" />
         </button>
         
-        <MyPageModal isOpen={isMyPageModalOpen} onClose={closeMyPageModal} onLogout={openLogoutConfirmation} />
+        <MyPageModal isOpen={isMyPageModalOpen} onClose={closeMyPageModal} onLogout={() => setIsLoggedIn(false)} />
 
         </div>
         </header>

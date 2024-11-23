@@ -6,6 +6,12 @@ import grayChatIcon from '../assets/grayChat.png';
 Modal.setAppElement('#root'); // 애플리케이션의 루트 요소 설정
 
 const MyPageModal = ({ isOpen, onClose, onLogout }) => {
+
+  const handleLogout = () => {
+    onLogout(); // 상위에서 전달받은 onLogout 호출
+    onClose(); // 모달 닫기
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -32,7 +38,7 @@ const MyPageModal = ({ isOpen, onClose, onLogout }) => {
         <span>카카오 계정으로 로그인됨</span>
       </div>
       <button
-        onClick={onLogout}
+        onClick={handleLogout}
         className="text-xs hover:underline focus:outline-none"
       >
         로그아웃
