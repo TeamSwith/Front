@@ -10,6 +10,7 @@ const ManageSidebar = ({ activeTab, setActiveTab, progressPercentage, tasks, han
 
     <div className="flex flex-col w-full flex-grow">
 
+        {/* schedule/information 카테고리 */}
         <div className="flex space-x-8 w-fit border-b border-gray-300 mb-4">
             <button
                 onClick={() => setActiveTab('schedule')}
@@ -99,7 +100,7 @@ const ManageSidebar = ({ activeTab, setActiveTab, progressPercentage, tasks, han
 
                     <div className= "flex flex-col items-center justify-center w-full">
                     <img src={noSchedule} alt="" className="w-[150px] h-[150px] mt-[100px] mb-3" />
-                    <p className="text-gray-500">예정된 스케줄이 없습니다.</p>
+                    <p className="text-gray-500 mb-[100px]">예정된 스케줄이 없습니다.</p>
                     </div>
             </div>
             )

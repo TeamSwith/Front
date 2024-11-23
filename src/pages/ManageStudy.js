@@ -114,7 +114,7 @@ const handleEditClick = () => {
   const totalTasks = tasks.length;
   const progressPercentage = (checkedCount / totalTasks) * 100;
 
-
+  //공지사항 애니메이션
   useEffect(() => {
     if (notice && marqueeTextRef.current && marqueeContainerRef.current) {
       setIsOverflowing(marqueeTextRef.current.scrollWidth > marqueeContainerRef.current.clientWidth);
@@ -123,7 +123,7 @@ const handleEditClick = () => {
   
 
   return (
-    <div className="xl:pl-[320px] xl:pr-[320px] lg:pl-[150px] lg:pr-[150px] px-[30px] py-[90px]">
+    <div className="sm:px-20 md:px-28 lg:px-36 xl:px-[300px] px-[30px] py-[90px]">
       <div className="w-full bg-[#F2F2F2] text-[#4B4B4B] text-[14px] py-2 mb-4 flex items-center justify-between rounded-2xl overflow-hidden position: relative">
         <div className="flex items-center">
           <img src={speakerIcon} alt="Speaker Icon" className="w-6 h-6 mr-3 ml-4" />
@@ -157,77 +157,81 @@ const handleEditClick = () => {
         </div>
       </div>
 
-      <div className="flex flex-col justify-center w-full">
-      <div className="flex items-center max-w-md w-full pt-3">
-        <img src={personIcon} alt="인원수" className="w-7 h-7 ml-3 mb-4" /> 
-          <span className='text-[#5B5B5B] mb-3'>
-            6 
-            {/*인원수에 따라 조정될 예정 */}
-          </span>
-          <span className='text-2xl ml-3 mb-3'>
-            C++의 황제가 될 거야
-          </span>
-      </div>
+      
 
       
       
-      <div className="flex flex-wrap flex-row md:flex-row md:space-x-4 w-full">
+    
 
-        <div className="flex flex-col">
+        <div className="flex flex-wrap maxlg:flex-col w-full gap-4">
 
-          <div className="text-[13px] ml-3 mb-2 text-[#4B4B4B]">
-            출석 현황
+        <div
+          className="flex flex-col flex-glow maxlg:items-center">
+            <div className="flex items-center max-w-md w-full pt-3">
+              <img src={personIcon} alt="인원수" className="w-7 h-7 ml-3 mb-4" /> 
+                <span className='text-[#5B5B5B] mb-3'>
+                  6 
+                  {/*인원수에 따라 조정될 예정 */}
+                </span>
+                <span className='text-2xl ml-3 mb-3'>
+                  C++의 황제가 될 거야
+                </span>
+            </div>
+
+            <div className="flex justify-start text-[13px] ml-3 mb-2 text-[#4B4B4B]">
+              출석 현황
+            </div>
+
+            <div className="bg-[#F7F9F2] w-full max-w-[320px] h-[60px] mb-4 rounded-lg shadow-lg"> </div>
+          
+            <div className="flex-shrink-0">
+              <Calendar 
+                onChange={setSelectedDate}
+                value={selectedDate}
+                className="p-6" 
+                formatDay={(locale, date) => date.toLocaleString('en', { day: 'numeric' })}
+                view={null}
+                minDetail={null}
+                next2Label={null}
+                prev2Label={null}
+              />
+            </div>
+
+            <div className="bg-[#8CC29E] w-full max-w-[320px] h-[40px] mt-4 rounded-lg shadow-lg flex items-center justify-center cursor-pointer"> 
+              <span className='text-[14px] text-white'>
+                출석하기
+              </span>
+            </div>
           </div>
 
-          <div className="bg-[#F7F9F2] w-full max-w-[400px] h-[60px] mb-4 rounded-lg shadow-lg"> </div>
-        
-          <div className="flex-shrink-0">
-            <Calendar 
-              onChange={setSelectedDate}
-              value={selectedDate}
-              className="p-6" 
-              formatDay={(locale, date) => date.toLocaleString('en', { day: 'numeric' })}
-              view={null}
-              minDetail={null}
-              next2Label={null}
-              prev2Label={null}
-            />
-          </div>
-
-          <div className="bg-[#8CC29E] w-full max-w-[400px] h-[40px] mt-4 rounded-lg shadow-lg flex items-center justify-center cursor-pointer"> 
-            <span className='text-[14px] text-white'>
-              출석하기
-            </span>
+          {/*sidebar*/}
+          <div className="flex-grow maxlg:w-full flex justify-center">
+            <div className="w-full flex flex-col items-center">
+              {isEditing ? (
+                <EditSidebar 
+                scheduleData={scheduleData}
+                tasks={tasks}
+                handleCheckboxChange={handleCheckboxChange}
+                setIsEditing={setIsEditing}
+                /> 
+                // 편집 모드일 때 EditSidebar 렌더링
+                ) : (
+              <ManageSidebar
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+                progressPercentage={progressPercentage}
+                tasks={tasks}
+                handleCheckboxChange={handleCheckboxChange}
+                selectedDate={selectedDate}
+                scheduleData={scheduleData}
+                onEditClick={handleEditClick} 
+                onCreateClick={handleCreateSchedule}
+              />
+              )}
           </div>
         </div>
-
-        <div className="w-full md:w-auto flex justify-center">
-        <div className = "w-full max-w-[400px] flex flex-col items-center">
-        {isEditing ? (
-          <EditSidebar 
-          scheduleData={scheduleData}
-          tasks={tasks}
-          handleCheckboxChange={handleCheckboxChange}
-          setIsEditing={setIsEditing}
-          /> 
-          // 편집 모드일 때 EditSidebar 렌더링
-          ) : (
-        <ManageSidebar
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          progressPercentage={progressPercentage}
-          tasks={tasks}
-          handleCheckboxChange={handleCheckboxChange}
-          selectedDate={selectedDate}
-          scheduleData={scheduleData}
-          onEditClick={handleEditClick} 
-          onCreateClick={handleCreateSchedule}
-        />
-        )}
       </div>
-      </div>
-      </div>
-      </div>
+      
         
     </div>
     

@@ -11,6 +11,9 @@ module.exports = {
       spacing: {
         '18': '4.5rem', // 4.5rem은 약 72px로, mt-18에 해당
       },
+      screens: {
+        maxlg: { max: "1023px" },
+      },
     },
   },
   plugins: [],
