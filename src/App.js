@@ -15,7 +15,7 @@ import LogoutConfirmationModal from './components/LogoutConfirmationModal';
 import DeleteAccountModal from './components/DeleteAccountModal';
 import AccountDeletedModal from './components/AccountDeletedModal';
 import LoginCallback from './pages/LoginCallback'; // LoginCallback 페이지 추가
-import { getUserInfo } from './services/authService'; // 사용자 정보를 가져오는 서비스
+import { getUserInfo, refreshAccessToken } from './services/authService'; // 사용자 정보를 가져오는 서비스
 
 Modal.setAppElement('#root');
 
@@ -24,7 +24,7 @@ const App = () => {
   const [isMyPageModalOpen, setIsMyPageModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태 관리
-  const [userEmail, setUserEmail] = useState(null); // 사용자 이메일 상태
+  const [userEmail, setUserEmail] = useState(null); // 이메일 말고 사용자 정보 다가져옴
   const [isLogoutConfirmationOpen, setIsLogoutConfirmationOpen] = useState(false);
   const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] = useState(false);
   const [isAccountDeletedModalOpen, setIsAccountDeletedModalOpen] = useState(false);
@@ -51,11 +51,25 @@ const App = () => {
           setUserEmail(userData.email); // 이메일 상태 업데이트
           localStorage.setItem('email', userData.email); // 로컬 스토리지에 저장
         })
-        .catch((error) => {
+        .catch(async (error) => {
           console.error('사용자 정보 가져오기 실패:', error);
+          if (error.response && error.response.status === 401) {
+            // 액세스 토큰 만료시 리프레시 토큰을 사용하여 갱신
+            try {
+              const newAccessToken = await refreshAccessToken(); // 리프레시 토큰을 사용하여 액세스 토큰 갱신
+              const userData = await getUserInfo(newAccessToken); // 새로운 액세스 토큰으로 사용자 정보 요청
+              setUserEmail(userData.email); // 이메일 상태 업데이트
+              localStorage.setItem('email', userData.email); // 로컬 스토리지에 저장
+            } catch (refreshError) {
+              console.error('액세스 토큰 갱신 실패:', refreshError);
+              setIsLoggedIn(false);
+            }
+          }
         });
+    } else {
+      setIsLoggedIn(false); // 액세스 토큰 없으면 로그인 상태 false
     }
-  }, []); // 처음 한 번만 실행되게 설정
+  }, [isLoggedIn]);  // 빈 배열로 한 번만 실행되도록 설정
 
   const handleLogout = () => {
     setIsLoggedIn(false);
