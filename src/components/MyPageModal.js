@@ -12,6 +12,9 @@ const MyPageModal = ({ isOpen, onClose, onLogout }) => {
     onClose(); // 모달 닫기
   };
 
+  // 로컬 스토리지에서 사용자 닉네임 가져오기
+  const userName = localStorage.getItem('nickname') || '오므라이스';  // nickname이 없으면 기본값 '오므라이스'
+
   return (
     <Modal
       isOpen={isOpen}
@@ -30,7 +33,7 @@ const MyPageModal = ({ isOpen, onClose, onLogout }) => {
         className="mx-auto rounded-full w-32 h-32 mb-4"
       />
       <h2 className="text-lg font-bold mb-3">
-        오므라이스 
+        {userName}
         <span className="text-sm text-[#BBBBBB] ml-2">님</span>
       </h2>
       <div className="flex items-center justify-center text-xs text-[#BBBBBB] mb-5">

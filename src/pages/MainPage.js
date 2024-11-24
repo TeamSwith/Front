@@ -167,7 +167,7 @@ const MainPage = ({ isLoggedIn, setIsLoggedIn, userEmail, handleLogout }) => {
       </div>
 
       <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModal} />
-      <LogoutConfirmationModal isOpen={isLogoutModalOpen} onClose={closeLogoutConfirmation} onLogout={handleLogout} />
+      <LogoutConfirmationModal isOpen={isLogoutModalOpen} onClose={closeLogoutConfirmation} onConfirmLogout={handleLogout} />
       <CreateStudyModal isOpen={isCreateStudyModalOpen} onClose={closeCreateStudyModal} onCreate={handleStudyCreation} />
       <MyPageModal isOpen={isMyPageModalOpen} onClose={closeMyPageModal} onLogout={openLogoutConfirmation} />
       <StudyManagementModal isOpen={isStudyManagementModalOpen} onClose={closeStudyManagementModal} onJoin={handleJoinStudy} />

@@ -24,7 +24,7 @@ const App = () => {
   const [isMyPageModalOpen, setIsMyPageModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태 관리
-  const [userEmail, setUserEmail] = useState(null); // 이메일 말고 사용자 정보 다가져옴
+  const [userEmail, setUserEmail] = useState(null); // 사용자 정보 다가져오는 거임
   const [isLogoutConfirmationOpen, setIsLogoutConfirmationOpen] = useState(false);
   const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] = useState(false);
   const [isAccountDeletedModalOpen, setIsAccountDeletedModalOpen] = useState(false);
