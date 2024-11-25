@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/swithLogo.png';          
 import accountIcon from '../assets/account_circle.png'; 
 import bellIcon from '../assets/bell.png'; 
@@ -15,6 +15,7 @@ const Header = ({
   isMyPageModalOpen, 
   closeMyPageModal, 
 }) => {
+  const navigate = useNavigate();
 
 /*  useEffect(() => {
     // 로그인된 상태 확인: 토큰이 로컬스토리지에 있으면 로그인된 상태
@@ -25,7 +26,7 @@ const Header = ({
 */    
   const handleCreateStudyClick = () => {
       if (isLoggedIn) {
-        openCreateStudyModal(); // 로그인된 상태에서는 생성하기 모달
+        navigate('/?action=study-create'); // 메인으로 이동해서 모달 열어줌
       } else {
         openLoginModal(); // 로그인되지 않은 상태에서는 로그인 모달
       }
@@ -33,7 +34,7 @@ const Header = ({
 
     const handleManageStudyClick = () => {
       if (isLoggedIn) {
-        openStudyManagementModal(); // 로그인된 상태에서는 스터디 관리 모달
+        navigate('/?action=study-manage'); // 메인으로 이동해서 모달 열어줌
       } else {
         openLoginModal(); // 로그인되지 않은 상태에서는 로그인 모달
       }

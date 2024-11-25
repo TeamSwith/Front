@@ -25,6 +25,7 @@ const MyPageModal = ({ isOpen, onClose, onLogout }) => {
       w-56 mt-16 right-4 mr-10 max-w-[220px] 
       mx-auto text-center
       sm:right-10 sm:mt-18 md:right-10 md:mt-18 lg:mr-10 lg:mt-18
+      shadow-lg shadow-gray-400/50  // 그림자 추가
     "
     >
       <img

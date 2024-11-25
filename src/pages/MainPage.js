@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import backgroundImage from '../assets/BackGround.png';
 import Header from '../components/Header';
 import LoginModal from '../components/LoginModal';
@@ -8,7 +8,6 @@ import LogoutConfirmationModal from '../components/LogoutConfirmationModal';
 import CreateStudyModal from '../components/CreateStudyModal';
 import StudyManagementModal from '../components/StudyManagementModal';
 import JoinConfirmationModal from '../components/JoinConfirmationModal';
-import { getUserInfo } from '../services/authService'; // 사용자 정보를 가져오는 서비스
 
 const MainPage = ({ isLoggedIn, setIsLoggedIn, userEmail, handleLogout }) => {
   const [isCreateStudyModalOpen, setIsCreateStudyModalOpen] = useState(false);
@@ -17,27 +16,21 @@ const MainPage = ({ isLoggedIn, setIsLoggedIn, userEmail, handleLogout }) => {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isStudyManagementModalOpen, setIsStudyManagementModalOpen] = useState(false); // Study Management 모달 상태
   const [isJoinConfirmationModalOpen, setIsJoinConfirmationModalOpen] = useState(false); // Join Confirmation 모달 상태
-//  const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태
-//  const [userEmail, setUserEmail] = useState(null); // 이메일 상태
 
   const navigate = useNavigate();
+  const location = useLocation(); 
 
-  // 컴포넌트가 마운트될 때 로컬 스토리지에서 액세스 토큰 확인
-/*  useEffect(() => {
-    const accessToken = localStorage.getItem('accessToken');
-    if (accessToken) {
-      setIsLoggedIn(true); // 토큰이 있으면 로그인 상태로 간주
-      getUserInfo()  // 로그인 상태일 때 사용자 정보 가져오기
-        .then((userData) => {
-          console.log('Received user data:', userData);  // 받아온 사용자 정보 확인
-          setUserEmail(userData.email); // 이메일 저장
-          localStorage.setItem('email', userData.email); // 이메일을 로컬 스토리지에 저장
-        })
-        .catch((error) => { 
-          console.error('사용자 정보 가져오기 실패:', error); 
-        });
+  // 페이지 이동 시, URL에서 'action' 파라미터를 확인하고, 해당하는 모달을 여는 코드
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search); 
+    const action = queryParams.get('action'); // 'action' 파라미터 값 가져오기
+
+    if (action === 'study-create') {
+      setIsCreateStudyModalOpen(true); // 스터디 생성 모달 열기
+    } else if (action === 'study-manage') {
+      setIsStudyManagementModalOpen(true); // 스터디 관리 모달 열기
     }
-  }, []); // 처음 한번만 실행되게 설정 */
+  }, [location]); // location이 변경될 때마다 실행
 
   const handleCreateStudyClick = () => {
     if (isLoggedIn) {
@@ -112,7 +105,6 @@ const MainPage = ({ isLoggedIn, setIsLoggedIn, userEmail, handleLogout }) => {
       userEmail={userEmail}  // 이메일 전달
       setIsLoggedIn={setIsLoggedIn} // 로그아웃 시 로그인 상태 업데이트 함수 전달
       handleLogout={handleLogout}
-
       openLoginModal={() => setIsLoginModalOpen(true)} // 로그인 모달 열기 함수 전달
       openCreateStudyModal={handleCreateStudyClick} // 스터디 생성 모달 핸들러 함수 전달
       openStudyManagementModal={handleManageStudyClick} // 스터디 관리 모달 핸들러 전달
