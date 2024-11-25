@@ -1,35 +1,28 @@
 // src/pages/LoginCallback.js
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { handleLogin } from '../services/authService'; // 로그인 후 토큰을 처리하는 함수
 
 const LoginCallback = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // URL에서 access-token과 refresh-token을 추출
     const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code'); // URL에서 카카오 로그인 후 반환된 code를 추출
+    const accessToken = urlParams.get('access-token');
+    const refreshToken = urlParams.get('refresh-token');
 
-    console.log('Received code:', code); // `code`가 정상적으로 추출되었는지 확인
+    if (accessToken && refreshToken) {
+      // 토큰을 로컬 스토리지에 저장
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
+      console.log('Tokens saved:', accessToken, refreshToken);
 
-    if (code) {
-      // `code`가 존재하면 로그인 후 토큰을 처리하고 페이지를 이동
-      handleLogin(code)
-        .then(() => {
-          alert('로그인 성공!');
-          navigate('/main'); // 로그인 후 메인 페이지로 리디렉션
-        })
-        .catch((error) => {
-          alert('로그인 실패: ' + error.message);
-        });
+      // 메인 페이지로 리디렉션
+      navigate('/');
     }
   }, [navigate]);
 
-  return (
-    <div>
-      <p>로그인 처리 중...</p>
-    </div>
-  );
+  return <div>로그인 처리 중...</div>;
 };
 
 export default LoginCallback;

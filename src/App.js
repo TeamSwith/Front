@@ -15,6 +15,7 @@ import LogoutConfirmationModal from './components/LogoutConfirmationModal';
 import DeleteAccountModal from './components/DeleteAccountModal';
 import AccountDeletedModal from './components/AccountDeletedModal';
 import LoginCallback from './pages/LoginCallback'; // LoginCallback 페이지 추가
+import { getUserInfo, refreshAccessToken } from './services/authService'; // 사용자 정보를 가져오는 서비스
 
 Modal.setAppElement('#root');
 
@@ -22,7 +23,8 @@ const App = () => {
 
   const [isMyPageModalOpen, setIsMyPageModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태 관리
+  const [userEmail, setUserEmail] = useState(null); // 사용자 정보 다가져오는 거임
   const [isLogoutConfirmationOpen, setIsLogoutConfirmationOpen] = useState(false);
   const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] = useState(false);
   const [isAccountDeletedModalOpen, setIsAccountDeletedModalOpen] = useState(false);
@@ -38,20 +40,62 @@ const App = () => {
   const openAccountDeletedModal = () => setIsAccountDeletedModalOpen(true);
   const closeAccountDeletedModal = () => setIsAccountDeletedModalOpen(false);
 
-  // const handleLogin = () => { setIsLoggedIn(true); closeLoginModalHandler(); };
-  const handleLogout = () => { setIsLoggedIn(false); closeLogoutConfirmation(); closeMyPageModalHandler(); };
-  const handleConfirmDelete = () => {
-    // 탈퇴 처리를 위한 함수 호출 (API 호출 등)
-    setIsDeleteAccountModalOpen(false);
-    setIsLoggedIn(false); // 로그아웃 처리
-    closeDeleteAccountModal(); // 탈퇴 모달 닫기
-    openAccountDeletedModal(); // 탈퇴 완료 모달 열기
+  // 컴포넌트가 마운트될 때 액세스 토큰을 확인하여 사용자 정보를 가져옴
+  useEffect(() => {
+    const accessToken = localStorage.getItem('accessToken');
+    if (accessToken) {
+      setIsLoggedIn(true);
+      // 사용자 정보를 가져오는 함수 호출
+      getUserInfo()
+        .then((userData) => {
+          setUserEmail(userData.email); // 이메일 상태 업데이트
+          localStorage.setItem('email', userData.email); // 로컬 스토리지에 저장
+        })
+        .catch(async (error) => {
+          console.error('사용자 정보 가져오기 실패:', error);
+          if (error.response && error.response.status === 401) {
+            // 액세스 토큰 만료시 리프레시 토큰을 사용하여 갱신
+            try {
+              const newAccessToken = await refreshAccessToken(); // 리프레시 토큰을 사용하여 액세스 토큰 갱신
+              const userData = await getUserInfo(newAccessToken); // 새로운 액세스 토큰으로 사용자 정보 요청
+              setUserEmail(userData.email); // 이메일 상태 업데이트
+              localStorage.setItem('email', userData.email); // 로컬 스토리지에 저장
+            } catch (refreshError) {
+              console.error('액세스 토큰 갱신 실패:', refreshError);
+              setIsLoggedIn(false);
+            }
+          }
+        });
+    } else {
+      setIsLoggedIn(false); // 액세스 토큰 없으면 로그인 상태 false
+    }
+  }, [isLoggedIn]);  // 빈 배열로 한 번만 실행되도록 설정
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    closeLogoutConfirmation();
+    closeMyPageModalHandler();
+    setUserEmail(null);
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('email');
+    localStorage.removeItem('nickname');
+    localStorage.removeItem('userId');
   };
 
-  // Custom hook to check login status and redirect to login modal if not logged in
+//  const handleLogout = () => { setIsLoggedIn(false); closeLogoutConfirmation(); closeMyPageModalHandler(); };
+  
+  // 계정 삭제 핸들러
+  const handleConfirmDelete = () => {
+    setIsDeleteAccountModalOpen(false);
+    setIsLoggedIn(false); // 로그아웃 처리
+    closeDeleteAccountModal();
+    openAccountDeletedModal();
+  };
+
+  // 로그인 필수 컴포넌트: 로그인되지 않으면 로그인 모달 열기
   const RequireLogin = ({ children }) => {
     const location = useLocation();
-
     useEffect(() => {
       if (!isLoggedIn) {
         openLoginModalHandler();
@@ -67,6 +111,7 @@ const App = () => {
         <Header 
           openLoginModal={openLoginModalHandler} 
           isLoggedIn={isLoggedIn} 
+          setIsLoggedIn={setIsLoggedIn} // 로그인 상태 변경 함수 전달
           openMyPageModal={openMyPageModalHandler} 
           isMyPageModalOpen={isMyPageModalOpen}
           closeMyPageModal={closeMyPageModalHandler}
@@ -74,8 +119,8 @@ const App = () => {
         />
         <main className="flex-grow overflow-hidden">
           <Routes>
-            <Route path="/" element={<MainPage />} />
-            <Route path="/api/oauth/kakao" element={<LoginCallback />} />
+            <Route path="/" element={<MainPage isLoggedIn={isLoggedIn} userEmail={userEmail} setIsLoggedIn={setIsLoggedIn} handleLogout={handleLogout} />} />
+            <Route path="/local-callback" element={<LoginCallback />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route 
               path="/create-study" 
@@ -103,7 +148,6 @@ const App = () => {
         <LogoutConfirmationModal isOpen={isLogoutConfirmationOpen} onClose={closeLogoutConfirmation} onConfirmLogout={handleLogout} />
         <DeleteAccountModal isOpen={isDeleteAccountModalOpen} onClose={closeDeleteAccountModal} onConfirmDelete={handleConfirmDelete} />
         <AccountDeletedModal isOpen={isAccountDeletedModalOpen} onClose={closeAccountDeletedModal} />
-        
       </div>
     </Router>
   );
