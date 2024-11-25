@@ -5,7 +5,19 @@ import addIcon from "../assets/add.png";
 import noSchedule from "../assets/noSchedule.png"
 import ManageComments from './ManageComments'; //임의의 피드백 데이터
 
-const ManageSidebar = ({ activeTab, setActiveTab, progressPercentage, tasks, handleCheckboxChange, selectedDate, scheduleData = { time: '', location: '' } , onEditClick, }) => {
+const ManageSidebar = ({ 
+    activeTab, 
+    setActiveTab, 
+    progressPercentage, 
+    tasks, 
+    handleCheckboxChange, 
+    selectedDate, 
+    scheduleData, 
+    onAddClick,
+    onEditClick, 
+}) => {
+
+
   return (
 
     <div className="flex flex-col w-full flex-grow">
@@ -33,11 +45,11 @@ const ManageSidebar = ({ activeTab, setActiveTab, progressPercentage, tasks, han
         <div className="bg-[#F7F9F2] flex-grow p-6 rounded-lg shadow-lg mb-4 md:mb-0 mt-4 md:mt-0">
 
         {activeTab === 'schedule' ? (
-            selectedDate && scheduleData.data ? (
+            scheduleData && scheduleData.time && scheduleData.location ? (
                 <div>
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-lg font-semibold text-[#4B4B4B]">
-                        {scheduleData.date} Study Schedule
+                        {selectedDate.toISOString().split('T')[0]} Study Schedule
                         </h2>
                         <div className="flex space-x-3">
                             <img src={editIcon} alt="Edit Icon" className="w-6 h-6 cursor-pointer"
@@ -89,8 +101,8 @@ const ManageSidebar = ({ activeTab, setActiveTab, progressPercentage, tasks, han
                         {scheduleData.date} Study Schedule
                         </h2>
                         <div className="flex space-x-3">
-                            <img src={addIcon} alt="Edit Icon" className="w-6 h-6 cursor-pointer"
-                            //onClick={onEditClick} 
+                            <img src={addIcon} alt="Add Icon" className="w-6 h-6 cursor-pointer"
+                            onClick={onAddClick} 
                             />
                             
                         </div>

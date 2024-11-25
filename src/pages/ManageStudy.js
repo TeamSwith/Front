@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
-import { fetchSchedule } from '../api/Study';
+import { fetchSchedule, createSchedule } from '../api/Study';
 import { fetchNotice, updateNotice } from '../api/Notice';
 import Calendar from 'react-calendar';
 import "react-calendar/dist/Calendar.css";
 import ManageSidebar from "../components/ManageSidebar";
-import EditSidebar from "../components/EditSIdebar";
+import CreateSidebar from "../components/CreateSIdebar";
+import EditSidebar from '../components/EditSIdebar';
 import speakerIcon from "../assets/speaker.png";
 import editIcon from "../assets/edit.png";
 import checkIcon from "../assets/Check.png"
@@ -14,38 +15,35 @@ import './ManageStudy.css';
 
 const ManageStudy = () => {
   const queryClient = useQueryClient();
-  //const [value, onChange] = useState(new Date());
   const marqueeTextRef = useRef(null);
   const marqueeContainerRef = useRef(null);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const [activeTab, setActiveTab] = useState('schedule');
   const [isEditing, setIsEditing] = useState(false);
-
-
-// Edit 버튼 클릭 시 편집 모드로 전환
-const handleEditClick = () => {
-  setIsEditing(true); 
-};
+  const [isCreating, setIsCreating] = useState(false);
 
   //calander 날짜 선택
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [userId, setUserId] = useState(1); //!!동적으로 수정되어야함
+  const [id] = useState(1);
 
   //스터디 일정 데이터 가져오기
-  const { data: scheduleData } = useQuery({
-    queryKey: ['schedule', userId, selectedDate],
-    queryFn: () => fetchSchedule(userId, selectedDate.toISOString().split('T')[0]), // 날짜를 API 형식으로 변환
-    enabled: !!selectedDate, // 날짜가 선택되었을 때만 실행
-    staleTime: 5 * 60 * 1000, // 캐싱 유효시간 (5분)
-  });
-
-  const handleCreateSchedule = () => {
-    console.log(`Creating schedule for date: ${selectedDate.toISOString().split('T')[0]}`);
+const { data: scheduleResponse, isLoading, error } = useQuery(
+  {
+    queryKey: ['schedule', id, selectedDate.toISOString().split('T')[0]],
+    queryFn: () => fetchSchedule(id, selectedDate.toISOString().split('T')[0]),
+    enabled: !!selectedDate,
+    staleTime: 5 * 60 * 1000, // 캐시 유효 시간 (5분)
   }
+);
+
+  const scheduleData = scheduleResponse?.success
+  ? scheduleResponse.data
+  : { time: '', location: ''};
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
-  };
+    queryClient.invalidateQueries(['schedule', id, date.toISOString().split('T')[0]]);
+};
 
   //Notice
   const { data: notice } = useQuery({
@@ -84,15 +82,6 @@ const handleEditClick = () => {
       editNotice({ notice: newNotice.trim() });
     }
   };
-
-{ /*
-  // 날짜가 변경될 때마다 새로운 스케줄 데이터를 불러오기
-  useEffect(() => {
-    const newScheduleData = fetchScheduleData(selectedDate);
-    setScheduleData(newScheduleData);
-  }, [selectedDate]);
-*/}
-
 
   // 과제 관련 상태 관리 (추후 api 호출)
   const [tasks, setTasks] = useState([
@@ -186,7 +175,7 @@ const handleEditClick = () => {
           
             <div className="flex-shrink-0">
               <Calendar 
-                onChange={setSelectedDate}
+                onChange={handleDateChange}
                 value={selectedDate}
                 className="p-6" 
                 formatDay={(locale, date) => date.toLocaleString('en', { day: 'numeric' })}
@@ -207,14 +196,25 @@ const handleEditClick = () => {
           {/*sidebar*/}
           <div className="flex-grow maxlg:w-full flex justify-center">
             <div className="w-full flex flex-col items-center">
-              {isEditing ? (
+              {isEditing === 'edit' ? (
                 <EditSidebar 
-                scheduleData={scheduleData}
+                scheduleData={scheduleResponse?.data || { date: selectedDate.toISOString().split('T')[0] }}
                 tasks={tasks}
                 handleCheckboxChange={handleCheckboxChange}
                 setIsEditing={setIsEditing}
+                id={id}
+                queryClient={queryClient}
                 /> 
                 // 편집 모드일 때 EditSidebar 렌더링
+                ) : isEditing === 'create' ? (
+                  <CreateSidebar
+                    scheduleData={{ date: selectedDate.toISOString().split('T')[0], time: '', location: '' }}
+                    tasks={tasks}
+                    handleCheckboxChange={handleCheckboxChange}
+                    setIsCreating={setIsCreating}
+                    id={id}
+                    queryClient={queryClient}
+                  />
                 ) : (
               <ManageSidebar
                 activeTab={activeTab}
@@ -224,8 +224,8 @@ const handleEditClick = () => {
                 handleCheckboxChange={handleCheckboxChange}
                 selectedDate={selectedDate}
                 scheduleData={scheduleData}
-                onEditClick={handleEditClick} 
-                onCreateClick={handleCreateSchedule}
+                onEditClick={() => setIsEditing('edit')}
+                onAddClick={() => setIsEditing('create')}
               />
               )}
           </div>
