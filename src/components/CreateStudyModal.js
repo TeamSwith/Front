@@ -3,6 +3,7 @@ import logo from '../assets/swithLogo.png';
 import cancelIcon from '../assets/Cancel.png'
 import EyeIcon from '../assets/Eye.png';
 import EyeOffIcon from '../assets/Eyeoff.png';
+import { createStudy } from '../services/studyService'; 
 
 const CreateStudyModal = ({ isOpen, onClose, onCreate }) => {
   const [studyId, setStudyId] = useState(''); // 로컬 상태
@@ -16,7 +17,12 @@ const CreateStudyModal = ({ isOpen, onClose, onCreate }) => {
 
   const handleCreateStudy = () => {
     if (password === confirmPassword) {
-      onCreate(studyId);  // 외부의 setStudyId 호출하여 상태 업데이트
+      // 로컬 스토리지에 스터디 아이디와 비밀번호 저장
+      localStorage.setItem('groupInsertId', studyId);
+      localStorage.setItem('groupPw', password);
+
+      // onCreate를 호출하여 CreateStudy로 studyId와 groupPw 전달
+      onCreate(studyId, password);  
       onClose();  // 모달 닫기
     } else {
       alert('비밀번호가 일치하지 않습니다.');

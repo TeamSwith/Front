@@ -1,11 +1,18 @@
 import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Banner from '../components/Banner'; // 배너 컴포넌트 임포트
 
 const StudyCreationComplete = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const { studyId, studyName, studyTopic, participants, studyPeriod, communicationLink } = location.state || {};
+
+  // 로컬 스토리지에서 값을 읽어옵니다.
+  const groupInsertId = localStorage.getItem('groupInsertId');
+  const groupPw = localStorage.getItem('groupPw');
+  const groupName = localStorage.getItem('groupName');
+  const maxNum = localStorage.getItem('maxNum');
+  const subject = localStorage.getItem('subject');
+  const period = localStorage.getItem('period');
+  const communication = localStorage.getItem('communication');
 
   const handleConfirm = () => {
     navigate('/'); // 메인 페이지로 이동
@@ -29,27 +36,27 @@ const StudyCreationComplete = () => {
             <tbody>
               <tr>
                 <td className="p-3 sm:p-4 w-1/3 sm:w-1/6 h-12 sm:h-16 border-2 border-[#8CC29E] text-center font-bold rounded-tl-lg whitespace-nowrap">스터디 아이디</td>
-                <td className="p-3 sm:p-4 border-2 border-[#8CC29E] rounded-tr-lg">{studyId}</td>
+                <td className="p-3 sm:p-4 border-2 border-[#8CC29E] rounded-tr-lg">{groupInsertId}</td>
               </tr>
               <tr>
                 <td className="p-3 sm:p-4 w-1/3 sm:w-1/6 h-12 sm:h-16 border-2 border-[#8CC29E] text-center font-bold whitespace-nowrap">스터디 명</td>
-                <td className="p-3 sm:p-4 border-2 border-[#8CC29E]">{studyName}</td>
+                <td className="p-3 sm:p-4 border-2 border-[#8CC29E]">{groupName}</td>
               </tr>
               <tr>
                 <td className="p-3 sm:p-4 w-1/3 sm:w-1/6 h-12 sm:h-16 border-2 border-[#8CC29E] text-center font-bold whitespace-nowrap">주제</td>
-                <td className="p-3 sm:p-4 border-2 border-[#8CC29E]">{studyTopic}</td>
+                <td className="p-3 sm:p-4 border-2 border-[#8CC29E]">{subject}</td>
               </tr>
               <tr>
                 <td className="p-3 sm:p-4 w-1/3 sm:w-1/6 h-12 sm:h-16 border-2 border-[#8CC29E] text-center font-bold whitespace-nowrap">스터디 인원</td>
-                <td className="p-3 sm:p-4 border-2 border-[#8CC29E]">최대 {participants}명</td>
+                <td className="p-3 sm:p-4 border-2 border-[#8CC29E]">최대 {maxNum}명</td>
               </tr>
               <tr>
                 <td className="p-3 sm:p-4 w-1/3 sm:w-1/6 h-12 sm:h-16 border-2 border-[#8CC29E] text-center font-bold whitespace-nowrap">스터디 기간</td>
-                <td className="p-3 sm:p-4 border-2 border-[#8CC29E]">{studyPeriod}</td>
+                <td className="p-3 sm:p-4 border-2 border-[#8CC29E]">{period}</td>
               </tr>
               <tr>
                 <td className="p-3 sm:p-4 w-1/3 sm:w-1/6 h-12 sm:h-16 border-2 border-[#8CC29E] text-center font-bold rounded-bl-lgw hitespace-nowrap">소통 수단</td>
-                <td className="p-3 sm:p-4 border-2 border-[#8CC29E] rounded-br-lg">{communicationLink}</td>
+                <td className="p-3 sm:p-4 border-2 border-[#8CC29E] rounded-br-lg">{communication}</td>
               </tr>
             </tbody>
           </table>

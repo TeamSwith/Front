@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Banner from '../components/Banner'; // 배너 컴포넌트 임포트
+import { createStudy } from '../services/studyService';
 
 const CreateStudy = () => {
-
   const location = useLocation();
-  const { studyId: initialStudyId } = location.state || {};
+  const { studyId, password } = location.state || {};  // 모달에서 전달된 studyId와 groupPw
 
+  // 비밀번호가 로컬에 저장된 경우 사용 가능하도록 설정
+  const storedPassword = localStorage.getItem('groupPw');
+  console.log("Received password in CreateStudy:", password || storedPassword);
+  
   const [studyName, setStudyName] = useState('');
   const [isEditingStudyName, setIsEditingStudyName] = useState(false); // 입력 모드 상태
-  const [studyId, setStudyId] = useState(''); // 스터디 아이디
+  // const [studyId, setStudyId] = useState(''); // 스터디 아이디
   const [studyTopic, setStudyTopic] = useState(''); // 스터디 주제
   const [isEditingStudyTopic, setIsEditingStudyTopic] = useState(false); // 입력 모드 상태
   const [participants, setParticipants] = useState(1); // 스터디 인원
@@ -19,28 +23,57 @@ const CreateStudy = () => {
 
   const navigate = useNavigate();
 
-  // location에서 받은 initialStudyId로 studyId 상태 업데이트
-  useEffect(() => {
-    if (initialStudyId) {
-      setStudyId(initialStudyId);
-    }
-  }, [initialStudyId]);
-
   const handleParticipantChange = (action) => {
     setParticipants((prev) => (action === 'increment' ? prev + 1 : Math.max(prev - 1, 1))); // 최소 1명 유지
   };
 
-  const handleCreateStudy = () => {
-    navigate('/study-creation-complete', {
-      state: {
-        studyId,
-        studyName,
-        studyTopic,
-        participants,
-        studyPeriod,
-        communicationLink
-      }
-    });
+  const handleCreateStudy = async () => {
+    const studyData = {
+      groupInsertId: studyId, // CreateStudyModal에서 받은 studyId
+      groupPw: password || storedPassword, // CreateStudyModal에서 받은 groupPw
+      groupName: studyName,
+      maxNum: participants,
+      subject: studyTopic,
+      period: studyPeriod,
+      communication: communicationLink,
+    };
+
+    try {
+      // const response = await createStudy(studyData);  // API 요청 보내기
+
+      // 성공적으로 생성된 스터디 정보 로컬 스토리지에 저장
+      // localStorage.setItem('groupInsertId', response.groupInsertId);
+      // localStorage.setItem('groupPw', response.groupPw);
+      // localStorage.setItem('groupName', response.groupName);
+      // localStorage.setItem('maxNum', response.maxNum);
+      // localStorage.setItem('subject', response.subject);
+      // localStorage.setItem('period', response.period);
+      // localStorage.setItem('communication', response.communication);
+      localStorage.setItem('groupInsertId', studyData.groupInsertId);
+      localStorage.setItem('groupPw', studyData.groupPw);
+      localStorage.setItem('groupName', studyData.groupName);
+      localStorage.setItem('maxNum', studyData.maxNum);
+      localStorage.setItem('subject', studyData.subject);
+      localStorage.setItem('period', studyData.period);
+      localStorage.setItem('communication', studyData.communication);
+
+      navigate('/study-creation-complete');
+
+      // // 생성 완료 후 스터디 생성 완료 페이지로 이동
+      // navigate('/study-creation-complete', {
+      //   state: { ...studyData, groupInsertId: response.groupInsertId },
+      // });
+    } catch (error) {
+      console.error('스터디 생성 실패:', error);
+      alert('스터디 생성에 실패했습니다.');
+    }
+  };
+
+  // "취소" 버튼 클릭 시 로컬 스토리지에서 값 삭제
+  const handleCancel = () => {
+    localStorage.removeItem('groupInsertId');
+    localStorage.removeItem('groupPw');
+    navigate('/');  // 메인 페이지로 이동
   };
 
   return (
@@ -51,13 +84,6 @@ const CreateStudy = () => {
       <div className="p-4 sm:p-6 rounded-lg">
         <div className="flex justify-between items-center mt-2 sm:mt-1 mb-5 sm:mb-4">
           <h1 className="text-lg sm:text-xl font-bold">스터디 설정 및 정보 입력</h1>
-          {/*<button
-            type="button"
-            onClick={() => setIsModalOpen(true)}
-            className="text-xs sm:text-snm px-3 py-2 bg-[#8CC29E] text-white rounded hover:bg-[#7BAE8D]"
-          >
-            스터디 아이디 입력하기
-          </button>*/}
         </div>
 
         <form className="space-y-2 sm:space-y-5">
@@ -171,7 +197,7 @@ const CreateStudy = () => {
             </button>
             <button
               type="button"
-              onClick={() => navigate('/')}
+              onClick={handleCancel}
               className="w-full sm:w-40 h-12 rounded-xl bg-[#EFF9F2] text-[#91DDAB] rounded-lg shadow-lg hover:bg-gray-200 focus:outline-none transition duration-300 text-sm sm:text-base"
             >
               취소
