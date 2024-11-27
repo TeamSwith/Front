@@ -1,18 +1,29 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Banner from '../components/Banner'; // 배너 컴포넌트 임포트
+import Banner from '../components/Banner';
+import { getStudyDetails } from '../services/studyService';
 
 const StudyCreationComplete = () => {
+  const [studyDetails, setStudyDetails] = useState(null);
   const navigate = useNavigate();
 
   // 로컬 스토리지에서 값을 읽어옵니다.
-  const groupInsertId = localStorage.getItem('groupInsertId');
-  const groupPw = localStorage.getItem('groupPw');
-  const groupName = localStorage.getItem('groupName');
-  const maxNum = localStorage.getItem('maxNum');
-  const subject = localStorage.getItem('subject');
-  const period = localStorage.getItem('period');
-  const communication = localStorage.getItem('communication');
+  const storedId = localStorage.getItem('id');
+
+  // 페이지가 로드될 때, groupInsertId를 통해 API 호출로 스터디 세부 정보 가져오기
+  useEffect(() => {
+    if (storedId) {
+      getStudyDetails(storedId) // groupInsertId를 이용해 API 호출
+        .then((response) => {
+          console.log('스터디 정보:', response.data);
+          setStudyDetails(response.data);  // 응답받은 데이터를 상태에 저장
+        })
+        .catch((error) => {
+          console.error('스터디 정보 가져오기 실패:', error);
+          alert('스터디 정보를 가져오는 데 실패했습니다.');
+        });
+    }
+  }, [storedId]); // groupInsertId 변경될 때마다 호출
 
   const handleConfirm = () => {
     navigate('/'); // 메인 페이지로 이동
@@ -21,6 +32,10 @@ const StudyCreationComplete = () => {
   const handleGoToManagement = () => {
     navigate('/manage-study'); // 스터디 관리 페이지로 이동
   };
+
+  if (!studyDetails) {
+    return <div>로딩 중...</div>; // studyDetails가 없으면 로딩 중 메시지 표시
+  }
 
   return (
     <div className="max-w-5.5xl mx-auto px-0 pt-20 sm:pt-24 space-y-2 mb-8">
@@ -36,27 +51,27 @@ const StudyCreationComplete = () => {
             <tbody>
               <tr>
                 <td className="p-3 sm:p-4 w-1/3 sm:w-1/6 h-12 sm:h-16 border-2 border-[#8CC29E] text-center font-bold rounded-tl-lg whitespace-nowrap">스터디 아이디</td>
-                <td className="p-3 sm:p-4 border-2 border-[#8CC29E] rounded-tr-lg">{groupInsertId}</td>
+                <td className="p-3 sm:p-4 border-2 border-[#8CC29E] rounded-tr-lg">{studyDetails.groupInsertId}</td>
               </tr>
               <tr>
                 <td className="p-3 sm:p-4 w-1/3 sm:w-1/6 h-12 sm:h-16 border-2 border-[#8CC29E] text-center font-bold whitespace-nowrap">스터디 명</td>
-                <td className="p-3 sm:p-4 border-2 border-[#8CC29E]">{groupName}</td>
+                <td className="p-3 sm:p-4 border-2 border-[#8CC29E]">{studyDetails.groupName}</td>
               </tr>
               <tr>
                 <td className="p-3 sm:p-4 w-1/3 sm:w-1/6 h-12 sm:h-16 border-2 border-[#8CC29E] text-center font-bold whitespace-nowrap">주제</td>
-                <td className="p-3 sm:p-4 border-2 border-[#8CC29E]">{subject}</td>
+                <td className="p-3 sm:p-4 border-2 border-[#8CC29E]">{studyDetails.subject}</td>
               </tr>
               <tr>
                 <td className="p-3 sm:p-4 w-1/3 sm:w-1/6 h-12 sm:h-16 border-2 border-[#8CC29E] text-center font-bold whitespace-nowrap">스터디 인원</td>
-                <td className="p-3 sm:p-4 border-2 border-[#8CC29E]">최대 {maxNum}명</td>
+                <td className="p-3 sm:p-4 border-2 border-[#8CC29E]">최대 {studyDetails.maxNum}명</td>
               </tr>
               <tr>
                 <td className="p-3 sm:p-4 w-1/3 sm:w-1/6 h-12 sm:h-16 border-2 border-[#8CC29E] text-center font-bold whitespace-nowrap">스터디 기간</td>
-                <td className="p-3 sm:p-4 border-2 border-[#8CC29E]">{period}</td>
+                <td className="p-3 sm:p-4 border-2 border-[#8CC29E]">{studyDetails.period}</td>
               </tr>
               <tr>
                 <td className="p-3 sm:p-4 w-1/3 sm:w-1/6 h-12 sm:h-16 border-2 border-[#8CC29E] text-center font-bold rounded-bl-lgw hitespace-nowrap">소통 수단</td>
-                <td className="p-3 sm:p-4 border-2 border-[#8CC29E] rounded-br-lg">{communication}</td>
+                <td className="p-3 sm:p-4 border-2 border-[#8CC29E] rounded-br-lg">{studyDetails.communication}</td>
               </tr>
             </tbody>
           </table>

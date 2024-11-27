@@ -14,6 +14,7 @@ const MyPageModal = ({ isOpen, onClose, onLogout }) => {
 
   // 로컬 스토리지에서 사용자 닉네임 가져오기
   const userName = localStorage.getItem('nickname') || '오므라이스';  // nickname이 없으면 기본값 '오므라이스'
+  const userImage = localStorage.getItem('userImage') || profileImage;  // 사용자 이미지 가져오기
 
   return (
     <Modal
@@ -29,7 +30,7 @@ const MyPageModal = ({ isOpen, onClose, onLogout }) => {
     "
     >
       <img
-        src={profileImage} // 프로필 이미지
+        src={userImage} // 프로필 이미지
         alt="프로필 이미지"
         className="mx-auto rounded-full w-32 h-32 mb-4"
       />

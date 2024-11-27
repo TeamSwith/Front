@@ -46,7 +46,7 @@ export const getUserInfo = async (newAccessToken = null) => {
     if (response.data && response.data.data) {
       // 응답 데이터에서 필요한 정보를 추출
       const userData = response.data.data;
-      const { email, nickname, id } = userData;
+      const { email, nickname, id, image } = userData;
 
       // 데이터 유효성 검증
       if (email && nickname && id) {
@@ -54,6 +54,7 @@ export const getUserInfo = async (newAccessToken = null) => {
         localStorage.setItem('email', email);
         localStorage.setItem('nickname', nickname);
         localStorage.setItem('userId', id);
+        localStorage.setItem('userImage', image);
         console.log('User data fetched and saved:', { email, nickname, id }); // 콘솔 확인
         return userData;  // 사용자 정보 반환
       } else {
@@ -80,12 +81,13 @@ export const getUserInfo = async (newAccessToken = null) => {
         });
 
         const userData = retryResponse.data.data;
-        const { email, nickname, id } = userData;
+        const { email, nickname, id, image } = userData;
 
         if (email && nickname && id) {
           localStorage.setItem('email', email);
           localStorage.setItem('nickname', nickname);
           localStorage.setItem('userId', id);
+          localStorage.setItem('userImage', image);
           console.log('User data fetched and saved after refresh:', { email, nickname, id });
         } else {
           console.warn('Invalid user data structure after refresh:', userData);

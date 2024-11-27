@@ -15,15 +15,51 @@ const CreateStudyModal = ({ isOpen, onClose, onCreate }) => {
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
   const toggleConfirmPasswordVisibility = () => setShowConfirmPassword(!showConfirmPassword);
 
-  const handleCreateStudy = () => {
+  const handleCreateStudy = async () => {
     if (password === confirmPassword) {
       // 로컬 스토리지에 스터디 아이디와 비밀번호 저장
       localStorage.setItem('groupInsertId', studyId);
       localStorage.setItem('groupPw', password);
 
-      // onCreate를 호출하여 CreateStudy로 studyId와 groupPw 전달
-      onCreate(studyId, password);  
-      onClose();  // 모달 닫기
+      // API 요청을 보내는 부분
+      const studyData = {
+        groupInsertId: studyId,
+        groupPw: password,
+        groupName: "", // 나중에 추가할 정보
+        maxNum: 0, // 나중에 수정
+        memberNum: 0, // 기본값 1
+        subject: "", // 나중에 추가할 정보
+        period: "", // 나중에 추가할 정보
+        communication: "" // 나중에 추가할 정보
+      };
+
+      try {
+        const response = await createStudy(studyData); // API 요청 보내기
+        console.log('스터디 생성 응답:', response);
+  
+        // API 응답 데이터 로컬 스토리지에 저장
+        localStorage.setItem('createdAt', response.data.createdAt);
+        localStorage.setItem('updatedAt', response.data.updatedAt);
+        localStorage.setItem('id', response.data.id);
+        localStorage.setItem('groupInsertId', response.data.groupInsertId);
+        localStorage.setItem('groupPw', response.data.groupPw);
+        localStorage.setItem('groupName', response.data.groupName);
+        localStorage.setItem('maxNum', response.data.maxNum);
+        localStorage.setItem('memberNum', response.data.memberNum);  // 추가된 필드 저장
+        localStorage.setItem('subject', response.data.subject);
+        localStorage.setItem('period', response.data.period);
+        localStorage.setItem('communication', response.data.communication);
+        localStorage.setItem('notice', response.data.notice);
+        localStorage.setItem('studies', JSON.stringify(response.data.studies)); // 여기에 스터디 일정이 저장됨
+  
+        // 성공 후 페이지 이동
+        onCreate(studyId, password); // 필요한 값 넘기기
+        onClose();  // 모달 닫기
+  
+      } catch (error) {
+        console.error('스터디 생성 실패:', error);
+        alert('스터디 생성에 실패했습니다.');
+      }
     } else {
       alert('비밀번호가 일치하지 않습니다.');
     }
