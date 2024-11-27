@@ -16,6 +16,7 @@ import DeleteAccountModal from './components/DeleteAccountModal';
 import AccountDeletedModal from './components/AccountDeletedModal';
 import LoginCallback from './pages/LoginCallback'; // LoginCallback 페이지 추가
 import { getUserInfo, refreshAccessToken } from './services/authService'; // 사용자 정보를 가져오는 서비스
+import api from './api';
 
 Modal.setAppElement('#root');
 

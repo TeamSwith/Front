@@ -1,6 +1,6 @@
 // /api/oauth/kakao/refresh에서 리프레쉬 토큰을 이용하여 토큰 재발급
 // /api/getLoginUser에서 액세스 토큰을 사용하여 사용자 정보를 가져옴
-import axios from 'axios';
+import api from './api';  // 수정된 axios 인스턴스 import
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL; // 백엔드 API URL
 
@@ -10,7 +10,7 @@ export const refreshAccessToken = () => {
   
     if (!refreshToken) { throw new Error('리프레시 토큰이 존재하지 않습니다'); }
   
-    return axios
+    return api
       .post(`${API_BASE_URL}/oauth/kakao/refresh`, {
         refresh_token: refreshToken,  // 리프레시 토큰을 POST 요청 본문에 포함
       })
@@ -37,16 +37,11 @@ export const getUserInfo = async (newAccessToken = null) => {
 
   // 사용자 정보를 가져오는 API 요청
   try {
-    const response = await axios.get(`${API_BASE_URL}/getLoginUser`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`, // 헤더에 액세스 토큰 포함
-      },
-    });
+    const response = await api.get(`${API_BASE_URL}/getLoginUser`);
+    const userData = response.data.data;
 
-    if (response.data && response.data.data) {
-      // 응답 데이터에서 필요한 정보를 추출
-      const userData = response.data.data;
-      const { email, nickname, id, image } = userData;
+    if (userData) {
+        const { email, nickname, id, image } = userData;
 
       // 데이터 유효성 검증
       if (email && nickname && id) {
@@ -74,7 +69,7 @@ export const getUserInfo = async (newAccessToken = null) => {
         accessToken = await refreshAccessToken(); // 리프레시 토큰을 사용하여 액세스 토큰 갱신
 
         // 갱신된 액세스 토큰으로 다시 사용자 정보 요청
-        const retryResponse = await axios.get(`${API_BASE_URL}/getLoginUser`, {
+        const retryResponse = await api.get(`${API_BASE_URL}/getLoginUser`, {
           headers: {
             Authorization: `Bearer ${accessToken}`, // 새로운 액세스 토큰 포함
           },
