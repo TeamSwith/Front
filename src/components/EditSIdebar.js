@@ -1,15 +1,38 @@
 import React, { useState } from 'react';
+import { editSchedule } from '../api/Study';
 import xIcon from "../assets/X.png";
-import timeIcon from "../assets/timeEdit.png";
 import locationIcon from "../assets/location.png";
 import MapDropdown from './MapDropdown';
 
-const EditSidebar = ({ scheduleData, tasks, handleCheckboxChange, setIsEditing }) => {
+const EditSidebar = ({ 
+    scheduleData, 
+    setScheduleData,
+    id,
+    studyId,
+    tasks, 
+    handleCheckboxChange, 
+    setIsEditing }) => {
 
   const [isMapOpen, setIsMapOpen] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(null);
-  const [address, setAddress] = useState('');
+  const [address, setAddress] = useState(scheduleData.location || '');
+  const [time, setTime] = useState(scheduleData.time || '');
   const [selectedPlaceName, setSelectedPlaceName] = useState("");
+  
+    const handleSave = async () => {
+      try {
+        const updatedSchedule = { time, location: `${address} ${selectedPlaceName}`.trim() };
+        const response = await editSchedule(id, studyId, updatedSchedule);
+        console.log('스터디 수정 성공:', response);
+  
+        setScheduleData(response.data); // 수정된 데이터 반영
+        alert('스터디 일정이 성공적으로 수정되었습니다.');
+        setIsEditing(false); // 수정 모드 종료
+      } catch (error) {
+        console.error('스터디 일정 수정 실패:', error);
+        alert('스터디 일정 수정에 실패했습니다. 다시 시도해주세요.');
+      }
+    };
 
   const handleLocationSelect = (location, placeName, addr) => {
     setSelectedLocation(location);
@@ -18,22 +41,38 @@ const EditSidebar = ({ scheduleData, tasks, handleCheckboxChange, setIsEditing }
     setIsMapOpen(false); // 지도 드롭다운 닫기
   };
 
+  const studyTime = (time) => {
+    const [hours, minutes] = time.split(':');
+    return `${hours}시 ${minutes}분`;
+  };
+
+  const studyDate = (date) => {
+    const [year, month, day] = date.split('-');
+    return `${year}년 ${month}월 ${day}일`;
+  };
+
   return (
     <div className="relative w-full">
         <div className="flex flex-col w-full flex-grow bg-[#F7F9F2] p-6 rounded-lg shadow-lg mb-4 md:mb-0 mt-4 md:mt-0">
             <div>
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-lg font-semibold text-[#4B4B4B]">
-                        {scheduleData.date} Edit Schedule
+                        {studyDate(scheduleData.date)} Edit Schedule
                     </h2>
                     <img src={xIcon} alt="Back" className="w-6 h-6 cursor-pointer"
                     onClick={() => setIsEditing(false)} />
                 </div>
             <hr className="border-t-[2px] border-gray-300 mb-4" />
-                <div className="flex justify-between items-center mb-2">
-                    <p className="text-[#4B4B4B]">
-                        <strong>시간:</strong> {scheduleData.time}</p>
-                    <img src={timeIcon} alt="time edit" className="w-6 h-6 cursor-pointer" />
+            <div className="flex justify-between item-center mb-2">
+                    <p className="text-[#4B4B4B] mr-3 mt-[4.5px] font-semibold w-[50px]">
+                        시간:</p>
+                    <input
+                      type="time"
+                      value={time}
+                      onChange={(e) => setTime(e.target.value)}
+                      className="bg-transparent border-none text-[#4B4B4B] py-1 appearance-none w-full"
+                      lang="en-GB"
+                    />
                 </div>
         <div className="relative mb-2">
                 <div className="flex justify-between items-center mb-2">
@@ -79,7 +118,8 @@ const EditSidebar = ({ scheduleData, tasks, handleCheckboxChange, setIsEditing }
         </div>
 
     <div className="flex justify-end">
-        <button type="submit" className="bg-[#8CC29E] text-white px-4 py-2 rounded-lg mt-3 ml-auto">
+        <button type="submit" className="bg-[#8CC29E] text-white px-4 py-2 rounded-lg mt-3 ml-auto"
+        onClick={handleSave}>
             저장
         </button>
     </div>

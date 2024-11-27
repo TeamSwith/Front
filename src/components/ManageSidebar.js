@@ -17,6 +17,17 @@ const ManageSidebar = ({
     onEditClick, 
 }) => {
 
+    const studyTime = (time) => {
+        const [hours, minutes] = time.split(':');
+        return `${hours}시 ${minutes}분`;
+      };
+
+      const studyDate = (date) => {
+        if (!date) return '날짜 정보 없음'; // date가 undefined, null, 또는 빈 문자열인 경우 기본 값 반환
+        const [year, month, day] = date.split('-');
+        return `${year}년 ${month}월 ${day}일`;
+      };
+
 
   return (
 
@@ -45,11 +56,11 @@ const ManageSidebar = ({
         <div className="bg-[#F7F9F2] flex-grow p-6 rounded-lg shadow-lg mb-4 md:mb-0 mt-4 md:mt-0">
 
         {activeTab === 'schedule' ? (
-            scheduleData && scheduleData.time && scheduleData.location ? (
+            scheduleData.time && scheduleData.location ? (
                 <div>
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-lg font-semibold text-[#4B4B4B]">
-                        {selectedDate.toISOString().split('T')[0]} Study Schedule
+                        {studyDate(scheduleData.date)} Study Schedule
                         </h2>
                         <div className="flex space-x-3">
                             <img src={editIcon} alt="Edit Icon" className="w-6 h-6 cursor-pointer"
@@ -58,7 +69,7 @@ const ManageSidebar = ({
                         </div>
                     </div>
                     <hr className="border-t-[2px] border-gray-300 mb-4" />
-                    <p className="text-[#4B4B4B] mb-2"><strong>시간:</strong> {scheduleData.time}</p>
+                    <p className="text-[#4B4B4B] mb-2"><strong>시간:</strong> {studyTime(scheduleData.time)}</p>
                     <p className="text-[#4B4B4B] mb-2"><strong>장소:</strong> {scheduleData.location}</p>
                     
                     <hr className="border-t-[2px] border-gray-300 mb-2" />
@@ -98,11 +109,11 @@ const ManageSidebar = ({
             <div>
                 <div className="flex justify-between items-center mb-4">
                         <h2 className="text-lg font-semibold text-[#4B4B4B]">
-                        {scheduleData.date} Study Schedule
+                        {studyDate(scheduleData.date)} Study Schedule
                         </h2>
                         <div className="flex space-x-3">
                             <img src={addIcon} alt="Add Icon" className="w-6 h-6 cursor-pointer"
-                            onClick={onAddClick} 
+                            onClick={onAddClick}
                             />
                             
                         </div>

@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import xIcon from "../assets/X.png";
-import timeIcon from "../assets/timeEdit.png";
 import locationIcon from "../assets/location.png";
 import MapDropdown from './MapDropdown';
 import { createSchedule } from '../api/Study';
 
 const CreateSidebar = ({ 
     scheduleData = { time: '', location: '' },
+    setScheduleData,
     tasks, 
     handleCheckboxChange, 
     setIsCreating, 
-    id, 
+    id,
     queryClient 
 }) => {
 
@@ -21,6 +21,10 @@ const CreateSidebar = ({
   const [selectedPlaceName, setSelectedPlaceName] = useState("");
   const [isSaving, setIsSaving] = useState(false); // 저장 중 상태 관리
 
+  const studyDate = (date) => {
+    const [year, month, day] = date.split('-');
+    return `${year}년 ${month}월 ${day}일`;
+  };
 
   const handleLocationSelect = (location, placeName, addr) => {
     setSelectedLocation(location);
@@ -48,10 +52,10 @@ const newScheduleData = {
   try {
     // createSchedule 호출
     const response = await createSchedule(id, newScheduleData);
-    console.log('스터디 생성 성공:', response);
+    console.log('스터디 생성:', response);
 
-    // React Query 캐시 무효화
-    queryClient.invalidateQueries(['schedule', id]);
+    setScheduleData(response.data);
+    queryClient.invalidateQueries(['schedule', id]); // React Query 캐시 무효화
 
     alert('스터디가 성공적으로 생성되었습니다!');
     setIsCreating(false); // 편집 모드 종료
@@ -69,22 +73,23 @@ const newScheduleData = {
             <div>
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-lg font-semibold text-[#4B4B4B]">
-                        {scheduleData.date} Craate Schedule
+                        {studyDate(scheduleData.date)} Create Schedule
                     </h2>
                     <img src={xIcon} alt="Back" className="w-6 h-6 cursor-pointer"
                     onClick={() => setIsCreating(false)} />
                 </div>
             <hr className="border-t-[2px] border-gray-300 mb-4" />
-                <div className="flex justify-between items-center mb-2">
-                    <p className="text-[#4B4B4B]">
-                        <strong>시간:</strong></p>
-                        <input
-                            type="time"
-                            value={time}
-                            onChange={(e) => setTime(e.target.value)}
-                            className="border rounded px-2 py-1"
-                            />
-                    <img src={timeIcon} alt="time edit" className="w-6 h-6 cursor-pointer" />
+
+                <div className="flex justify-between item-center mb-2">
+                    <p className="text-[#4B4B4B] mr-3 mt-[4.5px] font-semibold w-[50px]">
+                        시간:</p>
+                    <input
+                      type="time"
+                      value={time}
+                      onChange={(e) => setTime(e.target.value)}
+                      className="bg-transparent border-none text-[#4B4B4B] py-1 appearance-none w-full"
+                      lang="en-GB"
+                    />
                 </div>
         <div className="relative mb-2">
                 <div className="flex justify-between items-center mb-2">
@@ -93,7 +98,7 @@ const newScheduleData = {
                     <img
                         src={locationIcon}
                         alt="location edit"
-                        className="w-6 h-6 cursor-pointer"
+                        className="w-5 h-5 cursor-pointer mb-3 mr-[1px]"
                         onClick={() => setIsMapOpen((prev) => !prev)} // 지도 드롭다운 열기/닫기
                     />
                 </div>
@@ -126,7 +131,7 @@ const newScheduleData = {
                 </div>
             </div>
             <hr className="border-t-[2px] border-gray-300 mb-4" />
-            </div>    
+          </div>    
         </div>
 
     <div className="flex justify-end">

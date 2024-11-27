@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-export const fetchSchedule = async (id, studyId) => {
+export const fetchSchedule = async (id, date) => {
     try {
-      const { data } = await axios.get(`http://3.36.118.29:8080/api/group/${id}/study/${studyId}`);
+      const { data } = await axios.get(`http://3.36.118.29:8080/api/group/${id}/study/${date}`);
       if (!data.success || !data.data) {
         return { success: false, data: { time: '', location: '' } };
       }
@@ -21,5 +21,28 @@ export const fetchSchedule = async (id, studyId) => {
       console.error('Error creating Schedule:', error);
       throw error; // 에러를 상위 호출로 전달
     }
+  };
+
+export const editSchedule = async (id, studyId, updatedSchedule) => {
+  try {
+    const { data } = await axios.patch(
+      `http://3.36.118.29:8080/api/group/${id}/study/${studyId}`,
+      updatedSchedule
+    );
+
+    if (!data.success) {
+      throw new Error('스터디 일정 수정에 실패했습니다.');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error editing schedule:', error);
+    throw error; // 에러를 상위로 전달
+  }
+};
+
+  export const getMemNum = async (id) => {
+    const response = await axios.get(`http://3.36.118.29:8080/api/group/${id}/getMem`);
+    return response.data;
   };
 
