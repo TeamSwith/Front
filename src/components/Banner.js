@@ -1,5 +1,5 @@
 import React from 'react';
-import bannerImage from '../assets/Banner.png'; // 배너 이미지 경로
+import bannerImage from '../assets/Banner.png';
 
 const Banner = () => {
   return (

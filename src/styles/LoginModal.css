@@ -1,0 +1,31 @@
+.login-modal-overlay {
+    @apply bg-black bg-opacity-70 fixed inset-0 flex items-center justify-center z-50;
+}
+  
+.login-modal-content {
+    @apply bg-white rounded-lg p-20 md:p-24 w-11/12 max-w-md md:max-w-xl mx-auto relative text-center;
+}
+  
+.close-icon {
+    @apply absolute top-4 right-4 w-4 h-4 cursor-pointer;
+}
+  
+.logo {
+    @apply mx-auto h-12 md:h-16 mb-4 md:mb-6;
+}
+  
+.title {
+    @apply text-xl md:text-2xl font-bold mb-2 md:mb-3 whitespace-normal break-keep;
+}
+  
+.description {
+    @apply text-sm md:text-lg text-[#5B5B5B] mb-4 md:mb-6 whitespace-normal;
+}
+  
+.login-modal-button {
+    @apply bg-[#FEE500] flex items-center justify-center gap-4 w-full max-w-xs md:max-w-sm mx-auto py-2 md:py-3 rounded-md text-sm md:text-base font-bold text-black;
+}
+  
+.login-icon {
+    @apply w-4 h-4;
+}

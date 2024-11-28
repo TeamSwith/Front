@@ -3,7 +3,7 @@ import Modal from 'react-modal';
 import logo from '../assets/swithLogo.png';
 import cancelIcon from '../assets/Cancel.png';
 
-Modal.setAppElement('#root');
+Modal.setAppElement('#root'); // 애플리케이션의 루트 요소 설정
 
 const DeleteAccountModal = ({ isOpen, onClose, onConfirmDelete }) => {
   return (
@@ -18,16 +18,10 @@ const DeleteAccountModal = ({ isOpen, onClose, onConfirmDelete }) => {
       <h2 className="text-xl md:text-2xl font-bold mb-2 md:mb-3 whitespace-normal break-keep text-[#FF0000]">정말 탈퇴 하시겠습니까?</h2>
       <p className="text-sm md:text-lg text-[#5B5B5B] mb-4 md:mb-6 whitespace-normal break-keep">계정이 영구적으로 사라집니다</p>
       <div className="flex justify-center gap-6">
-        <button 
-          onClick={onConfirmDelete} 
-          className="bg-[#91DDAB] text-white w-full sm:w-28 h-12 rounded-xl shadow-lg hover:bg-[#7BAE8D]"
-        >
+        <button onClick={onConfirmDelete} className="bg-[#91DDAB] text-white w-full sm:w-28 h-12 rounded-xl shadow-lg hover:bg-[#7BAE8D]">
           네
         </button>
-        <button 
-          onClick={onClose} 
-          className="bg-[#EFF9F2] text-[#91DDAB] w-full sm:w-28 h-12 rounded-xl shadow-lg hover:bg-gray-200"
-        >
+        <button onClick={onClose} className="bg-[#EFF9F2] text-[#91DDAB] w-full sm:w-28 h-12 rounded-xl shadow-lg hover:bg-gray-200">
           아니요
         </button>
       </div>
