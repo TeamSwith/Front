@@ -17,14 +17,6 @@ const Header = ({
 }) => {
   const navigate = useNavigate();
 
-/*  useEffect(() => {
-    // 로그인된 상태 확인: 토큰이 로컬스토리지에 있으면 로그인된 상태
-    if (localStorage.getItem('accessToken')) {
-      setIsLoggedIn(true);
-    }
-  }, []); // 컴포넌트가 처음 렌더링 될 때 한 번 실행
-*/    
-
   // 메인으로 이동해서 스터디 생성 모달, 로그인 안됐으면 로그인 모달
   const handleCreateStudyClick = () => {
       if (isLoggedIn) { navigate('/?action=study-create'); } 

@@ -27,6 +27,10 @@ const StudyCreationComplete = () => {
   // 관리 페이지로 이동 누르면 스터디 관리 페이지로 이동
   const handleGoToManagement = () => { navigate('/manage-study'); };
 
+  if (!studyDetails) {
+    return <div>Loading...</div>;  // studyDetails가 없으면 로딩 표시
+  }
+
   return (
     <div className="max-w-5.5xl mx-auto px-0 pt-20 sm:pt-24 space-y-2 mb-8">
       <Banner className="mb-2 sm:mb-4" />

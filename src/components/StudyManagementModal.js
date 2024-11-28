@@ -12,7 +12,10 @@ const StudyManagementModal = ({ isOpen, onClose, onJoin }) => {
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
-  const handleJoinClick = () => { onJoin(studyId, password); onClose(); };
+  const handleJoinClick = () => {
+    onJoin(studyId, password);  // 가입 처리 함수 호출
+    onClose();  // 모달 닫기
+  };
 
   return (
     <Modal

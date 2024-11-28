@@ -23,13 +23,13 @@ const CreateStudy = () => {
   const [isEditingStudyTopic, setIsEditingStudyTopic] = useState(false);
   const [isEditingStudyLink, setIsEditingStudyLink] = useState(false);
 
-  // 페이지가 로드되면 스터디 고유 id를 통해 studyId(groupInsertId)를 받아옴
+  // 페이지가 로드되면 스터디 고유 id(groupId)를 통해 studyId(groupInsertId)를 받아옴
   useEffect(() => {
     if (storedId) {
       getStudyId(storedId)  // id를 통해 studyId를 가져오는 API 호출
         .then((response) => {
           console.log('응답 studyId:', response.data);
-          setStudyId(response.data);  // 응답을 studyId 상태에 저장
+          setStudyId(response.data.groupInsertId);  // 응답을 studyId 상태에 저장
         })
         .catch((error) => {
           console.error('스터디 ID 가져오기 실패:', error);

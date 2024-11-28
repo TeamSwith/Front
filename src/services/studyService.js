@@ -35,7 +35,7 @@ export const createStudy = async (studyData) => {
 // 2. 스터디 ID 가져오기 API 호출
 export const getStudyId = async (id) => {
     try {
-      const response = await api.get(`${API_BASE_URL}/group/${id}/group_insert_id`);
+      const response = await api.get(`${API_BASE_URL}/group/${id}`);
       
       // 응답 데이터가 예상한 형식인지 확인
       if (!response || !response.data) { throw new Error("응답 데이터가 유효하지 않습니다."); }
