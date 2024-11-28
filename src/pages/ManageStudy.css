@@ -27,19 +27,30 @@
   background-color: #F7F9F2; /* 배경 색상 */
   border: none; /* 외곽선 제거 */
   font-family: 'YourCustomFont';
-  width: 400px;
-  max-width: 400px;
-  height: 450px;
+  width: 320px;
+  max-width: 320px;
+  height: 440px;
   border-radius: 5%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .react-calendar__tile {
   font-size: 1rem; /* 타일 내 텍스트 크기 조정 */
-  padding: 1rem; /* 타일의 여백 조정 */
+  padding: 0.9rem; /* 타일의 여백 조정 */
   font-weight: bold;
+  height: 2.5rem; /* 정사각형 비율 */
+  width: 2.5rem; /* 정사각형 비율 */
+  display: flex; /* 가운데 정렬 */
+  align-items: center; /* 수직 가운데 정렬 */
+  justify-content: center; /* 수평 가운데 정렬 */
+  border-radius: 50%; /* 원형 */
 }
 
+.react-calendar__month-view__days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr); /* 7일 기준 레이아웃 */
+  row-gap: 0.6rem; /* 일과 일 사이의 세로 간격 */
+}
 
 .react-calendar__tile--now {
   background-color: #8CC29E; /* 오늘 날짜 색상 */

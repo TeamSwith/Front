@@ -152,7 +152,7 @@ const MainPage = ({ isLoggedIn, setIsLoggedIn, userEmail, handleLogout }) => {
       <div className="absolute bottom-0 right-0 flex flex-col items-end space-y-7 pb-20 z-20 button-container px-margin"
         style={{
           paddingRight: 'clamp(50px, 10vw, 150px)',
-}}>
+        }}>
         <button
           onClick={handleCreateStudyClick}
           className="custom-button bg-white bg-opacity-90 text-black rounded-3xl hover:bg-opacity-100 hover:bg-gray-100 flex items-center justify-center max-w-full max-h-full"

@@ -1,38 +1,30 @@
 import React, { useState } from 'react';
-import { editSchedule } from '../api/Study';
 import xIcon from "../assets/X.png";
 import locationIcon from "../assets/location.png";
 import MapDropdown from './MapDropdown';
+import { createSchedule } from '../api/Study';
 
-const EditSidebar = ({ 
-    scheduleData, 
+const CreateSidebar = ({ 
+    scheduleData = { time: '', location: '' },
     setScheduleData,
-    id,
-    studyId,
     tasks, 
     handleCheckboxChange, 
-    setIsEditing }) => {
+    setIsCreating, 
+    id,
+    queryClient 
+}) => {
 
   const [isMapOpen, setIsMapOpen] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(null);
-  const [address, setAddress] = useState(scheduleData.location || '');
   const [time, setTime] = useState(scheduleData.time || '');
+  const [address, setAddress] = useState('');
   const [selectedPlaceName, setSelectedPlaceName] = useState("");
-  
-    const handleSave = async () => {
-      try {
-        const updatedSchedule = { time, location: `${address} ${selectedPlaceName}`.trim() };
-        const response = await editSchedule(id, studyId, updatedSchedule);
-        console.log('스터디 수정 성공:', response);
-  
-        setScheduleData(response.data); // 수정된 데이터 반영
-        alert('스터디 일정이 성공적으로 수정되었습니다.');
-        setIsEditing(false); // 수정 모드 종료
-      } catch (error) {
-        console.error('스터디 일정 수정 실패:', error);
-        alert('스터디 일정 수정에 실패했습니다. 다시 시도해주세요.');
-      }
-    };
+  const [isSaving, setIsSaving] = useState(false); // 저장 중 상태 관리
+
+  const studyDate = (date) => {
+    const [year, month, day] = date.split('-');
+    return `${year}년 ${month}월 ${day}일`;
+  };
 
   const handleLocationSelect = (location, placeName, addr) => {
     setSelectedLocation(location);
@@ -41,10 +33,39 @@ const EditSidebar = ({
     setIsMapOpen(false); // 지도 드롭다운 닫기
   };
 
-  const studyDate = (date) => {
-    const [year, month, day] = date.split('-');
-    return `${year}년 ${month}월 ${day}일`;
+  const handleSave = async () => {
+    // 유효성 검사
+    if (!time || !address) {
+      alert('시간 및 장소를 모두 입력해주세요.');
+      return;
+    }
+
+// 스터디 생성 데이터
+const newScheduleData = {
+    date: scheduleData.date, // 선택한 날짜
+    time: time, // 입력된 시간
+    location: `${address} ${selectedPlaceName}`, // 입력된 장소
   };
+
+  setIsSaving(true); // 저장 중 상태 설정
+
+  try {
+    // createSchedule 호출
+    const response = await createSchedule(id, newScheduleData);
+    console.log('스터디 생성:', response);
+
+    setScheduleData(response.data);
+    queryClient.invalidateQueries(['schedule', id]); // React Query 캐시 무효화
+
+    alert('스터디가 성공적으로 생성되었습니다!');
+    setIsCreating(false); // 편집 모드 종료
+  } catch (error) {
+    console.error('스터디 생성 실패:', error);
+    alert('스터디 생성에 실패했습니다. 다시 시도해주세요.');
+  } finally {
+    setIsSaving(false); // 저장 중 상태 해제
+  }
+};
 
   return (
     <div className="relative w-full">
@@ -52,13 +73,14 @@ const EditSidebar = ({
             <div>
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-lg font-semibold text-[#4B4B4B]">
-                        {studyDate(scheduleData.date)} Edit Schedule
+                        {studyDate(scheduleData.date)} Create Schedule
                     </h2>
                     <img src={xIcon} alt="Back" className="w-6 h-6 cursor-pointer"
-                    onClick={() => setIsEditing(false)} />
+                    onClick={() => setIsCreating(false)} />
                 </div>
             <hr className="border-t-[2px] border-gray-300 mb-4" />
-            <div className="flex justify-between item-center mb-2">
+
+                <div className="flex justify-between item-center mb-2">
                     <p className="text-[#4B4B4B] mr-3 mt-[4.5px] font-semibold w-[50px]">
                         시간:</p>
                     <input
@@ -76,7 +98,7 @@ const EditSidebar = ({
                     <img
                         src={locationIcon}
                         alt="location edit"
-                        className="w-6 h-6 cursor-pointer"
+                        className="w-5 h-5 cursor-pointer mb-3 mr-[1px]"
                         onClick={() => setIsMapOpen((prev) => !prev)} // 지도 드롭다운 열기/닫기
                     />
                 </div>
@@ -109,12 +131,11 @@ const EditSidebar = ({
                 </div>
             </div>
             <hr className="border-t-[2px] border-gray-300 mb-4" />
-            </div>    
+          </div>    
         </div>
 
     <div className="flex justify-end">
-        <button type="submit" className="bg-[#8CC29E] text-white px-4 py-2 rounded-lg mt-3 ml-auto"
-        onClick={handleSave}>
+        <button onClick={handleSave} disabled={isSaving} type="submit" className="bg-[#8CC29E] text-white px-4 py-2 rounded-lg mt-3 ml-auto">
             저장
         </button>
     </div>
@@ -123,4 +144,4 @@ const EditSidebar = ({
   );
 };
 
-export default EditSidebar;
+export default CreateSidebar;
