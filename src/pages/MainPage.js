@@ -8,6 +8,7 @@ import LogoutConfirmationModal from '../components/LogoutConfirmationModal';
 import CreateStudyModal from '../components/CreateStudyModal';
 import StudyManagementModal from '../components/StudyManagementModal';
 import JoinConfirmationModal from '../components/JoinConfirmationModal';
+import { checkStudyJoin } from '../services/studyJoinService';
 
 const MainPage = ({ isLoggedIn, setIsLoggedIn, userEmail, handleLogout }) => {
   const [isCreateStudyModalOpen, setIsCreateStudyModalOpen] = useState(false);
@@ -81,16 +82,36 @@ const MainPage = ({ isLoggedIn, setIsLoggedIn, userEmail, handleLogout }) => {
     navigate('/create-study', { state: { studyId: id } });
   };
 
-  const handleJoinStudy = () => {
-    setIsStudyManagementModalOpen(false);
-    setIsJoinConfirmationModalOpen(true);
+  const handleJoinStudy = async (studyId, password) => {
+    try {
+      const response = await checkStudyJoin(studyId, password);
+      console.log('응답:', response);  // 응답 전체를 확인
+
+      if (response.success) {
+        // true면 바로 관리 페이지로 리디렉션
+        console.log('가입되어 있음, 관리 페이지로 이동');
+        navigate('/manage-study');
+      } else {
+        // false면 가입 확인 모달 띄우기
+        console.log('가입되지 않음, 가입 확인 모달 띄우기');
+        setIsJoinConfirmationModalOpen(true);
+      }
+    } catch (error) {
+      console.error('스터디 가입 오류:', error);
+      alert('스터디 가입에 실패했습니다. 다시 시도해주세요.');
+    }
   };
 
-  const confirmJoinStudy = () => {
-    // 실제로 스터디에 가입하는 로직 추가
-    setIsJoinConfirmationModalOpen(false);
-    navigate('/manage-study'); // 가입 확인 후 관리 페이지로 이동
-  };
+  // const handleJoinStudy = () => {
+  //   setIsStudyManagementModalOpen(false);
+  //   setIsJoinConfirmationModalOpen(true);
+  // };
+
+  // const confirmJoinStudy = () => {
+  //   // 실제로 스터디에 가입하는 로직 추가
+  //   setIsJoinConfirmationModalOpen(false);
+  //   navigate('/manage-study'); // 가입 확인 후 관리 페이지로 이동
+  // };
   
   return (
     <div
@@ -162,8 +183,16 @@ const MainPage = ({ isLoggedIn, setIsLoggedIn, userEmail, handleLogout }) => {
       <LogoutConfirmationModal isOpen={isLogoutModalOpen} onClose={closeLogoutConfirmation} onConfirmLogout={handleLogout} />
       <CreateStudyModal isOpen={isCreateStudyModalOpen} onClose={closeCreateStudyModal} onCreate={handleStudyCreation} />
       <MyPageModal isOpen={isMyPageModalOpen} onClose={closeMyPageModal} onLogout={openLogoutConfirmation} />
-      <StudyManagementModal isOpen={isStudyManagementModalOpen} onClose={closeStudyManagementModal} onJoin={handleJoinStudy} />
-      <JoinConfirmationModal isOpen={isJoinConfirmationModalOpen} onClose={closeJoinConfirmationModal} onConfirm={confirmJoinStudy} />
+      <StudyManagementModal
+        isOpen={isStudyManagementModalOpen}
+        onClose={closeStudyManagementModal}
+        onJoin={handleJoinStudy}
+      />
+      <JoinConfirmationModal
+        isOpen={isJoinConfirmationModalOpen}
+        onClose={closeJoinConfirmationModal}
+        onConfirm={() => navigate('/manage-study')}  // 가입 확인 후 관리 페이지로 이동
+      />
     </div>
   );
 };

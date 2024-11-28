@@ -3,7 +3,7 @@ import Modal from 'react-modal';
 import logo from '../assets/swithLogo.png';
 import cancelIcon from '../assets/Cancel.png';
 
-Modal.setAppElement('#root');
+Modal.setAppElement('#root'); // 애플리케이션의 루트 요소 설정
 
 const AccountDeletedModal = ({ isOpen, onClose }) => {
   return (
@@ -17,10 +17,7 @@ const AccountDeletedModal = ({ isOpen, onClose }) => {
       <img src={logo} alt="Swith Logo" className="mx-auto h-12 md:h-16 mb-4 md:mb-6" />
       <h2 className="text-xl md:text-2xl font-bold mb-2 md:mb-3 whitespace-normal break-keep">탈퇴되었습니다</h2>
       <p className="text-sm md:text-lg text-[#5B5B5B] mb-4 md:mb-6 whitespace-normal break-keep">다시 만날 날을 기대할게요!</p>
-      <button
-        onClick={onClose}
-        className="bg-[#91DDAB] text-white w-28 sm:w-28 h-12 rounded-xl shadow-lg hover:bg-[#7BAE8D]"
-      >
+      <button onClick={onClose} className="bg-[#91DDAB] text-white w-28 sm:w-28 h-12 rounded-xl shadow-lg hover:bg-[#7BAE8D]">
         확인
       </button>
     </Modal>
