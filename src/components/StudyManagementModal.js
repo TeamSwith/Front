@@ -12,10 +12,7 @@ const StudyManagementModal = ({ isOpen, onClose, onJoin }) => {
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
-  const handleJoinClick = () => {
-    onJoin(studyId, password); // 모달에서 스터디에 입장하는 기능
-    onClose();
-  };
+  const handleJoinClick = () => { onJoin(studyId, password); onClose(); };
 
   return (
     <Modal
@@ -50,10 +47,7 @@ const StudyManagementModal = ({ isOpen, onClose, onJoin }) => {
           style={{ width: "20px", height: "20px" }}
         />
       </div>
-      <button
-        onClick={handleJoinClick}
-        className="bg-[#91DDAB] text-white w-28 h-12 rounded-xl shadow-lg hover:bg-[#7BAE8D]"
-      >
+      <button onClick={handleJoinClick} className="bg-[#91DDAB] text-white w-28 h-12 rounded-xl shadow-lg hover:bg-[#7BAE8D]">
         입장하기
       </button>
     </Modal>

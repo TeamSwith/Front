@@ -1,6 +1,6 @@
-import Modal from 'react-modal';
 import './App.css';
 import React, { useState, useEffect } from 'react';
+import Modal from 'react-modal';
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import MainPage from './pages/MainPage';
 import PrivacyPolicy from './pages/PrivacyPolicy';
@@ -14,9 +14,8 @@ import MyPageModal from './components/MyPageModal';
 import LogoutConfirmationModal from './components/LogoutConfirmationModal';
 import DeleteAccountModal from './components/DeleteAccountModal';
 import AccountDeletedModal from './components/AccountDeletedModal';
-import LoginCallback from './pages/LoginCallback'; // LoginCallback 페이지 추가
-import { getUserInfo, refreshAccessToken } from './services/authService'; // 사용자 정보를 가져오는 서비스
-import api from './api';
+import LoginCallback from './pages/LoginCallback';
+import { getUserInfo } from './services/authService';
 
 Modal.setAppElement('#root');
 
@@ -44,6 +43,7 @@ const App = () => {
   // 컴포넌트가 마운트될 때 액세스 토큰을 확인하여 사용자 정보를 가져옴
   useEffect(() => {
     const accessToken = localStorage.getItem('accessToken');
+
     if (accessToken) {
       setIsLoggedIn(true);
       // 사용자 정보를 가져오는 함수 호출
@@ -53,24 +53,13 @@ const App = () => {
           localStorage.setItem('email', userData.email); // 로컬 스토리지에 저장
         })
         .catch(async (error) => {
-          console.error('사용자 정보 가져오기 실패:', error);
-          if (error.response && error.response.status === 401) {
-            // 액세스 토큰 만료시 리프레시 토큰을 사용하여 갱신
-            try {
-              const newAccessToken = await refreshAccessToken(); // 리프레시 토큰을 사용하여 액세스 토큰 갱신
-              const userData = await getUserInfo(newAccessToken); // 새로운 액세스 토큰으로 사용자 정보 요청
-              setUserEmail(userData.email); // 이메일 상태 업데이트
-              localStorage.setItem('email', userData.email); // 로컬 스토리지에 저장
-            } catch (refreshError) {
-              console.error('액세스 토큰 갱신 실패:', refreshError);
-              setIsLoggedIn(false);
-            }
-          }
+          console.error('사용자 정보 가져오기 실패:', error)
+          setIsLoggedIn(false); // 로그인 상태 false로 설정
         });
     } else {
       setIsLoggedIn(false); // 액세스 토큰 없으면 로그인 상태 false
     }
-  }, [isLoggedIn]);  // 빈 배열로 한 번만 실행되도록 설정
+  }, [isLoggedIn]);  // 로그인 상태가 변경될 때마다 실행되도록 설정
 
   const handleLogout = () => {
     setIsLoggedIn(false);
@@ -79,14 +68,13 @@ const App = () => {
     setUserEmail(null);
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
+    localStorage.removeItem('userId');
     localStorage.removeItem('email');
     localStorage.removeItem('nickname');
-    localStorage.removeItem('userId');
+    localStorage.removeItem('userImage')
   };
-
-//  const handleLogout = () => { setIsLoggedIn(false); closeLogoutConfirmation(); closeMyPageModalHandler(); };
   
-  // 계정 삭제 핸들러
+  // 회원 탈퇴 핸들러
   const handleConfirmDelete = () => {
     setIsDeleteAccountModalOpen(false);
     setIsLoggedIn(false); // 로그아웃 처리
@@ -98,11 +86,8 @@ const App = () => {
   const RequireLogin = ({ children }) => {
     const location = useLocation();
     useEffect(() => {
-      if (!isLoggedIn) {
-        openLoginModalHandler();
-      }
+      if (!isLoggedIn) { openLoginModalHandler(); }
     }, [location]);
-
     return isLoggedIn ? children : <Navigate to="/" replace />;
   };
 
@@ -110,12 +95,8 @@ const App = () => {
     <Router>
       <div className="flex flex-col min-h-screen">
         <Header 
-          openLoginModal={openLoginModalHandler} 
-          isLoggedIn={isLoggedIn} 
-          setIsLoggedIn={setIsLoggedIn} // 로그인 상태 변경 함수 전달
-          openMyPageModal={openMyPageModalHandler} 
-          isMyPageModalOpen={isMyPageModalOpen}
-          closeMyPageModal={closeMyPageModalHandler}
+          openLoginModal={openLoginModalHandler} isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}
+          openMyPageModal={openMyPageModalHandler} isMyPageModalOpen={isMyPageModalOpen} closeMyPageModal={closeMyPageModalHandler}
           openLogoutConfirmation={openLogoutConfirmation}
         />
         <main className="flex-grow overflow-hidden">

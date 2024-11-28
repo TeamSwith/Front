@@ -1,4 +1,3 @@
-// src/pages/LoginCallback.js
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -17,8 +16,7 @@ const LoginCallback = () => {
       localStorage.setItem('refreshToken', refreshToken);
       console.log('Tokens saved:', accessToken, refreshToken);
 
-      // 메인 페이지로 리디렉션
-      navigate('/');
+      navigate('/'); // 메인 페이지로 리디렉션
     }
   }, [navigate]);
 

@@ -6,7 +6,7 @@ import EyeOffIcon from '../assets/Eyeoff.png';
 import { createStudy } from '../services/studyService'; 
 
 const CreateStudyModal = ({ isOpen, onClose, onCreate }) => {
-  const [studyId, setStudyId] = useState(''); // 로컬 상태
+  const [studyId, setStudyId] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -17,24 +17,18 @@ const CreateStudyModal = ({ isOpen, onClose, onCreate }) => {
 
   const handleCreateStudy = async () => {
     if (password === confirmPassword) {
-      // 로컬 스토리지에 스터디 아이디와 비밀번호 저장
+      // 로컬 스토리지에 저장
       localStorage.setItem('groupInsertId', studyId);
       localStorage.setItem('groupPw', password);
 
-      // API 요청을 보내는 부분
+      // API 요청
       const studyData = {
         groupInsertId: studyId,
         groupPw: password,
-        groupName: "", // 나중에 추가할 정보
-        maxNum: 0, // 나중에 수정
-        memberNum: 0, // 기본값 1
-        subject: "", // 나중에 추가할 정보
-        period: "", // 나중에 추가할 정보
-        communication: "" // 나중에 추가할 정보
       };
 
       try {
-        const response = await createStudy(studyData); // API 요청 보내기
+        const response = await createStudy(studyData); // API 호출 후, 응답 받기
         console.log('스터디 생성 응답:', response);
   
         // API 응답 데이터 로컬 스토리지에 저장
@@ -45,17 +39,17 @@ const CreateStudyModal = ({ isOpen, onClose, onCreate }) => {
         localStorage.setItem('groupPw', response.data.groupPw);
         localStorage.setItem('groupName', response.data.groupName);
         localStorage.setItem('maxNum', response.data.maxNum);
-        localStorage.setItem('memberNum', response.data.memberNum);  // 추가된 필드 저장
+        localStorage.setItem('memberNum', response.data.memberNum);
         localStorage.setItem('subject', response.data.subject);
         localStorage.setItem('period', response.data.period);
         localStorage.setItem('communication', response.data.communication);
         localStorage.setItem('notice', response.data.notice);
-        localStorage.setItem('studies', JSON.stringify(response.data.studies)); // 여기에 스터디 일정이 저장됨
+        localStorage.setItem('studies', JSON.stringify(response.data.studies)); // 스터디 일정 저장될 부분
   
-        // 성공 후 페이지 이동
+        // 생성 후 페이지 이동
         onCreate(studyId, password); // 필요한 값 넘기기
         onClose();  // 모달 닫기
-  
+
       } catch (error) {
         console.error('스터디 생성 실패:', error);
         alert('스터디 생성에 실패했습니다.');
@@ -112,10 +106,7 @@ const CreateStudyModal = ({ isOpen, onClose, onCreate }) => {
               style={{ width: "20px", height: "20px" }}
             />
           </div>
-          <button
-            onClick={handleCreateStudy}
-            className="bg-[#91DDAB] text-white w-28 h-12 rounded-xl shadow-lg hover:bg-[#7BAE8D]"
-          >
+          <button onClick={handleCreateStudy} className="bg-[#91DDAB] text-white w-28 h-12 rounded-xl shadow-lg hover:bg-[#7BAE8D]">
             생성하기
           </button>
         </div>
