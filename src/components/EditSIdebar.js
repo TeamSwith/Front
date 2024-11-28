@@ -41,11 +41,6 @@ const EditSidebar = ({
     setIsMapOpen(false); // 지도 드롭다운 닫기
   };
 
-  const studyTime = (time) => {
-    const [hours, minutes] = time.split(':');
-    return `${hours}시 ${minutes}분`;
-  };
-
   const studyDate = (date) => {
     const [year, month, day] = date.split('-');
     return `${year}년 ${month}월 ${day}일`;

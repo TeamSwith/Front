@@ -1,8 +1,10 @@
 import axios from 'axios';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 export const fetchSchedule = async (id, date) => {
     try {
-      const { data } = await axios.get(`http://3.36.118.29:8080/api/group/${id}/study/${date}`);
+      const { data } = await axios.get(`${API_BASE_URL}/group/${id}/study/${date}`);
       if (!data.success || !data.data) {
         return { success: false, data: { time: '', location: '' } };
       }
@@ -15,7 +17,7 @@ export const fetchSchedule = async (id, date) => {
 
   export const createSchedule = async (id, ScheduleData) => {
     try {
-      const { data } = await axios.post(`http://3.36.118.29:8080/api/group/${id}/study`, ScheduleData);
+      const { data } = await axios.post(`${API_BASE_URL}/group/${id}/study`, ScheduleData);
       return data; // 서버 응답 데이터 반환
     } catch (error) {
       console.error('Error creating Schedule:', error);
@@ -26,7 +28,7 @@ export const fetchSchedule = async (id, date) => {
 export const editSchedule = async (id, studyId, updatedSchedule) => {
   try {
     const { data } = await axios.patch(
-      `http://3.36.118.29:8080/api/group/${id}/study/${studyId}`,
+      `${API_BASE_URL}/group/${id}/study/${studyId}`,
       updatedSchedule
     );
 
@@ -42,7 +44,7 @@ export const editSchedule = async (id, studyId, updatedSchedule) => {
 };
 
   export const getMemNum = async (id) => {
-    const response = await axios.get(`http://3.36.118.29:8080/api/group/${id}/getMem`);
+    const response = await axios.get(`${API_BASE_URL}/group/${id}/getMem`);
     return response.data;
   };
 

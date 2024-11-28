@@ -21,8 +21,8 @@ const ManageStudy = () => {
   const [activeTab, setActiveTab] = useState('schedule');
   const [isEditing, setIsEditing] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
-  const [isEditingNotice, setIsEditingNotice] = useState(false);
   const [newNotice, setNewNotice] = useState('');
+  const [isEditingNotice, setIsEditingNotice] = useState(false);
 
   //calander 날짜 선택
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -32,7 +32,6 @@ const ManageStudy = () => {
 
   const handleDateChange = async (date) => {
     const formattedDate = date.toLocaleDateString('en-CA');
-
 
     try {
       // GET API 호출
@@ -97,7 +96,6 @@ const ManageStudy = () => {
   };
 
   const handleSaveNotice = () => {
-    console.log('Saving notice:', { id, notice: newNotice }); // 디버깅 로그
     updateNoticeMutation({ id, notice: newNotice }); // `id`와 `notice`를 전달
     setIsEditingNotice(false); // 수정 모드 종료
   };
@@ -169,15 +167,7 @@ const ManageStudy = () => {
             )}
           </div>
         </div>
-        
-        
       </div>
-
-      
-
-      
-      
-    
 
         <div className="flex flex-wrap maxlg:flex-col w-full gap-4">
 
