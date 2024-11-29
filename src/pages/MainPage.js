@@ -10,7 +10,7 @@ import StudyManagementModal from '../components/StudyManagementModal';
 import JoinConfirmationModal from '../components/JoinConfirmationModal';
 import { checkStudyJoin, joinStudy } from '../services/studyJoinService';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+//const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const MainPage = ({ isLoggedIn, setIsLoggedIn, userEmail, handleLogout }) => {
   const [isCreateStudyModalOpen, setIsCreateStudyModalOpen] = useState(false);
@@ -96,7 +96,7 @@ const MainPage = ({ isLoggedIn, setIsLoggedIn, userEmail, handleLogout }) => {
 
       // redirect URL 추출 (redirect: 뒤에 오는 부분을 URL로 변환)
       const redirectUrl = response.data.data.redirect.replace("redirect:", "").trim(); // "redirect:" 부분 제거
-      const fullRedirectUrl = `${API_BASE_URL}/group${redirectUrl}`;
+      //const fullRedirectUrl = `${API_BASE_URL}/group${redirectUrl}`;
       const groupId = response.data.data.groupId;
       setGroupId(groupId); // groupId 저장
       console.log('groupId:', groupId);
@@ -132,7 +132,7 @@ const MainPage = ({ isLoggedIn, setIsLoggedIn, userEmail, handleLogout }) => {
 
       if (joinResponse.data.success) {
         console.log('스터디 가입 성공:', joinResponse.data.data.message);
-        const redirectUrl = joinResponse.data.data.message.split(':')[1].trim();  // 'redirect:URL' 형식에서 URL을 추출
+        //const redirectUrl = joinResponse.data.data.message.split(':')[1].trim();  // 'redirect:URL' 형식에서 URL을 추출
         navigate('/manage-study', { state: { id: groupId } });
       } else {
         console.log('스터디 가입 실패:', joinResponse.data.data.message);

@@ -11,10 +11,10 @@ const ManageSidebar = ({
     progressPercentage, 
     tasks, 
     handleCheckboxChange, 
-    selectedDate, 
     scheduleData, 
     onAddClick,
-    onEditClick, 
+    onEditClick,
+    onDeleteClick,
 }) => {
 
     const studyTime = (time) => {
@@ -22,7 +22,7 @@ const ManageSidebar = ({
         return `${hours}시 ${minutes}분`;
       };
 
-      const studyDate = (date) => {
+    const studyDate = (date) => {
         if (!date) return '날짜 정보 없음'; // date가 undefined, null, 또는 빈 문자열인 경우 기본 값 반환
         const [year, month, day] = date.split('-');
         return `${year}년 ${month}월 ${day}일`;
@@ -65,7 +65,8 @@ const ManageSidebar = ({
                         <div className="flex space-x-3">
                             <img src={editIcon} alt="Edit Icon" className="w-6 h-6 cursor-pointer"
                             onClick={onEditClick} />
-                            <img src={trashIcon} alt="Trash Icon" className="w-6 h-6 cursor-pointer" />
+                            <img src={trashIcon} alt="Trash Icon" className="w-6 h-6 cursor-pointer"
+                            onClick={onDeleteClick} />
                         </div>
                     </div>
                     <hr className="border-t-[2px] border-gray-300 mb-4" />

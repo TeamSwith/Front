@@ -57,6 +57,25 @@ export const editSchedule = async (id, studyId, updatedSchedule) => {
   }
 };
 
+export const deleteSchedule = async (id, studyId, updatedSchedule) => {
+  try {
+    const { data } = await axios.delete(
+      `${API_BASE_URL}/group/${id}/study/${studyId}`, {
+        headers: getAuthHeader(), // Authorization 헤더 추가
+      }
+    );
+
+    if (!data.success) {
+      throw new Error('스터디 일정 삭제에 실패했습니다.');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error deleting schedule:', error);
+    throw error; // 에러를 상위로 전달
+  }
+};
+
   export const getMemNum = async (id) => {
     const response = await axios.get(`${API_BASE_URL}/group/${id}/getMem`, {
       headers: getAuthHeader(), // Authorization 헤더 추가
