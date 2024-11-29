@@ -10,7 +10,7 @@ import StudyManagementModal from '../components/StudyManagementModal';
 import JoinConfirmationModal from '../components/JoinConfirmationModal';
 import { checkStudyJoin, joinStudy } from '../services/studyJoinService';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+//const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const MainPage = ({ isLoggedIn, setIsLoggedIn, userEmail, handleLogout }) => {
   const [isCreateStudyModalOpen, setIsCreateStudyModalOpen] = useState(false);
@@ -96,9 +96,13 @@ const MainPage = ({ isLoggedIn, setIsLoggedIn, userEmail, handleLogout }) => {
 
       // redirect URL 추출 (redirect: 뒤에 오는 부분을 URL로 변환)
       const redirectUrl = response.data.data.redirect.replace("redirect:", "").trim(); // "redirect:" 부분 제거
-      const fullRedirectUrl = `${API_BASE_URL}/group/${redirectUrl}`;
-      console.log('리디렉션 URL:', fullRedirectUrl);
-      navigate(fullRedirectUrl);  // 해당 URL로 이동
+      //const fullRedirectUrl = `${API_BASE_URL}/group${redirectUrl}`;
+      const groupId = response.data.data.groupId;
+      setGroupId(groupId); // groupId 저장
+      console.log('groupId:', groupId);
+      console.log('redirectUrl:', redirectUrl);
+      //console.log('리디렉션 URL:', fullRedirectUrl);
+      navigate('/manage-study', { state: { id: groupId } });  // 해당 URL로 이동
 
     } else if (response.data.code === 200 && response.data.data.message === "가입 전") {
       console.log('가입 가능한 상태, 가입 확인 모달 띄우기');
@@ -128,8 +132,8 @@ const MainPage = ({ isLoggedIn, setIsLoggedIn, userEmail, handleLogout }) => {
 
       if (joinResponse.data.success) {
         console.log('스터디 가입 성공:', joinResponse.data.data.message);
-        const redirectUrl = joinResponse.data.data.message.split(':')[1].trim();  // 'redirect:URL' 형식에서 URL을 추출
-        navigate(redirectUrl);  // 관리 페이지로 리디렉션
+        //const redirectUrl = joinResponse.data.data.message.split(':')[1].trim();  // 'redirect:URL' 형식에서 URL을 추출
+        navigate('/manage-study', { state: { id: groupId } });
       } else {
         console.log('스터디 가입 실패:', joinResponse.data.data.message);
         alert(joinResponse.data.data.message || '존재하지 않는 스터디입니다');

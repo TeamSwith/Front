@@ -33,8 +33,8 @@ const CreateSidebar = ({
     setIsMapOpen(false); // 지도 드롭다운 닫기
   };
 
+  // 유효성 검사, 시간과 장소 모두 입력하도록
   const handleSave = async () => {
-    // 유효성 검사
     if (!time || !address) {
       alert('시간 및 장소를 모두 입력해주세요.');
       return;

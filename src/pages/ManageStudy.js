@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
-import { fetchSchedule, getMemNum } from '../api/Study';
+import { useLocation } from 'react-router-dom';
+import { fetchSchedule, getMemNum, deleteSchedule } from '../api/Study';
 import { fetchNotice, updateNotice } from '../api/Notice';
 import Calendar from 'react-calendar';
 import "react-calendar/dist/Calendar.css";
@@ -14,6 +15,7 @@ import personIcon from "../assets/person.png";
 import './ManageStudy.css';
 
 const ManageStudy = () => {
+  const location = useLocation();
   const queryClient = useQueryClient();
   const marqueeTextRef = useRef(null);
   const marqueeContainerRef = useRef(null);
@@ -24,38 +26,39 @@ const ManageStudy = () => {
   const [newNotice, setNewNotice] = useState('');
   const [isEditingNotice, setIsEditingNotice] = useState(false);
 
-  //calander 날짜 선택
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(new Date());  //calander 날짜 선택
   const [scheduleData, setScheduleData] = useState({time: '', location: ''});
-  const id = 2; // Group ID 가져올 수 있게되면 수정
+  const { id } = location.state || {};
   const [studyId, setStudyId] = useState(null);
 
-  const handleDateChange = async (date) => {
-    const formattedDate = date.toLocaleDateString('en-CA');
-
-    try {
-      // GET API 호출
-      const response = await fetchSchedule(id, formattedDate);
-
-      if (response.success && response.data?.id) {
-        setScheduleData(response.data); 
-        setStudyId(response.data.id); // studyId 업데이트
-
-      } else {
-        setScheduleData({ date: formattedDate, time: '', location: '' });
-        setStudyId(null);
+  // 캘린더에서 날짜 선택하면 일정을 불러오는 함수
+  const handleDateChange = useCallback(
+    async (date) => {
+      const formattedDate = date.toLocaleDateString('en-CA');
+  
+      try {
+        // GET API 호출
+        const response = await fetchSchedule(id, formattedDate);
+  
+        if (response.success && response.data?.id) {
+          setScheduleData(response.data); 
+          setStudyId(response.data.id); // studyId 업데이트
+        } else {
+          setScheduleData({ date: formattedDate, time: '', location: '' });
+          setStudyId(null);
+        }
+      } catch (error) {
+        console.error('스터디 데이터를 불러오는 중 오류 발생:', error);
       }
-    } catch (error) {
-      console.error('스터디 데이터를 불러오는 중 오류 발생:', error);
-      alert('스터디 데이터를 불러오지 못했습니다. 다시 시도해주세요.');
-    }
-  };
+    },
+    [id] // 의존성 배열에 필요한 값 추가
+  );
 
   useEffect(() => {
     handleDateChange(selectedDate); // selectedDate가 변경될 때 데이터 업데이트
   }, [selectedDate]);
 
-  // 선택된 날짜 변경 핸들러
+  // 날짜를 선택할 경우 실행되는 함수
   const onDateChange = (date) => {
     setSelectedDate(date);
     handleDateChange(date); // 날짜 변경 시 스케줄 데이터 업데이트
@@ -69,6 +72,40 @@ const ManageStudy = () => {
       staleTime: 1000 * 60 * 5,
     }
   );
+
+  // 스터디 일정 생성시 data가 바로 업데이트
+  const handleCreateScheduleSuccess = (createdData) => {
+    setScheduleData(createdData); // 생성된 데이터로 업데이트
+    setStudyId(createdData.id); // 생성된 studyId 업데이트
+  };
+
+  //스터디 일정 삭제
+  const handleDeleteSchedule = async () => {
+    if (!id || !studyId) {
+      alert('삭제할 스터디 정보가 없습니다.');
+      return;
+    }
+
+    const confirmDelete = window.confirm('정말 이 스터디 일정을 삭제하시겠습니까?');
+    if (!confirmDelete) return;
+
+    try {
+      await deleteSchedule(id, studyId); // API 호출
+      alert('스터디 일정이 성공적으로 삭제되었습니다.');
+
+      // 삭제 후 상태 초기화 및 React Query 캐시 무효화
+      setScheduleData((prevData) => ({
+        ...prevData,
+        time: '',
+        location: '',
+      }));
+      setStudyId(null);
+      queryClient.invalidateQueries(['schedule', id]);
+    } catch (error) {
+      console.error('스터디 일정 삭제 실패:', error);
+      alert('스터디 일정 삭제에 실패했습니다. 다시 시도해주세요.');
+    }
+  };
 
   //Notice
   const { data: noticeData, isLoading: isNoticeLoading, isError: isNoticeError } = useQuery(
@@ -86,9 +123,6 @@ const ManageStudy = () => {
       queryClient.invalidateQueries({ queryKey: [id, 'notice'] }); // 캐시 무효화
     },
   });
-
-  //const url = `http://3.36.118.29:8080/api/group/${id}`
-  //console.log(url);
 
   const handleEditNoticeClick = () => {
     setIsEditingNotice(true);
@@ -132,10 +166,10 @@ const ManageStudy = () => {
 
   if (isNoticeLoading) return <div>Loading...</div>;
   if (isNoticeError) return <div>공지사항을 불러오는 중 오류가 발생했습니다.</div>;
-  
 
   return (
-    <div className="sm:px-20 md:px-28 lg:px-36 xl:px-[300px] px-[30px] py-[90px]">
+    <div className="sm:px-12 md:px-20 lg:px-30 xl:px-[300px] px-[30px] py-[90px] pb-[200px]">
+      {/*반응형에서 패딩 손봐야함*/}
       <div className="w-full bg-[#F2F2F2] text-[#4B4B4B] text-[14px] py-2 mb-4 flex items-center justify-between rounded-2xl overflow-hidden relative">
         <div className="flex items-center w-full">
           <img src={speakerIcon} alt="Speaker Icon" className="w-8 h-8 mr-3 ml-4" />
@@ -169,10 +203,14 @@ const ManageStudy = () => {
         </div>
       </div>
 
+        <div className="flex w-full gap-4"> 
+        {/*
         <div className="flex flex-wrap maxlg:flex-col w-full gap-4">
+        의 경우 반응형.
+        */}
 
         <div
-          className="flex flex-col flex-glow maxlg:items-center">
+          className="flex flex-col flex-glow item-start">
             <div className="flex items-center max-w-md w-full pt-3">
               <img src={personIcon} alt="인원수" className="w-7 h-7 ml-3 mb-4" /> 
                 <span className='text-[#5B5B5B] mb-3'>
@@ -215,38 +253,38 @@ const ManageStudy = () => {
             <div className="w-full flex flex-col items-center">
               {isEditing ? (
                 <EditSidebar 
-                scheduleData={ scheduleData || { date: selectedDate.toISOString().split('T')[0] }}
-                setScheduleData={setScheduleData}
-                tasks={tasks}
-                handleCheckboxChange={handleCheckboxChange}
-                setIsEditing={setIsEditing}
-                id={id}
-                studyId={studyId}
-                queryClient={queryClient}
+                  scheduleData={ scheduleData || { date: selectedDate.toISOString().split('T')[0] }}
+                  setScheduleData={setScheduleData}
+                  tasks={tasks}
+                  handleCheckboxChange={handleCheckboxChange}
+                  setIsEditing={setIsEditing}
+                  id={id}
+                  studyId={studyId}
+                  queryClient={queryClient}
                 /> 
-                // 편집 모드일 때 EditSidebar 렌더링
                 ) : isCreating ? (
-                  <CreateSidebar
-                    scheduleData={scheduleData || { date: selectedDate.toISOString().split('T')[0] }}
-                    setScheduleData={setScheduleData}
-                    tasks={tasks}
-                    handleCheckboxChange={handleCheckboxChange}
-                    setIsCreating={setIsCreating}
-                    id={id}
-                    queryClient={queryClient}
+                <CreateSidebar
+                  scheduleData={scheduleData || { date: selectedDate.toISOString().split('T')[0] }}
+                  setScheduleData={handleCreateScheduleSuccess}
+                  tasks={tasks}
+                  handleCheckboxChange={handleCheckboxChange}
+                  setIsCreating={setIsCreating}
+                  id={id}
+                  queryClient={queryClient}
                   />
                 ) : (
-              <ManageSidebar
-                activeTab={activeTab}
-                setActiveTab={setActiveTab}
-                progressPercentage={progressPercentage}
-                tasks={tasks}
-                handleCheckboxChange={handleCheckboxChange}
-                selectedDate={selectedDate}
-                scheduleData={scheduleData}
-                onEditClick={() => setIsEditing(true)}
-                onAddClick={() => setIsCreating(true)}
-              />
+                <ManageSidebar
+                  activeTab={activeTab}
+                  setActiveTab={setActiveTab}
+                  progressPercentage={progressPercentage}
+                  tasks={tasks}
+                  handleCheckboxChange={handleCheckboxChange}
+                  selectedDate={selectedDate}
+                  scheduleData={scheduleData || { date: '', time: '', location: '' }}
+                  onEditClick={() => setIsEditing(true)}
+                  onAddClick={() => setIsCreating(true)}
+                  onDeleteClick={handleDeleteSchedule}
+                />
               )}
           </div>
         </div>
