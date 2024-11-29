@@ -24,8 +24,8 @@ const StudyCreationComplete = () => {
 
   // 확인 버튼 누르면 메인 페이지로 이동
   const handleConfirm = () => { navigate('/'); };
-  // 관리 페이지로 이동 누르면 스터디 관리 페이지로 이동
-  const handleGoToManagement = () => { navigate('/manage-study'); };
+  // // 관리 페이지로 이동 누르면 스터디 관리 페이지로 이동
+  // const handleGoToManagement = () => { navigate('/manage-study'); };
 
   if (!studyDetails) {
     return <div>Loading...</div>;  // studyDetails가 없으면 로딩 표시
@@ -74,9 +74,9 @@ const StudyCreationComplete = () => {
           <button onClick={handleConfirm} className="w-full sm:w-40 h-12 rounded-xl bg-[#91DDAB] text-white rounded-lg shadow-lg hover:bg-[#7BAE8D] focus:outline-none transition duration-300 text-sm sm:text-base">
             확인
           </button>
-          <button onClick={handleGoToManagement} className="w-full sm:w-40 h-12 rounded-xl bg-[#EFF9F2] text-[#91DDAB] rounded-lg shadow-lg hover:bg-gray-200 focus:outline-none transition duration-300 text-sm sm:text-base">
+          {/* <button onClick={handleGoToManagement} className="w-full sm:w-40 h-12 rounded-xl bg-[#EFF9F2] text-[#91DDAB] rounded-lg shadow-lg hover:bg-gray-200 focus:outline-none transition duration-300 text-sm sm:text-base">
             관리 페이지로 이동
-          </button>
+          </button> */}
         </div>
       </div>
     </div>

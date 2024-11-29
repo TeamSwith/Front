@@ -7,26 +7,20 @@ export const checkStudyJoin = async (groupInsertId, groupPw) => {
   try {
     const response = await api.post(`${API_BASE_URL}/group/join`, { groupInsertId, groupPw });
     console.log(response); 
-  
-    // 가입 여부만 체크해서 success 값 반환
-    if (response.data.message === "이미 가입되어 있음") {
-        return { success: true }; // 이렇게 반환해야 맞게 나감
-      } else {
-        return { success: false }; // 이렇게 반환해야 맞게 나감
-      }
+
+    return response;
+
     } catch (error) {
       console.error('스터디 그룹 가입 오류:', error);
       throw error;
     }
 };
 
-// // 스터디 가입하기 (groupId와 userId를 매핑테이블에 짝지어 저장)
-// export const joinStudy = async (groupId) => {
-//     try {
-//       const response = await api.post(`${API_BASE_URL}/user-group/create`, { groupId });
-//       return response.data;
-//     } catch (error) {
-//       console.error('스터디 그룹 가입 요청 오류:', error);
-//       throw error;
-//     }
-//   };
+export const joinStudy = async (groupId) => {
+    try {
+      const response = await api.post(`${API_BASE_URL}/user-group/create`, { groupId });
+      return response; // API 응답을 반환
+    } catch (error) {
+      throw new Error('스터디 가입에 실패했습니다. 다시 시도해주세요.');
+    }
+};
