@@ -8,7 +8,9 @@ import LogoutConfirmationModal from '../components/LogoutConfirmationModal';
 import CreateStudyModal from '../components/CreateStudyModal';
 import StudyManagementModal from '../components/StudyManagementModal';
 import JoinConfirmationModal from '../components/JoinConfirmationModal';
-import { checkStudyJoin } from '../services/studyJoinService';
+import { checkStudyJoin, joinStudy } from '../services/studyJoinService';
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const MainPage = ({ isLoggedIn, setIsLoggedIn, userEmail, handleLogout }) => {
   const [isCreateStudyModalOpen, setIsCreateStudyModalOpen] = useState(false);
@@ -16,7 +18,9 @@ const MainPage = ({ isLoggedIn, setIsLoggedIn, userEmail, handleLogout }) => {
   const [isMyPageModalOpen, setIsMyPageModalOpen] = useState(false); // MyPage 모달 상태
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isStudyManagementModalOpen, setIsStudyManagementModalOpen] = useState(false); // Study Management 모달 상태
+
   const [isJoinConfirmationModalOpen, setIsJoinConfirmationModalOpen] = useState(false); // Join Confirmation 모달 상태
+  const [groupId, setGroupId] = useState(null);
 
   const navigate = useNavigate();
   const location = useLocation(); 
@@ -85,16 +89,50 @@ const MainPage = ({ isLoggedIn, setIsLoggedIn, userEmail, handleLogout }) => {
   const handleJoinStudy = async (studyId, password) => {
     try {
       const response = await checkStudyJoin(studyId, password);
-      console.log('응답:', response);  // 응답 전체를 확인
+      console.log('응답:', response);
 
-      if (response.success) {
-        // true면 바로 관리 페이지로 리디렉션
-        console.log('가입되어 있음, 관리 페이지로 이동');
-        navigate('/manage-study');
+    if (response.data.code === 200 && response.data.data.message === "이미 가입되어 있음") {
+      console.log('이미 가입되어 있음, 관리 페이지로 이동');
+
+      // redirect URL 추출 (redirect: 뒤에 오는 부분을 URL로 변환)
+      const redirectUrl = response.data.data.redirect.replace("redirect:", "").trim(); // "redirect:" 부분 제거
+      const fullRedirectUrl = `${API_BASE_URL}/group/${redirectUrl}`;
+      console.log('리디렉션 URL:', fullRedirectUrl);
+      navigate(fullRedirectUrl);  // 해당 URL로 이동
+
+    } else if (response.data.code === 200 && response.data.data.message === "가입 전") {
+      console.log('가입 가능한 상태, 가입 확인 모달 띄우기');
+      const groupId = response.data.data.groupId;
+      setGroupId(groupId); // groupId 저장
+      setIsJoinConfirmationModalOpen(true);
+      console.log('groupId:', groupId);
+
+    } else if (response.data.code === 404 && response.data.data.message === "정원을 초과했습니다." ) {
+      console.log('정원 초과:', response.data.data.message);
+      alert(response.data.data.message);
+
+    } else {
+      console.log('오류 발생');
+    }
+    } catch (error) {
+      console.error('스터디 가입 오류:', error);
+      alert('스터디 가입에 실패했습니다. 다시 시도해주세요.');
+    }
+  };
+
+  // 모달에서 확인 버튼 클릭 시 호출될 함수 (스터디 가입 요청)
+  const handleConfirmJoin = async () => {
+    try {
+      const joinResponse = await joinStudy(groupId);
+      console.log(joinResponse);
+
+      if (joinResponse.data.success) {
+        console.log('스터디 가입 성공:', joinResponse.data.data.message);
+        const redirectUrl = joinResponse.data.data.message.split(':')[1].trim();  // 'redirect:URL' 형식에서 URL을 추출
+        navigate(redirectUrl);  // 관리 페이지로 리디렉션
       } else {
-        // false면 가입 확인 모달 띄우기
-        console.log('가입되지 않음, 가입 확인 모달 띄우기');
-        setIsJoinConfirmationModalOpen(true);
+        console.log('스터디 가입 실패:', joinResponse.data.data.message);
+        alert(joinResponse.data.data.message || '존재하지 않는 스터디입니다');
       }
     } catch (error) {
       console.error('스터디 가입 오류:', error);
@@ -102,17 +140,6 @@ const MainPage = ({ isLoggedIn, setIsLoggedIn, userEmail, handleLogout }) => {
     }
   };
 
-  // const handleJoinStudy = () => {
-  //   setIsStudyManagementModalOpen(false);
-  //   setIsJoinConfirmationModalOpen(true);
-  // };
-
-  // const confirmJoinStudy = () => {
-  //   // 실제로 스터디에 가입하는 로직 추가
-  //   setIsJoinConfirmationModalOpen(false);
-  //   navigate('/manage-study'); // 가입 확인 후 관리 페이지로 이동
-  // };
-  
   return (
     <div
       style={{
@@ -191,7 +218,7 @@ const MainPage = ({ isLoggedIn, setIsLoggedIn, userEmail, handleLogout }) => {
       <JoinConfirmationModal
         isOpen={isJoinConfirmationModalOpen}
         onClose={closeJoinConfirmationModal}
-        onConfirm={() => navigate('/manage-study')}  // 가입 확인 후 관리 페이지로 이동
+        onConfirm={handleConfirmJoin}
       />
     </div>
   );
