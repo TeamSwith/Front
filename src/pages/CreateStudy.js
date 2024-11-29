@@ -69,12 +69,12 @@ const CreateStudy = () => {
     }
   };
 
-  // 취소 버튼 삭제할 예정 (api가 없음)
-  const handleCancel = () => {
-    localStorage.removeItem('groupInsertId');
-    localStorage.removeItem('groupPw');
-    navigate('/');
-  };
+  // // 취소 버튼 삭제할 예정 (api가 없음)
+  // const handleCancel = () => {
+  //   localStorage.removeItem('groupInsertId');
+  //   localStorage.removeItem('groupPw');
+  //   navigate('/');
+  // };
 
   return (
     <div className="max-w-5.5xl mx-auto px-0 pt-24 space-y-2 mb-8">
@@ -190,9 +190,9 @@ const CreateStudy = () => {
             <button type="button" onClick={handleUpdateStudyDetails} className="w-full sm:w-40 h-12 rounded-xl bg-[#91DDAB] text-white rounded-lg shadow-lg hover:bg-[#7BAE8D] focus:outline-none transition duration-300 text-sm sm:text-base">
               생성 하기
             </button>
-            <button type="button" onClick={handleCancel} className="w-full sm:w-40 h-12 rounded-xl bg-[#EFF9F2] text-[#91DDAB] rounded-lg shadow-lg hover:bg-gray-200 focus:outline-none transition duration-300 text-sm sm:text-base">
+            {/* <button type="button" onClick={handleCancel} className="w-full sm:w-40 h-12 rounded-xl bg-[#EFF9F2] text-[#91DDAB] rounded-lg shadow-lg hover:bg-gray-200 focus:outline-none transition duration-300 text-sm sm:text-base">
               취소
-            </button>
+            </button> */}
           </div>
         </form>
       </div>
