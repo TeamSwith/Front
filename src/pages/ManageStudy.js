@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
+import { useLocation } from 'react-router-dom';
 import { fetchSchedule, getMemNum } from '../api/Study';
 import { fetchNotice, updateNotice } from '../api/Notice';
 import Calendar from 'react-calendar';
@@ -14,6 +15,7 @@ import personIcon from "../assets/person.png";
 import './ManageStudy.css';
 
 const ManageStudy = () => {
+  const location = useLocation();
   const queryClient = useQueryClient();
   const marqueeTextRef = useRef(null);
   const marqueeContainerRef = useRef(null);
@@ -27,11 +29,13 @@ const ManageStudy = () => {
   //calander 날짜 선택
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [scheduleData, setScheduleData] = useState({time: '', location: ''});
-  const id = 2; // Group ID 가져올 수 있게되면 수정
+  //const id = 2; // Group ID 가져올 수 있게되면 수정
+  const { id } = location.state || {};
   const [studyId, setStudyId] = useState(null);
 
   const handleDateChange = async (date) => {
     const formattedDate = date.toLocaleDateString('en-CA');
+    console.log('formattedDate:', formattedDate, 'Type:', typeof formattedDate);
 
     try {
       // GET API 호출
@@ -132,7 +136,11 @@ const ManageStudy = () => {
 
   if (isNoticeLoading) return <div>Loading...</div>;
   if (isNoticeError) return <div>공지사항을 불러오는 중 오류가 발생했습니다.</div>;
-  
+
+  console.log('Rendering ID:', id, 'Type:', typeof id);
+console.log('Rendering Notice:', noticeData?.data, 'Type:', typeof noticeData?.data);
+console.log('Rendering Schedule:', scheduleData, 'Type:', typeof scheduleData);
+console.log('Rendering Tasks:', tasks, 'Type:', Array.isArray(tasks) ? 'array' : typeof tasks);
 
   return (
     <div className="sm:px-20 md:px-28 lg:px-36 xl:px-[300px] px-[30px] py-[90px]">
@@ -221,7 +229,7 @@ const ManageStudy = () => {
                 handleCheckboxChange={handleCheckboxChange}
                 setIsEditing={setIsEditing}
                 id={id}
-                studyId={studyId}
+                studyId={studyId || 0}
                 queryClient={queryClient}
                 /> 
                 // 편집 모드일 때 EditSidebar 렌더링
@@ -243,7 +251,7 @@ const ManageStudy = () => {
                 tasks={tasks}
                 handleCheckboxChange={handleCheckboxChange}
                 selectedDate={selectedDate}
-                scheduleData={scheduleData}
+                scheduleData={scheduleData || { date: '', time: '', location: '' }}
                 onEditClick={() => setIsEditing(true)}
                 onAddClick={() => setIsCreating(true)}
               />

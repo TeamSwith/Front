@@ -9,7 +9,8 @@ const CreateStudy = () => {
   // const { password } = location.state || {};  // 모달에서 전달된 groupPw
 
   // 로컬에서 id와 gropPw를 가져와 사용할 수 있도록 설정
-  const storedId = localStorage.getItem('id');
+  const storedId = parseInt(localStorage.getItem('id'), 10);
+  console.log('Stored ID:', storedId, 'Type:', typeof storedId);
   // const storedPassword = localStorage.getItem('groupPw');
   
   const [studyId, setStudyId] = useState(''); // 스터디 아이디
@@ -28,7 +29,7 @@ const CreateStudy = () => {
     if (storedId) {
       getStudyId(storedId)  // id를 통해 studyId를 가져오는 API 호출
         .then((response) => {
-          console.log('응답 studyId:', response.data);
+          console.log('응답 studyId:', response.data, 'groupInsertId Type:', typeof response.data.groupInsertId, 'id Type:', typeof response.data.id);
           setStudyId(response.data.groupInsertId);  // 응답을 studyId 상태에 저장
         })
         .catch((error) => {
