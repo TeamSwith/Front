@@ -3,6 +3,7 @@ import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { useLocation } from 'react-router-dom';
 import { fetchSchedule, getMemNum, deleteSchedule } from '../api/Study';
 import { fetchNotice, updateNotice } from '../api/Notice';
+import { fetchTasks } from '../api/Task';
 import Calendar from 'react-calendar';
 import "react-calendar/dist/Calendar.css";
 import ManageSidebar from "../components/ManageSidebar";
@@ -38,15 +39,25 @@ const ManageStudy = () => {
       const formattedDate = date.toLocaleDateString('en-CA');
   
       try {
-        // GET API 호출
+        // 스터디 일정 호출
         const response = await fetchSchedule(id, formattedDate);
   
         if (response.success && response.data?.id) {
           setScheduleData(response.data); 
-          setStudyId(response.data.id); // studyId 업데이트
+          const currentStudyId = response.data.id; // 새로운 studyId 설정
+          setStudyId(currentStudyId);
+
+          // 과제 호출
+          const taskResponse = await fetchTasks(id, currentStudyId);
+          setTasks(taskResponse.map(task => ({
+          id: task.id,
+          label: task.content,
+          checked: task.taskStatus === 'COMPLETED', // 상태 기반으로 체크 여부 설정
+        })));
         } else {
           setScheduleData({ date: formattedDate, time: '', location: '' });
           setStudyId(null);
+          setTasks([]);
         }
       } catch (error) {
         console.error('스터디 데이터를 불러오는 중 오류 발생:', error);
@@ -57,7 +68,7 @@ const ManageStudy = () => {
 
   useEffect(() => {
     handleDateChange(selectedDate); // selectedDate가 변경될 때 데이터 업데이트
-  }, [selectedDate]);
+  }, []);
 
   // 날짜를 선택할 경우 실행되는 함수
   const onDateChange = (date) => {
@@ -237,6 +248,7 @@ const ManageStudy = () => {
                   setScheduleData={setScheduleData}
                   setIsEditing={setIsEditing}
                   tasks={tasks}
+                  setTasks={setTasks}
                   id={id}
                   studyId={studyId}
                   queryClient={queryClient}
@@ -255,6 +267,10 @@ const ManageStudy = () => {
                 <ManageSidebar
                   activeTab={activeTab}
                   setActiveTab={setActiveTab}
+                  id={id}
+                  studyId={studyId}
+                  tasks={tasks}
+                  setTasks={setTasks}
                   selectedDate={selectedDate}
                   scheduleData={scheduleData || { date: '', time: '', location: '' }}
                   onEditClick={() => setIsEditing(true)}

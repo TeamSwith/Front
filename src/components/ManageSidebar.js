@@ -9,6 +9,10 @@ import ManageComments from './ManageComments'; //임의의 피드백 데이터
 const ManageSidebar = ({ 
     activeTab, 
     setActiveTab,
+    id,
+    studyId,
+    tasks,
+    setTasks,
     scheduleData, 
     onAddClick,
     onEditClick,
@@ -27,8 +31,7 @@ const ManageSidebar = ({
       };
 
     const handleTaskUpdate = (updatedTasks) => {
-        console.log('Updated tasks from ManageTasks:', updatedTasks);
-        // 필요하면 추가 로직 수행
+        setTasks(updatedTasks);
       };
     
   return (
@@ -77,8 +80,14 @@ const ManageSidebar = ({
                     
                     <hr className="border-t-[2px] border-gray-300 mb-2" />
 
-                    <ManageTasks onTaskUpdate={handleTaskUpdate} />
-                    
+                    <ManageTasks 
+                        id={id}
+                        studyId={studyId}
+                        tasks={tasks}
+                        setTasks={setTasks}
+                        onTaskUpdate={handleTaskUpdate}
+                    />
+
                     <hr className="border-t-[2px] border-gray-300 mb-4" />
                     <ManageComments />
                 </div>

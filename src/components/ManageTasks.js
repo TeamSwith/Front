@@ -1,32 +1,73 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { fetchTasks, updateTaskStatus } from "../api/Task";
 
-const ManageTasks = ({ onTaskUpdate }) => {
-  const [tasks, setTasks] = useState([
-    { id: 1, label: '과제 1', checked: false },
-    { id: 2, label: '과제 2', checked: false },
-    { id: 3, label: '과제 3', checked: false },
-    { id: 4, label: '과제 4', checked: false },
-  ]);
+const ManageTasks = ({ id, studyId, tasks=[], setTasks, onTaskUpdate }) => {
+    const [progressPercentage, setProgressPercentage] = useState(0);
 
-  // 체크박스 상태 변경 함수
-  const handleCheckboxChange = (id) => {
-    const updatedTasks = tasks.map((task) =>
-      task.id === id ? { ...task, checked: !task.checked } : task
-    );
-    setTasks(updatedTasks);
+    useEffect(() => {
+        const syncTasks = async () => {
+            if (Array.isArray(tasks) && tasks.length > 0) {
+                const updatedTasks = tasks.map((task) => ({
+                    id: task.id,
+                    content: task.content || task.label,
+                    checked: task.checked || task.taskStatus === "COMPLETED",
+                }));
+                setTasks(updatedTasks); // 부모 상태 직접 업데이트
+                updateProgress(updatedTasks);
+            } else {
+                try {
+                    const response = await fetchTasks(id, studyId);
+                    if (response.success && response.data.length > 0) {
+                        const tasksData = response.data.map((task) => ({
+                            id: task.id,
+                            content: task.content || task.label,
+                            checked: task.taskStatus === "COMPLETED",
+                        }));
+                        setTasks(tasksData); // 부모 상태 업데이트
+                        updateProgress(tasksData);
+                    } else {
+                        setTasks([]); // tasks가 비어 있는 경우 초기화
+                        updateProgress([]); // 프로그레스바도 초기화
+                    }
+                } catch (error) {
+                    console.error("Failed to fetch tasks:", error);
+                    setTasks([]); // 에러 발생 시 초기화
+                }
+            }
+        };
+    
+        syncTasks();
+    }, [tasks, id, studyId, setTasks]);
 
-    // 부모 컴포넌트에 업데이트된 과제 상태 전달
-    onTaskUpdate(updatedTasks);
-  };
+    // 체크 상태 업데이트
+    const handleCheckboxChange = async (taskId, checked) => {
+        try {
+            const updatedStatus = checked ? "COMPLETED" : "PENDING";
+            const response = await updateTaskStatus(taskId, updatedStatus);
+            if (response.success) {
+                const updatedTasks = tasks.map((task) =>
+                    task.id === taskId ? { ...task, checked } : task
+                );
+                setTasks(updatedTasks);
+                updateProgress(updatedTasks); // 업데이트된 `localTasks`로 프로그레스바 업데이트
+                onTaskUpdate(taskId);
+            }
+        } catch (error) {
+            console.error("Failed to update task status:", error);
+        }
+    };
 
-  // 체크된 항목의 비율 계산
-  const checkedCount = tasks.filter((task) => task.checked).length;
-  const totalTasks = tasks.length;
-  const progressPercentage = (checkedCount / totalTasks) * 100;
+    // 프로그레스바 업데이트
+    const updateProgress = (tasks) => {
+        const completedCount = tasks.filter((task) => task.checked).length; // `checked` 상태를 기준으로 완료된 과제 계산
+        const totalCount = tasks.length;
+        const progress = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
+        setProgressPercentage(progress);
+      };
 
   return (
     <div className="p-6">
-      {/* 과제 텍스트와 게이지 바 컨테이너 */}
+      {/* 과제 텍스트와 프로그레스바 */}
       <div className="flex items-center mb-4 space-x-4">
         <p className="text-lg text-[#4B4B4B] mr-4">과제</p>
         <div className="w-[200px] h-4 bg-gray-300 rounded-full overflow-hidden">
@@ -41,14 +82,14 @@ const ManageTasks = ({ onTaskUpdate }) => {
       {/* 체크박스 리스트 */}
       <div>
         {tasks.map((task) => (
-          <div key={task.id} className="flex items-center mb-2.5">
+          <div key={task.id} className="flex items-center mb-2.5 space-x-2">
             <input
               type="checkbox"
               checked={task.checked}
-              onChange={() => handleCheckboxChange(task.id)}
+              onChange={(e) => handleCheckboxChange(task.id, e.target.checked)}
               className="mr-2"
             />
-            <label className="text-[#4B4B4B]">{task.label}</label>
+            <label className="text-[#4B4B4B]">{task.content}</label> {/* 텍스트 렌더링 */}
           </div>
         ))}
       </div>

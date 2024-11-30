@@ -12,6 +12,10 @@ const getAuthHeader = () => {
 
 // 과제 생성
 export const createTask = async (id, studyId, taskMessage) => {
+    if (!taskMessage || taskMessage.trim() === "") {
+        throw new Error("Task message cannot be empty");
+    }
+
   try {
     const response = await axios.post(
       `${API_BASE_URL}/group/${id}/study/${studyId}/create`,

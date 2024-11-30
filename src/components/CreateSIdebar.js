@@ -40,7 +40,7 @@ const CreateSidebar = ({
   const handleAddTask = () => {
     setTasks((prevTasks) => [
       ...prevTasks,
-      { id: Date.now(), label: '', checked: false, isNew: true } // Temporary task ID
+      { id: Date.now(), content: '', checked: false, isNew: true } // Temporary task ID
     ]);
   };
 
@@ -53,23 +53,9 @@ const CreateSidebar = ({
   const handleTaskChange = (id, content) => {
     setTasks((prevTasks) =>
       prevTasks.map((task) =>
-        task.id === id ? { ...task, label: content } : task
+        task.id === id ? { ...task, content } : task
       )
     );
-  };
-
-  // 과제 set 핸들러
-  const handleSaveTask = async (task) => {
-    try {
-      const response = await createTask(id, scheduleData.id, task.label);
-      setTasks((prevTasks) =>
-        prevTasks.map((t) =>
-          t.id === task.id ? { ...task, id: response.data.id, isNew: false } : t
-        )
-      );
-    } catch (error) {
-      console.error('Error saving task:', error);
-    }
   };
 
   const handleSave = async () => {
@@ -95,9 +81,14 @@ const CreateSidebar = ({
       setScheduleData(response.data);
       queryClient.invalidateQueries(['schedule', id]); // React Query 캐시 무효화
 
+      const createdStudyId = response.data.id; // 생성된 스터디 ID
+
       const newTasks = tasks.filter((task) => task.isNew);
+        if (!response.data.id) {
+          throw new Error("스터디 ID가 생성되지 않았습니다.");
+        }
         for (const task of newTasks) {
-          await handleSaveTask(task);
+          await handleSaveTask({ ...task, studyId: createdStudyId });
         } // 생성한 과제 저장
 
       alert('스터디가 성공적으로 생성되었습니다!');
@@ -108,6 +99,20 @@ const CreateSidebar = ({
     } finally {
       setIsSaving(false); // 저장 중 상태 해제
     }
+};
+
+// 과제 set 핸들러
+const handleSaveTask = async (task) => {
+  try {
+    const response = await createTask(id, task.studyId, task.content);
+    setTasks((prevTasks) =>
+      prevTasks.map((t) =>
+        t.id === task.id ? { ...task, id: response.data.id, isNew: false } : t
+      )
+    );
+  } catch (error) {
+    console.error('Error saving task:', error);
+  }
 };
 
   return (
