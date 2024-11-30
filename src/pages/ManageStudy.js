@@ -12,7 +12,7 @@ import speakerIcon from "../assets/speaker.png";
 import editIcon from "../assets/edit.png";
 import checkIcon from "../assets/Check.png"
 import personIcon from "../assets/person.png";
-import './ManageStudy.css';
+import '../styles/ManageStudy.css';
 
 const ManageStudy = () => {
   const location = useLocation();
@@ -143,27 +143,6 @@ const ManageStudy = () => {
     }
   }, [noticeData, marqueeTextRef, marqueeContainerRef]);
 
-
-  // 과제 관련 상태 관리 (추후 api 호출)
-  const [tasks, setTasks] = useState([
-    { id: 1, label: '과제 1', checked: false },
-    { id: 2, label: '과제 2', checked: false },
-    { id: 3, label: '과제 3', checked: false },
-    { id: 4, label: '과제 4', checked: false },
-  ]);
-  // 체크박스 상태 변경 함수
-  const handleCheckboxChange = (id) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === id ? { ...task, checked: !task.checked } : task
-      )
-    );
-  };
-  // 체크된 항목의 비율을 계산
-  const checkedCount = tasks.filter((task) => task.checked).length;
-  const totalTasks = tasks.length;
-  const progressPercentage = (checkedCount / totalTasks) * 100;
-
   if (isNoticeLoading) return <div>Loading...</div>;
   if (isNoticeError) return <div>공지사항을 불러오는 중 오류가 발생했습니다.</div>;
 
@@ -255,8 +234,6 @@ const ManageStudy = () => {
                 <EditSidebar 
                   scheduleData={ scheduleData || { date: selectedDate.toISOString().split('T')[0] }}
                   setScheduleData={setScheduleData}
-                  tasks={tasks}
-                  handleCheckboxChange={handleCheckboxChange}
                   setIsEditing={setIsEditing}
                   id={id}
                   studyId={studyId}
@@ -266,8 +243,6 @@ const ManageStudy = () => {
                 <CreateSidebar
                   scheduleData={scheduleData || { date: selectedDate.toISOString().split('T')[0] }}
                   setScheduleData={handleCreateScheduleSuccess}
-                  tasks={tasks}
-                  handleCheckboxChange={handleCheckboxChange}
                   setIsCreating={setIsCreating}
                   id={id}
                   queryClient={queryClient}
@@ -276,9 +251,6 @@ const ManageStudy = () => {
                 <ManageSidebar
                   activeTab={activeTab}
                   setActiveTab={setActiveTab}
-                  progressPercentage={progressPercentage}
-                  tasks={tasks}
-                  handleCheckboxChange={handleCheckboxChange}
                   selectedDate={selectedDate}
                   scheduleData={scheduleData || { date: '', time: '', location: '' }}
                   onEditClick={() => setIsEditing(true)}

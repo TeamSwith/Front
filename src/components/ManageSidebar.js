@@ -3,14 +3,12 @@ import editIcon from "../assets/edit.png";
 import trashIcon from "../assets/Trash.png";
 import addIcon from "../assets/add.png";
 import noSchedule from "../assets/noSchedule.png"
+import ManageTasks from './ManageTasks';
 import ManageComments from './ManageComments'; //임의의 피드백 데이터
 
 const ManageSidebar = ({ 
     activeTab, 
-    setActiveTab, 
-    progressPercentage, 
-    tasks, 
-    handleCheckboxChange, 
+    setActiveTab,
     scheduleData, 
     onAddClick,
     onEditClick,
@@ -28,7 +26,11 @@ const ManageSidebar = ({
         return `${year}년 ${month}월 ${day}일`;
       };
 
-
+    const handleTaskUpdate = (updatedTasks) => {
+        console.log('Updated tasks from ManageTasks:', updatedTasks);
+        // 필요하면 추가 로직 수행
+      };
+    
   return (
 
     <div className="flex flex-col w-full flex-grow">
@@ -74,35 +76,9 @@ const ManageSidebar = ({
                     <p className="text-[#4B4B4B] mb-2"><strong>장소:</strong> {scheduleData.location}</p>
                     
                     <hr className="border-t-[2px] border-gray-300 mb-2" />
-                    <div className="p-6">
-                        {/* 과제 텍스트와 게이지 바 컨테이너 */}
-                        <div className="flex items-center mb-4 space-x-4">
-                            <p className="text-lg text-[#4B4B4B] mr-4">과제</p>
-                            <div className="w-[200px] h-4 bg-gray-300 rounded-full overflow-hidden">
-                                <div
-                                className="h-full bg-[#8CC29E] rounded-full transition-width duration-300"
-                                style={{ width: `${progressPercentage}%` }}
-                                ></div>
-                            </div>
-                            <span className="text-[#5B5B5B]">
-                                {Math.round(progressPercentage)}%
-                            </span>
-                        </div>
-                        {/* 체크박스 리스트 */}
-                        <div>
-                            {tasks.map((task) => (
-                                <div key={task.id} className="flex items-center mb-2.5">
-                                <input
-                                    type="checkbox"
-                                    checked={task.checked}
-                                    onChange={() => handleCheckboxChange(task.id)}
-                                    className="mr-2"
-                                />
-                                <label className="text-[#4B4B4B]">{task.label}</label>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+
+                    <ManageTasks onTaskUpdate={handleTaskUpdate} />
+                    
                     <hr className="border-t-[2px] border-gray-300 mb-4" />
                     <ManageComments />
                 </div>
