@@ -25,6 +25,7 @@ const ManageStudy = () => {
   const [isCreating, setIsCreating] = useState(false);
   const [newNotice, setNewNotice] = useState('');
   const [isEditingNotice, setIsEditingNotice] = useState(false);
+  const [tasks, setTasks] = useState([]);
 
   const [selectedDate, setSelectedDate] = useState(new Date());  //calander 날짜 선택
   const [scheduleData, setScheduleData] = useState({time: '', location: ''});
@@ -235,6 +236,7 @@ const ManageStudy = () => {
                   scheduleData={ scheduleData || { date: selectedDate.toISOString().split('T')[0] }}
                   setScheduleData={setScheduleData}
                   setIsEditing={setIsEditing}
+                  tasks={tasks}
                   id={id}
                   studyId={studyId}
                   queryClient={queryClient}
@@ -243,6 +245,8 @@ const ManageStudy = () => {
                 <CreateSidebar
                   scheduleData={scheduleData || { date: selectedDate.toISOString().split('T')[0] }}
                   setScheduleData={handleCreateScheduleSuccess}
+                  tasks={tasks}
+                  setTasks={setTasks}
                   setIsCreating={setIsCreating}
                   id={id}
                   queryClient={queryClient}

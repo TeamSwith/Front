@@ -9,7 +9,7 @@ const EditSidebar = ({
     setScheduleData,
     id,
     studyId,
-    tasks, 
+    tasks = [], 
     handleCheckboxChange, 
     setIsEditing }) => {
 
