@@ -83,3 +83,13 @@ export const deleteSchedule = async (id, studyId, updatedSchedule) => {
     return response.data;
   };
 
+  export const fetchGroupUsers = async (id) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/user-group/${id}/users`);
+      return response.data;
+
+    } catch (error) {
+      console.error('API 호출 오류:', error);
+      throw error;
+    }
+  };
