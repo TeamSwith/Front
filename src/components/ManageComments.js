@@ -103,6 +103,10 @@ const ManageComments = ({ studyId, studyDetails, userInfo, selectedDate }) => {
 
   // 댓글 삭제
   const handleDeleteComment = async (commentId) => {
+
+    const confirmDelete = window.confirm('정말 이 댓글을 삭제하시겠습니까?');
+    if (!confirmDelete) return;
+
     try {
       const response = await deleteComment(commentId); // 서버에서 댓글 삭제
 
