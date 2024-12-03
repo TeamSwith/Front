@@ -305,7 +305,6 @@ const ManageStudy = () => {
                   onEditClick={() => setIsEditing(true)}
                   onAddClick={() => setIsCreating(true)}
                   onDeleteClick={handleDeleteSchedule}
-                  studyId={studyId}
                   studyDetails={studyDetails}
                   userInfo={userInfo}
                 />
