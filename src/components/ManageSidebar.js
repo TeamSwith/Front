@@ -17,7 +17,6 @@ const ManageSidebar = ({
     onAddClick,
     onEditClick,
     onDeleteClick,
-    studyId,
     selectedDate,
     studyDetails,
     userInfo,
