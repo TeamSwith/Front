@@ -17,6 +17,10 @@ const ManageSidebar = ({
     onAddClick,
     onEditClick,
     onDeleteClick,
+    studyId,
+    selectedDate,
+    studyDetails,
+    userInfo,
 }) => {
 
     const studyTime = (time) => {
@@ -89,7 +93,7 @@ const ManageSidebar = ({
                     />
 
                     <hr className="border-t-[2px] border-gray-300 mb-4" />
-                    <ManageComments />
+                    <ManageComments studyDetails={studyDetails} userInfo={userInfo} studyId={studyId} selectedDate={selectedDate} />
                 </div>
             ) : (
             <div>
@@ -117,15 +121,26 @@ const ManageSidebar = ({
             // Information 탭 내용
             <div>
                 <h2 className="text-xl text-[#4B4B4B] mb-4">
-                C++의 황제가 될 거야
+                    {studyDetails.groupName}
                 </h2>
                 <hr className="border-t-[2px] border-gray-300 mb-4" />
-                <p className="text-[#4B4B4B] mb-5">스터디 아이디 |</p>
-                <p className="text-[#4B4B4B] mb-5">스터디 기간 |</p>
-                <p className="text-[#4B4B4B] mb-5 cursor-pointer">소통 수단 |</p>
-                <p className="text-[#4B4B4B] mb-4">XXXX.XX.XX에 생성된 스터디</p>
+                <p className="text-[#4B4B4B] mb-5">스터디 아이디 | {studyDetails.groupInsertId}</p>
+                <p className="text-[#4B4B4B] mb-5">스터디 기간 | {studyDetails.period}</p>
+                <p className="text-[#4B4B4B] mb-5 cursor-pointer">소통 수단 | {studyDetails.communication}</p>
+                {/* <p className="text-[#4B4B4B] mb-4">XXXX.XX.XX에 생성된 스터디</p> */}
                 <hr className="border-t-[2px] border-gray-300 mb-4" />
-                <p className="text-lg text-[#4B4B4B] mb-5">스터디원</p>
+                <p className="text-lg text-[#4B4B4B] mb-3">스터디원</p>
+                {userInfo &&
+                 userInfo.map((user) => (
+                    <div key={user.id} className="flex items-center mb-2">
+                    <img
+                        src={user.image || 'https://via.placeholder.com/40'}
+                        alt={user.nickname}
+                        className="w-10 h-10 rounded-full mr-4"
+                    />
+                    <span className="text-[#4B4B4B]">{user.nickname}</span>
+                    </div>
+                ))}
             </div>
         )}
 

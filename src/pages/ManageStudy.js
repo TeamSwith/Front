@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { useLocation } from 'react-router-dom';
-import { fetchSchedule, getMemNum, deleteSchedule } from '../api/Study';
+import { fetchSchedule, getMemNum, deleteSchedule, fetchGroupUsers } from '../api/Study';
 import { fetchNotice, updateNotice } from '../api/Notice';
 import { fetchTasks } from '../api/Task';
+import { getStudyDetails } from '../services/studyService';
 import Calendar from 'react-calendar';
 import "react-calendar/dist/Calendar.css";
 import ManageSidebar from "../components/ManageSidebar";
@@ -28,10 +29,36 @@ const ManageStudy = () => {
   const [isEditingNotice, setIsEditingNotice] = useState(false);
   const [tasks, setTasks] = useState([]);
 
+  const [userInfo, setUserInfo] = useState(null); // 스터디원 정보
+  const [studyDetails, setStudyDetails] = useState(null); // 스터디 세부 정보
   const [selectedDate, setSelectedDate] = useState(new Date());  //calander 날짜 선택
   const [scheduleData, setScheduleData] = useState({time: '', location: ''});
   const { id } = location.state || {};
   const [studyId, setStudyId] = useState(null);
+
+  // 스터디 세부 정보 불러오기
+  useEffect(() => {
+    if (id) {
+      getStudyDetails(id)
+        .then((response) => {
+          console.log('스터디 정보:', response.data);
+          setStudyDetails(response.data); // groupName만 상태에 저장
+        })
+        .catch((error) => { console.error('스터디 정보 가져오기 실패:', error); });
+    }
+  }, []);
+
+  // 스터디원 정보 불러오기
+  useEffect(() => {
+    if (id) {
+      fetchGroupUsers(id)
+        .then((response) => {
+          console.log('스터디원 정보:', response.data);
+          setUserInfo(response.data); // groupName만 상태에 저장
+        })
+        .catch((error) => { console.error('스터디 정보 가져오기 실패:', error); });
+    }
+  }, []);
 
   // 캘린더에서 날짜 선택하면 일정을 불러오는 함수
   const handleDateChange = useCallback(
@@ -158,6 +185,8 @@ const ManageStudy = () => {
   if (isNoticeLoading) return <div>Loading...</div>;
   if (isNoticeError) return <div>공지사항을 불러오는 중 오류가 발생했습니다.</div>;
 
+  if (!studyDetails) { return <div>Loading...</div>; }
+
   return (
     <div className="sm:px-12 md:px-20 lg:px-30 xl:px-[300px] px-[30px] py-[90px] pb-[200px]">
       {/*반응형에서 패딩 손봐야함*/}
@@ -209,7 +238,7 @@ const ManageStudy = () => {
                   {/*인원수에 따라 조정될 예정 */}
                 </span>
                 <span className='text-2xl ml-4 mb-3'>
-                  C++의 황제가 될 거야
+                  {studyDetails.groupName}
                 </span>
             </div>
 
@@ -276,6 +305,9 @@ const ManageStudy = () => {
                   onEditClick={() => setIsEditing(true)}
                   onAddClick={() => setIsCreating(true)}
                   onDeleteClick={handleDeleteSchedule}
+                  studyId={studyId}
+                  studyDetails={studyDetails}
+                  userInfo={userInfo}
                 />
               )}
           </div>
