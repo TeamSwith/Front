@@ -43,6 +43,7 @@ const ManageComments = ({ studyId, studyDetails, userInfo, selectedDate }) => {
             hour: '2-digit',
             minute: '2-digit',
             timeZone: 'Asia/Seoul',
+            hour12: false,
           });
 
           return {
@@ -95,6 +96,7 @@ const ManageComments = ({ studyId, studyDetails, userInfo, selectedDate }) => {
           hour: '2-digit',
           minute: '2-digit',
           timeZone: 'Asia/Seoul',
+          hour12: false,
         }),
       };
 
@@ -159,6 +161,7 @@ const ManageComments = ({ studyId, studyDetails, userInfo, selectedDate }) => {
                     hour: '2-digit',
                     minute: '2-digit',
                     timeZone: 'Asia/Seoul',
+                    hour12: false,
                   }),
                 }
               : comment
