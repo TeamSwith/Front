@@ -3,6 +3,7 @@ import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { useLocation } from 'react-router-dom';
 import { fetchSchedule, getMemNum, deleteSchedule, fetchGroupUsers } from '../api/Study';
 import { fetchNotice, updateNotice } from '../api/Notice';
+import { fetchTasks } from '../api/Task';
 import { getStudyDetails } from '../services/studyService';
 import Calendar from 'react-calendar';
 import "react-calendar/dist/Calendar.css";
@@ -13,7 +14,7 @@ import speakerIcon from "../assets/speaker.png";
 import editIcon from "../assets/edit.png";
 import checkIcon from "../assets/Check.png"
 import personIcon from "../assets/person.png";
-import './ManageStudy.css';
+import '../styles/ManageStudy.css';
 
 const ManageStudy = () => {
   const location = useLocation();
@@ -26,6 +27,7 @@ const ManageStudy = () => {
   const [isCreating, setIsCreating] = useState(false);
   const [newNotice, setNewNotice] = useState('');
   const [isEditingNotice, setIsEditingNotice] = useState(false);
+  const [tasks, setTasks] = useState([]);
 
   const [userInfo, setUserInfo] = useState(null); // 스터디원 정보
   const [studyDetails, setStudyDetails] = useState(null); // 스터디 세부 정보
@@ -64,15 +66,25 @@ const ManageStudy = () => {
       const formattedDate = date.toLocaleDateString('en-CA');
   
       try {
-        // GET API 호출
+        // 스터디 일정 호출
         const response = await fetchSchedule(id, formattedDate);
   
         if (response.success && response.data?.id) {
           setScheduleData(response.data); 
-          setStudyId(response.data.id); // studyId 업데이트
+          const currentStudyId = response.data.id; // 새로운 studyId 설정
+          setStudyId(currentStudyId);
+
+          // 과제 호출
+          const taskResponse = await fetchTasks(id, currentStudyId);
+          setTasks(taskResponse.map(task => ({
+          id: task.id,
+          label: task.content,
+          checked: task.taskStatus === 'COMPLETED', // 상태 기반으로 체크 여부 설정
+        })));
         } else {
           setScheduleData({ date: formattedDate, time: '', location: '' });
           setStudyId(null);
+          setTasks([]);
         }
       } catch (error) {
         console.error('스터디 데이터를 불러오는 중 오류 발생:', error);
@@ -83,7 +95,7 @@ const ManageStudy = () => {
 
   useEffect(() => {
     handleDateChange(selectedDate); // selectedDate가 변경될 때 데이터 업데이트
-  }, [selectedDate]);
+  }, []);
 
   // 날짜를 선택할 경우 실행되는 함수
   const onDateChange = (date) => {
@@ -169,27 +181,6 @@ const ManageStudy = () => {
       );
     }
   }, [noticeData, marqueeTextRef, marqueeContainerRef]);
-
-
-  // 과제 관련 상태 관리 (추후 api 호출)
-  const [tasks, setTasks] = useState([
-    { id: 1, label: '과제 1', checked: false },
-    { id: 2, label: '과제 2', checked: false },
-    { id: 3, label: '과제 3', checked: false },
-    { id: 4, label: '과제 4', checked: false },
-  ]);
-  // 체크박스 상태 변경 함수
-  const handleCheckboxChange = (id) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === id ? { ...task, checked: !task.checked } : task
-      )
-    );
-  };
-  // 체크된 항목의 비율을 계산
-  const checkedCount = tasks.filter((task) => task.checked).length;
-  const totalTasks = tasks.length;
-  const progressPercentage = (checkedCount / totalTasks) * 100;
 
   if (isNoticeLoading) return <div>Loading...</div>;
   if (isNoticeError) return <div>공지사항을 불러오는 중 오류가 발생했습니다.</div>;
@@ -284,9 +275,9 @@ const ManageStudy = () => {
                 <EditSidebar 
                   scheduleData={ scheduleData || { date: selectedDate.toISOString().split('T')[0] }}
                   setScheduleData={setScheduleData}
-                  tasks={tasks}
-                  handleCheckboxChange={handleCheckboxChange}
                   setIsEditing={setIsEditing}
+                  tasks={tasks}
+                  setTasks={setTasks}
                   id={id}
                   studyId={studyId}
                   queryClient={queryClient}
@@ -296,7 +287,7 @@ const ManageStudy = () => {
                   scheduleData={scheduleData || { date: selectedDate.toISOString().split('T')[0] }}
                   setScheduleData={handleCreateScheduleSuccess}
                   tasks={tasks}
-                  handleCheckboxChange={handleCheckboxChange}
+                  setTasks={setTasks}
                   setIsCreating={setIsCreating}
                   id={id}
                   queryClient={queryClient}
@@ -305,15 +296,15 @@ const ManageStudy = () => {
                 <ManageSidebar
                   activeTab={activeTab}
                   setActiveTab={setActiveTab}
-                  progressPercentage={progressPercentage}
+                  id={id}
+                  studyId={studyId}
                   tasks={tasks}
-                  handleCheckboxChange={handleCheckboxChange}
+                  setTasks={setTasks}
                   selectedDate={selectedDate}
                   scheduleData={scheduleData || { date: '', time: '', location: '' }}
                   onEditClick={() => setIsEditing(true)}
                   onAddClick={() => setIsCreating(true)}
                   onDeleteClick={handleDeleteSchedule}
-                  studyId={studyId}
                   studyDetails={studyDetails}
                   userInfo={userInfo}
                 />
