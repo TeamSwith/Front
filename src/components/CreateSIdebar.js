@@ -176,7 +176,7 @@ const handleSaveTask = async (task) => {
                   />
                   <input
                     type="text"
-                    value={task.content} //이 부분 content로 통일
+                    value={task.label}
                     onChange={(e) => handleTaskChange(task.id, e.target.value)}
                     className="flex-1 p-2 border border-gray-300 rounded opacity-50"
                     placeholder="과제 내용을 입력하세요"
