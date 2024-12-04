@@ -44,17 +44,17 @@ const CreateStudy = () => {
   // 입력되지 않았을때 생성이 안되고 alert로 모든 정보를 입력해야한다고 띄워줘야함. (추후 수정)
   const handleUpdateStudyDetails = async () => {
 
-    if (!studyName || !studyTopic || !studyPeriod || !communicationLink) {
+    if (!studyName || !studyTopic || !studyPeriod.trim() || participants <= 0 || !communicationLink) {
       alert('모든 스터디 정보를 입력해주세요.');
       return; // 필수 입력 항목이 없으면 함수 종료
     }
 
     const studyData = {
-      groupName: studyName || "",
-      maxNum: participants || 0,
-      subject: studyTopic || "",
-      period: studyPeriod || 0, 
-      communication: communicationLink || "",
+      groupName: studyName,
+      maxNum: participants,
+      subject: studyTopic,
+      period: studyPeriod, 
+      communication: communicationLink,
     };
 
     try {
@@ -72,7 +72,7 @@ const CreateStudy = () => {
       navigate('/study-creation-complete');
     } catch (error) {
       console.error('스터디 업데이트 실패:', error);
-      alert('스터디 정보를 업데이트하는 데 실패했습니다. 다시 시도해주세요.');
+      alert('모든 스터디 정보를 입력해주세요.');
     }
   };
 
