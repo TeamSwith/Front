@@ -185,7 +185,7 @@ const EditSidebar = ({
                       placeholder="새 과제 입력"
                     />
                   ) : (
-                    <label className="flex-1 text-[#4B4B4B]">{task.content}</label>
+                    <label className="flex-1 text-[#4B4B4B]">{task.content || task.label}</label>
                   )}
                   <img
                     src={deleteIcon}

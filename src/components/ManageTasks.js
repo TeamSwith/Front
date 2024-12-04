@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { fetchTasks, updateTaskStatus } from "../api/Task";
 
 const ManageTasks = ({ 
@@ -11,41 +11,33 @@ const ManageTasks = ({
     const [progressPercentage, setProgressPercentage] = useState(0);
 
       // loadTasks 함수 정의
-  const loadTasks = async () => {
-    try {
-      // 이미 tasks가 있을 경우에는 그대로 사용
-      if (Array.isArray(tasks) && tasks.length > 0) {
-        const updatedTasks = tasks.map((task) => ({
-          id: task.id,
-          content: task.content,
-          checked: task.checked || task.taskStatus === "COMPLETED",
-        }));
-        setTasks(updatedTasks); // 부모 상태 직접 업데이트
-        updateProgress(updatedTasks);
-      } else {
-        const response = await fetchTasks(id, studyId);
-        if (response.success && response.data.length > 0) {
-          const tasksData = response.data.map((task) => ({
-            id: task.id,
-            content: task.content,
-            checked: task.taskStatus === "COMPLETED",
-          }));
-          setTasks(tasksData); // 부모 상태 업데이트
-          updateProgress(tasksData);
-        } else {
-          setTasks([]); // tasks가 비어 있는 경우 초기화
+      const loadTasks = useCallback(async () => {
+        try {
+          // 새로운 날짜가 선택되면 과제를 새로 불러옴
+          const response = await fetchTasks(id, studyId);
+    
+          if (response.success && response.data.length > 0) {
+            const tasksData = response.data.map((task) => ({
+              id: task.id,
+              content: task.content || task.label,
+              checked: task.taskStatus === "COMPLETED",
+            }));
+            setTasks(tasksData); // 부모 상태 업데이트
+            updateProgress(tasksData); // 프로그레스바 업데이트
+          } else {
+            setTasks([]); // 과제가 없으면 비워주기
+            updateProgress([]); // 프로그레스바도 초기화
+          }
+        } catch (error) {
+          console.error("Failed to fetch tasks:", error);
+          setTasks([]); // 에러 발생 시 초기화
           updateProgress([]); // 프로그레스바도 초기화
         }
-      }
-    } catch (error) {
-      console.error("Failed to fetch tasks:", error);
-      setTasks([]); // 에러 발생 시 초기화
-    }
-  };
+      }, [id, studyId, setTasks]);
 
   useEffect(() => {
     loadTasks();
-  }, [tasks, id, studyId, selectedDate]);
+  }, [id, studyId, selectedDate, loadTasks]);
 
     // 체크 상태 업데이트
     const handleCheckboxChange = async (taskId, checked) => {
@@ -97,7 +89,7 @@ const ManageTasks = ({
               onChange={(e) => handleCheckboxChange(task.id, e.target.checked)}
               className="mr-2"
             />
-            <label className="text-[#4B4B4B]">{task.content}</label> {/* 텍스트 렌더링 */}
+            <label className="text-[#4B4B4B]">{task.content || task.label}</label> {/* 텍스트 렌더링 */}
           </div>
         ))}
       </div>
