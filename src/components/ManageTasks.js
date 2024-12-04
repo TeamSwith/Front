@@ -17,7 +17,7 @@ const ManageTasks = ({
       if (Array.isArray(tasks) && tasks.length > 0) {
         const updatedTasks = tasks.map((task) => ({
           id: task.id,
-          content: task.content,
+          content: task.content || task.label,
           checked: task.checked || task.taskStatus === "COMPLETED",
         }));
         setTasks(updatedTasks); // 부모 상태 직접 업데이트
@@ -45,7 +45,7 @@ const ManageTasks = ({
 
   useEffect(() => {
     loadTasks();
-  }, [tasks, id, studyId, selectedDate]);
+  }, [id, studyId, selectedDate]);
 
     // 체크 상태 업데이트
     const handleCheckboxChange = async (taskId, checked) => {
