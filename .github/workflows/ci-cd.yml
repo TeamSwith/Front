@@ -32,11 +32,7 @@ jobs:
           echo "${{ secrets.EC2_PEM_KEY }}" > ~/.ssh/ec2_key.pem
           chmod 600 ~/.ssh/ec2_key.pem
 
-      - name: Copy docker-compose.yml to EC2
-        run: |
-          scp -i ~/.ssh/ec2_key.pem -o StrictHostKeyChecking=no ./docker-compose.yml ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/
-      
-
+    
       - name: Deploy to EC2
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/ec2_key.pem ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
