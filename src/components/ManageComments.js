@@ -10,9 +10,6 @@ const ManageComments = ({ studyId, studyDetails, userInfo, selectedDate }) => {
   // 수정 상태 관리
   const [editingCommentId, setEditingCommentId] = useState(null); 
   const [editingCommentContent, setEditingCommentContent] = useState(''); 
-  // console.log('studyId :', studyId);
-  // console.log('studyDetails :', studyDetails);
-  // console.log('userInfo :', userInfo);
 
   // 한국 시간으로 변환하는 함수 (Intl.DateTimeFormat 사용)
   const convertToKST = (utcDate) => {
@@ -51,6 +48,7 @@ const ManageComments = ({ studyId, studyDetails, userInfo, selectedDate }) => {
       try {
         const response = await fetchComments(studyId); // 댓글 목록을 받아옴
         const fetchedComments = response.data.comments.map((comment) => {
+
           // userInfo에서 userId와 일치하는 정보 찾기
           const user = userInfo.find((user) => user.id === comment.userId); 
           // UTC 시간 -> 한국 시간으로 변환
@@ -147,7 +145,7 @@ const ManageComments = ({ studyId, studyDetails, userInfo, selectedDate }) => {
 
   // 댓글 수정 저장
   const handleSaveEdit = async () => {
-    if (editingCommentContent.trim() === '') { alert('댓글 내용을 입력하세요.'); return; }
+    if (editingCommentContent.trim() === '') { alert('댓글을 입력하세요.'); return; }
 
     try {
       const response = await updateComment( editingCommentId, editingCommentContent );
