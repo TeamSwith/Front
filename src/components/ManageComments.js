@@ -14,22 +14,6 @@ const ManageComments = ({ studyId, studyDetails, userInfo, selectedDate }) => {
   // console.log('studyDetails :', studyDetails);
   // console.log('userInfo :', userInfo);
 
-
-  // 한국 시간으로 변환하는 함수
-  const formatDateToKST = (date) => {
-    const options = {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false,
-      timeZone: 'Asia/Seoul', // 한국 시간대로 설정
-    };
-    return new Date(date).toLocaleString('ko-KR', options);
-  };
-
   // 사용자 ID 조회
   useEffect(() => {
     const loadUserId = async () => {
@@ -51,13 +35,23 @@ const ManageComments = ({ studyId, studyDetails, userInfo, selectedDate }) => {
         const fetchedComments = response.data.comments.map((comment) => {
           // userInfo에서 userId와 일치하는 정보 찾기
           const user = userInfo.find((user) => user.id === comment.userId); 
+
+          const formattedDate = new Date(comment.createdAt).toLocaleString('ko-KR', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZone: 'Asia/Seoul',
+          });
+
           return {
             id: comment.commentId,
             userId: comment.userId, // 댓글 작성자 ID
             nickname: user ? user.nickname : '알 수 없음', // 작성자 닉네임
             profileImage: user ? user.image : '', // 작성자 프로필 이미지
             content: comment.content,
-            date: formatDateToKST(comment.createdAt),
+            date: formattedDate,
           };
         });
 
@@ -94,7 +88,14 @@ const ManageComments = ({ studyId, studyDetails, userInfo, selectedDate }) => {
         nickname: currentUser ? currentUser.nickname : '알 수 없음', // 현재 로그인한 사용자 nickname
         profileImage: currentUser ? currentUser.image : '', // 현재 로그인한 사용자 이미지
         content: response.data.content,
-        date: formatDateToKST(response.data.createdAt),
+        date: new Date(response.data.createdAt).toLocaleString('ko-KR', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          timeZone: 'Asia/Seoul',
+        }),
       };
 
       setComments([newCommentData, ...comments]); // 새로운 댓글을 기존 상태 앞에 추가
@@ -151,7 +152,14 @@ const ManageComments = ({ studyId, studyDetails, userInfo, selectedDate }) => {
               ? {
                   ...comment,
                   content: editingCommentContent,
-                  date: formatDateToKST(response.data.createdAt),
+                  date: new Date(response.data.createdAt).toLocaleString('ko-KR', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    timeZone: 'Asia/Seoul',
+                  }),
                 }
               : comment
           )
