@@ -14,18 +14,22 @@ const ManageComments = ({ studyId, studyDetails, userInfo, selectedDate }) => {
   // console.log('studyDetails :', studyDetails);
   // console.log('userInfo :', userInfo);
 
-  // 한국 시간으로 변환하는 함수
+  // 한국 시간으로 변환하는 함수 (Intl.DateTimeFormat 사용)
   const convertToKST = (utcDate) => {
-    const koreaTime = new Date(new Date(utcDate).getTime() + (9 * 60 * 60 * 1000)); // 9시간 더함
-    return koreaTime.toLocaleString('ko-KR', {
+    const koreaTime = new Date(utcDate).getTime() + (9 * 60 * 60 * 1000); // 9시간 더함
+
+    // Intl.DateTimeFormat 사용하여 한국 시간으로 포맷
+    const dateFormatter = new Intl.DateTimeFormat('ko-KR', {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
       hour: '2-digit',
       minute: '2-digit',
-      second: '2-digit',
-      hour12: false, // 24시간제로 표시
+      hour12: false, // 24시간제
     });
+
+    // 한국 시간으로 변환된 날짜를 반환
+    return dateFormatter.format(koreaTime);
   };
 
   // 사용자 ID 조회
