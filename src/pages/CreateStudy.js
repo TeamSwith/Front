@@ -43,6 +43,12 @@ const CreateStudy = () => {
 
   // 입력되지 않았을때 생성이 안되고 alert로 모든 정보를 입력해야한다고 띄워줘야함. (추후 수정)
   const handleUpdateStudyDetails = async () => {
+
+    if (!studyName || !studyTopic || !studyPeriod || !communicationLink) {
+      alert('모든 스터디 정보를 입력해주세요.');
+      return; // 필수 입력 항목이 없으면 함수 종료
+    }
+
     const studyData = {
       groupName: studyName || "",
       maxNum: participants || 0,
@@ -66,16 +72,9 @@ const CreateStudy = () => {
       navigate('/study-creation-complete');
     } catch (error) {
       console.error('스터디 업데이트 실패:', error);
-      alert('스터디 정보를 업데이트하는 데 실패했습니다.'); // 모든 정보 입력하라는 문장으로 바꿔주면 될 듯
+      alert('스터디 정보를 업데이트하는 데 실패했습니다. 다시 시도해주세요.');
     }
   };
-
-  // // 취소 버튼 삭제할 예정 (api가 없음)
-  // const handleCancel = () => {
-  //   localStorage.removeItem('groupInsertId');
-  //   localStorage.removeItem('groupPw');
-  //   navigate('/');
-  // };
 
   return (
     <div className="max-w-5.5xl mx-auto px-0 pt-24 space-y-2 mb-8">
@@ -191,9 +190,6 @@ const CreateStudy = () => {
             <button type="button" onClick={handleUpdateStudyDetails} className="w-full sm:w-40 h-12 rounded-xl bg-[#91DDAB] text-white rounded-lg shadow-lg hover:bg-[#7BAE8D] focus:outline-none transition duration-300 text-sm sm:text-base">
               생성 하기
             </button>
-            {/* <button type="button" onClick={handleCancel} className="w-full sm:w-40 h-12 rounded-xl bg-[#EFF9F2] text-[#91DDAB] rounded-lg shadow-lg hover:bg-gray-200 focus:outline-none transition duration-300 text-sm sm:text-base">
-              취소
-            </button> */}
           </div>
         </form>
       </div>

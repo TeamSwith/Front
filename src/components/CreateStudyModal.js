@@ -52,7 +52,7 @@ const CreateStudyModal = ({ isOpen, onClose, onCreate }) => {
 
       } catch (error) {
         console.error('스터디 생성 실패:', error);
-        alert('스터디 생성에 실패했습니다.');
+        alert('존재하는 스터디 아이디입니다.'); // (수정) 스터디 생성에 실패했습니다.
       }
     } else {
       alert('비밀번호가 일치하지 않습니다.');
