@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { fetchTasks, updateTaskStatus } from "../api/Task";
 
 const ManageTasks = ({ 
@@ -11,7 +11,7 @@ const ManageTasks = ({
     const [progressPercentage, setProgressPercentage] = useState(0);
 
       // loadTasks 함수 정의
-      const loadTasks = async () => {
+      const loadTasks = useCallback(async () => {
         try {
           // 새로운 날짜가 선택되면 과제를 새로 불러옴
           const response = await fetchTasks(id, studyId);
@@ -33,11 +33,11 @@ const ManageTasks = ({
           setTasks([]); // 에러 발생 시 초기화
           updateProgress([]); // 프로그레스바도 초기화
         }
-      };
+      }, [id, studyId, setTasks]);
 
   useEffect(() => {
     loadTasks();
-  }, [id, studyId, selectedDate]);
+  }, [id, studyId, selectedDate, loadTasks]);
 
     // 체크 상태 업데이트
     const handleCheckboxChange = async (taskId, checked) => {
