@@ -7,5 +7,8 @@ RUN npm run build
 
 FROM nginx 
 EXPOSE 3000
+
+ENV CHOKIDAR_USEPOLLING=true
+
 COPY ./default.conf /etc/nginx/conf.d/default.conf 
 COPY --from=builder usr/src/app/build /usr/share/nginx/html

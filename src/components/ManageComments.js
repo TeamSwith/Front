@@ -35,19 +35,22 @@ const ManageComments = ({ studyId, studyDetails, userInfo, selectedDate }) => {
         const fetchedComments = response.data.comments.map((comment) => {
           // userInfo에서 userId와 일치하는 정보 찾기
           const user = userInfo.find((user) => user.id === comment.userId); 
+
+          const formattedDate = new Date(comment.createdAt).toLocaleString('ko-KR', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+          });
+
           return {
             id: comment.commentId,
             userId: comment.userId, // 댓글 작성자 ID
             nickname: user ? user.nickname : '알 수 없음', // 작성자 닉네임
             profileImage: user ? user.image : '', // 작성자 프로필 이미지
             content: comment.content,
-            date: comment.date || new Date().toLocaleString('ko-KR', {
-              year: 'numeric',
-              month: '2-digit',
-              day: '2-digit',
-              hour: '2-digit',
-              minute: '2-digit',
-            }),
+            date: formattedDate,
           };
         });
 
@@ -63,7 +66,7 @@ const ManageComments = ({ studyId, studyDetails, userInfo, selectedDate }) => {
       }
     };
     loadComments();
-  }, [studyId, selectedDate]);
+  }, [studyId, selectedDate, userInfo]);
 
   // 댓글 추가
   const handleAddComment = async () => {
@@ -84,7 +87,7 @@ const ManageComments = ({ studyId, studyDetails, userInfo, selectedDate }) => {
         nickname: currentUser ? currentUser.nickname : '알 수 없음', // 현재 로그인한 사용자 nickname
         profileImage: currentUser ? currentUser.image : '', // 현재 로그인한 사용자 이미지
         content: response.data.content,
-        date: new Date().toLocaleString('ko-KR', {
+        date: new Date(response.data.createdAt).toLocaleString('ko-KR', {
           year: 'numeric',
           month: '2-digit',
           day: '2-digit',
@@ -103,7 +106,6 @@ const ManageComments = ({ studyId, studyDetails, userInfo, selectedDate }) => {
 
   // 댓글 삭제
   const handleDeleteComment = async (commentId) => {
-
     const confirmDelete = window.confirm('정말 이 댓글을 삭제하시겠습니까?');
     if (!confirmDelete) return;
 
@@ -148,7 +150,7 @@ const ManageComments = ({ studyId, studyDetails, userInfo, selectedDate }) => {
               ? {
                   ...comment,
                   content: editingCommentContent,
-                  date: new Date().toLocaleString('ko-KR', {
+                  date: new Date(response.data.createdAt).toLocaleString('ko-KR', {
                     year: 'numeric',
                     month: '2-digit',
                     day: '2-digit',
@@ -243,7 +245,7 @@ const ManageComments = ({ studyId, studyDetails, userInfo, selectedDate }) => {
               )}
 
               {/* 수정 및 삭제 버튼 */}
-              {!editingCommentId && (
+              {!editingCommentId && comment.userId === userId && (
                 <div className="flex justify-end space-x-1 mt-2">
                   <button
                     onClick={() => handleEditComment(comment)} // 수정 버튼 클릭 시 수정 시작
