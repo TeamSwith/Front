@@ -14,6 +14,20 @@ const ManageComments = ({ studyId, studyDetails, userInfo, selectedDate }) => {
   // console.log('studyDetails :', studyDetails);
   // console.log('userInfo :', userInfo);
 
+  // 한국 시간으로 변환하는 함수
+  const convertToKST = (utcDate) => {
+    const koreaTime = new Date(new Date(utcDate).getTime() + (9 * 60 * 60 * 1000)); // 9시간 더함
+    return koreaTime.toLocaleString('ko-KR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false, // 24시간제로 표시
+    });
+  };
+
   // 사용자 ID 조회
   useEffect(() => {
     const loadUserId = async () => {
@@ -35,16 +49,8 @@ const ManageComments = ({ studyId, studyDetails, userInfo, selectedDate }) => {
         const fetchedComments = response.data.comments.map((comment) => {
           // userInfo에서 userId와 일치하는 정보 찾기
           const user = userInfo.find((user) => user.id === comment.userId); 
-
-          const formattedDate = new Date(comment.createdAt).toLocaleString('ko-KR', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            timeZone: 'Asia/Seoul',
-            hour12: false,
-          });
+          // UTC 시간 -> 한국 시간으로 변환
+          const formattedDate = convertToKST(comment.createdAt);
 
           return {
             id: comment.commentId,
@@ -83,21 +89,17 @@ const ManageComments = ({ studyId, studyDetails, userInfo, selectedDate }) => {
       );
       // 로그인한 사용자 정보 가져오기 (userInfo에서 userId와 일치하는 정보 찾기)
       const currentUser = userInfo.find((user) => user.id === userId);
+
+      // UTC 시간 -> 한국 시간으로 변환
+      const formattedDate = convertToKST(response.data.createdAt);
+
       const newCommentData = {
         id: response.data.commentId,
         userId: userId,
         nickname: currentUser ? currentUser.nickname : '알 수 없음', // 현재 로그인한 사용자 nickname
         profileImage: currentUser ? currentUser.image : '', // 현재 로그인한 사용자 이미지
         content: response.data.content,
-        date: new Date(response.data.createdAt).toLocaleString('ko-KR', {
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-          timeZone: 'Asia/Seoul',
-          hour12: false,
-        }),
+        date: formattedDate,
       };
 
       setComments([newCommentData, ...comments]); // 새로운 댓글을 기존 상태 앞에 추가
@@ -154,15 +156,7 @@ const ManageComments = ({ studyId, studyDetails, userInfo, selectedDate }) => {
               ? {
                   ...comment,
                   content: editingCommentContent,
-                  date: new Date(response.data.createdAt).toLocaleString('ko-KR', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    timeZone: 'Asia/Seoul',
-                    hour12: false,
-                  }),
+                  date: convertToKST(response.data.createdAt),
                 }
               : comment
           )
