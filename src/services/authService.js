@@ -50,9 +50,9 @@ export const getUserInfo = async (newAccessToken = null) => {
       // 데이터 유효성 검증
       if (email && nickname && id) {
         // 로컬 스토리지에 저장
-        localStorage.setItem('email', email);
+        // localStorage.setItem('email', email);
         localStorage.setItem('nickname', nickname);
-        localStorage.setItem('userId', id);
+        // localStorage.setItem('userId', id);
         localStorage.setItem('userImage', image);
         console.log('User data fetched and saved:', { email, nickname, id });
         return userData;  // 사용자 정보 반환
@@ -83,9 +83,9 @@ export const getUserInfo = async (newAccessToken = null) => {
         const { email, nickname, id, image } = userData;
 
         if (email && nickname && id) {
-          localStorage.setItem('email', email);
+          // localStorage.setItem('email', email);
           localStorage.setItem('nickname', nickname);
-          localStorage.setItem('userId', id);
+          // localStorage.setItem('userId', id);
           localStorage.setItem('userImage', image);
           console.log('User data fetched and saved after refresh:', { email, nickname, id });
         } else {

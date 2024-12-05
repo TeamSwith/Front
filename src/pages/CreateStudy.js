@@ -62,11 +62,11 @@ const CreateStudy = () => {
       const response = await updateStudyDetails(storedId, studyData);
 
       // 응답 데이터로 로컬 스토리지 업데이트 (groupInsertedId는 업데이트 하지 않았음)
-      localStorage.setItem('groupName', response.data.groupName);
-      localStorage.setItem('maxNum', response.data.maxNum);
-      localStorage.setItem('subject', response.data.subject);
-      localStorage.setItem('period', response.data.period);
-      localStorage.setItem('communication', response.data.communication);
+      // localStorage.setItem('groupName', response.data.groupName);
+      // localStorage.setItem('maxNum', response.data.maxNum);
+      // localStorage.setItem('subject', response.data.subject);
+      // localStorage.setItem('period', response.data.period);
+      // localStorage.setItem('communication', response.data.communication);
 
       // 생성 완료 페이지로 이동
       navigate('/study-creation-complete');

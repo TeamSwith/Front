@@ -80,7 +80,7 @@ export const deleteSchedule = async (id, studyId, updatedSchedule) => {
     const response = await axios.get(`${API_BASE_URL}/group/${id}/getMem`, {
       headers: getAuthHeader(), // Authorization 헤더 추가
     });
-    return response.data;
+    return response.data.data;
   };
 
   export const fetchGroupUsers = async (id) => {

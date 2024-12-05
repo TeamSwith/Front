@@ -4,6 +4,7 @@ import logo from '../assets/swithLogo.png';
 import accountIcon from '../assets/account_circle.png'; 
 import bellIcon from '../assets/bell.png'; 
 import MyPageModal from '../components/MyPageModal';
+import AlarmModal from '../components/AlarmModal';
 
 const Header = ({ 
   isLoggedIn,
@@ -17,6 +18,8 @@ const Header = ({
 }) => {
   const navigate = useNavigate();
 
+  const [isAlarmModalOpen, setIsAlarmModalOpen] = useState(false); // 알람 모달 상태
+
   // 메인으로 이동해서 스터디 생성 모달, 로그인 안됐으면 로그인 모달
   const handleCreateStudyClick = () => {
       if (isLoggedIn) { navigate('/?action=study-create'); } 
@@ -27,6 +30,16 @@ const Header = ({
   const handleManageStudyClick = () => {
     if (isLoggedIn) { navigate('/?action=study-manage'); } 
     else { openLoginModal(); }
+  };
+
+  // 알람 모달 열기
+  const openAlarmModal = () => {
+    setIsAlarmModalOpen(true);
+  };
+
+  // 알람 모달 닫기
+  const closeAlarmModal = () => {
+    setIsAlarmModalOpen(false);
   };
 
   return (
@@ -59,11 +72,12 @@ const Header = ({
         </button>
       )}
 
-      <button className="flex items-center"> {/* 오른쪽: 알람 */}
+      <button onClick={openAlarmModal} className="flex items-center"> {/* 오른쪽: 알람 */}
         <img src={bellIcon} alt="알람" className="w-6 h-6" />
       </button>
         
       <MyPageModal isOpen={isMyPageModalOpen} onClose={closeMyPageModal} onLogout={() => setIsLoggedIn(false)} />
+      <AlarmModal isOpen={isAlarmModalOpen} onClose={closeAlarmModal} isLoggedIn={isLoggedIn} />
       </div>
       </header>
   );

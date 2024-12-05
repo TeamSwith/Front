@@ -50,7 +50,7 @@ const App = () => {
       getUserInfo()
         .then((userData) => {
           setUserEmail(userData.email); // 이메일 상태 업데이트
-          localStorage.setItem('email', userData.email); // 로컬 스토리지에 저장
+          // localStorage.setItem('email', userData.email); // 로컬 스토리지에 저장
         })
         .catch(async (error) => {
           console.error('사용자 정보 가져오기 실패:', error)
@@ -68,8 +68,8 @@ const App = () => {
     setUserEmail(null);
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('email');
+    // localStorage.removeItem('userId');
+    // localStorage.removeItem('email');
     localStorage.removeItem('nickname');
     localStorage.removeItem('userImage')
   };
