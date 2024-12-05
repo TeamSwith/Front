@@ -5,6 +5,7 @@ import accountIcon from '../assets/account_circle.png';
 import bellIcon from '../assets/bell.png'; 
 import MyPageModal from '../components/MyPageModal';
 import AlarmModal from '../components/AlarmModal';
+import alarmSSE from '../services/useAlarmSSE';
 
 const Header = ({ 
   isLoggedIn,
@@ -18,7 +19,31 @@ const Header = ({
 }) => {
   const navigate = useNavigate();
 
+
   const [isAlarmModalOpen, setIsAlarmModalOpen] = useState(false); // 알람 모달 상태
+  const [alerts, setAlerts] = useState([]); // SSE 관련 알람 상태
+
+  // 알람이 새로 들어오면 alerts 상태를 업데이트하는 함수
+  const handleNewAlert = (newAlert) => {
+    console.log('새로운 알람:', newAlert);  // 콘솔에 알림 출력
+    setAlerts((prevAlerts) => [...prevAlerts, newAlert]);
+  };
+
+  // 로그인된 상태일 때만 알람 SSE 연결
+  useEffect(() => {
+    if (!isLoggedIn) return;
+
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      const eventSource = alarmSSE(token, handleNewAlert);
+
+      // 컴포넌트 언마운트 시 eventSource 닫기
+      return () => {
+        eventSource.close();
+      };
+    }
+  }, [isLoggedIn]);
+
 
   // 메인으로 이동해서 스터디 생성 모달, 로그인 안됐으면 로그인 모달
   const handleCreateStudyClick = () => {
@@ -77,7 +102,7 @@ const Header = ({
       </button>
         
       <MyPageModal isOpen={isMyPageModalOpen} onClose={closeMyPageModal} onLogout={() => setIsLoggedIn(false)} />
-      <AlarmModal isOpen={isAlarmModalOpen} onClose={closeAlarmModal} isLoggedIn={isLoggedIn} />
+      <AlarmModal isOpen={isAlarmModalOpen} onClose={closeAlarmModal} isLoggedIn={isLoggedIn} alerts={alerts} />
       </div>
       </header>
   );
