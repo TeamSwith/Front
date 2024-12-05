@@ -90,3 +90,19 @@
 .react-calendar__tile:hover {
     background-color: #12921E; /* 호버 시 색상 */
 }
+
+/* 날짜에 스터디 일정이 있을 경우 작은 동그라미 표시 */
+.react-calendar__tile.study-scheduled {
+  position: relative; /* 날짜에 상대 위치 설정 */
+}
+
+.react-calendar__tile.study-scheduled::after {
+  content: '';  /* 동그라미 추가 */
+  position: absolute;
+  top: 5px;  /* 오른쪽 상단 위치 */
+  right: 5px;  /* 오른쪽 상단 위치 */
+  width: 8px;  /* 동그라미 크기 */
+  height: 8px;  /* 동그라미 크기 */
+  border-radius: 50%;  /* 동그라미 모양 */
+  background-color: #12921E;  /* 동그라미 색상 */
+}

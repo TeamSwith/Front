@@ -46,10 +46,6 @@ const ManageSidebar = ({
         return `${year}년 ${month}월 ${day}일`;
       };
 
-    const handleTaskUpdate = (updatedTasks) => {
-        setTasks(updatedTasks);
-      };
-
      // 체크 상태 업데이트
      const handleCheckboxChange = async (taskId, checked) => {
         try {
