@@ -95,13 +95,13 @@ const MainPage = ({ isLoggedIn, setIsLoggedIn, userEmail, handleLogout }) => {
       console.log('이미 가입되어 있음, 관리 페이지로 이동');
 
       // redirect URL 추출 (redirect: 뒤에 오는 부분을 URL로 변환)
-      const redirectUrl = response.data.data.redirect.replace("redirect:", "").trim(); // "redirect:" 부분 제거
+      // const redirectUrl = response.data.data.redirect.replace("redirect:", "").trim(); // "redirect:" 부분 제거
       //const fullRedirectUrl = `${API_BASE_URL}/group${redirectUrl}`;
       const groupId = response.data.data.groupId;
       setGroupId(groupId); // groupId 저장
       console.log('groupId:', groupId);
-      console.log('redirectUrl:', redirectUrl);
-      //console.log('리디렉션 URL:', fullRedirectUrl);
+      // console.log('redirectUrl:', redirectUrl);
+      // console.log('리디렉션 URL:', fullRedirectUrl);
       navigate('/manage-study', { state: { id: groupId } });  // 해당 URL로 이동
 
     } else if (response.data.code === 200 && response.data.data.message === "가입 전") {
@@ -111,9 +111,9 @@ const MainPage = ({ isLoggedIn, setIsLoggedIn, userEmail, handleLogout }) => {
       setIsJoinConfirmationModalOpen(true);
       console.log('groupId:', groupId);
 
-    } else if (response.data.code === 404 && response.data.data.message === "정원을 초과했습니다." ) {
-      console.log('정원 초과:', response.data.data.message);
-      alert(response.data.data.message);
+    } else if (response.data.status === 404 && response.data.message === "인원이 가득 찼습니다." ) {
+      console.log('정원 초과:', response.data.message);
+      alert(response.data.message);
 
     } else {
       console.log('오류 발생');
@@ -131,12 +131,12 @@ const MainPage = ({ isLoggedIn, setIsLoggedIn, userEmail, handleLogout }) => {
       console.log(joinResponse);
 
       if (joinResponse.data.success) {
-        console.log('스터디 가입 성공:', joinResponse.data.data.message);
+        // console.log('스터디 가입 성공:', joinResponse.data.data.message);
         //const redirectUrl = joinResponse.data.data.message.split(':')[1].trim();  // 'redirect:URL' 형식에서 URL을 추출
         navigate('/manage-study', { state: { id: groupId } });
       } else {
-        console.log('스터디 가입 실패:', joinResponse.data.data.message);
-        alert(joinResponse.data.data.message || '존재하지 않는 스터디입니다');
+        // console.log('스터디 가입 실패:', joinResponse.data.data.message);
+        alert('존재하지 않는 스터디입니다');
       }
     } catch (error) {
       console.error('스터디 가입 오류:', error);

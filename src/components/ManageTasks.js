@@ -40,13 +40,6 @@ const ManageTasks = ({
     loadTasks();
   }, [id, studyId, selectedDate, loadTasks]);
 
-  useEffect(() => {
-    if (tasks.length === 0) {
-      loadTasks();
-    }
-  }, [id, studyId, selectedDate, tasks.length, loadTasks]);
-  // 배열 비어있을 때만 새로 불러오는
-
     // 체크 상태 업데이트
     const handleCheckboxChange = async (taskId, checked) => {
         try {

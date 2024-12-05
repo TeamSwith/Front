@@ -165,7 +165,7 @@ const ManageStudy = () => {
 
   const handleEditNoticeClick = () => {
     setIsEditingNotice(true);
-    setNewNotice(noticeData?.data || '');
+    setNewNotice(noticeData?.data?.notice || '');
   };
 
   const handleSaveNotice = () => {
@@ -207,7 +207,7 @@ const ManageStudy = () => {
                 className={`marquee-text ${isOverflowing ? 'animate-marquee' : ''}`}
                 ref={marqueeTextRef}
               >
-                {noticeData?.data || '공지사항이 없습니다.'}
+                {noticeData?.data?.notice || '공지사항이 없습니다.'}
               </span>
             )}
           </div>
@@ -234,7 +234,7 @@ const ManageStudy = () => {
             <div className="flex items-center max-w-md w-full pt-3">
               <img src={personIcon} alt="인원수" className="w-7 h-7 ml-3 mb-4" /> 
                 <span className='text-[#5B5B5B] mb-3'>
-                {MemNumData?.data !== undefined ? MemNumData.data : ' '} 
+                {MemNumData?.mem !== undefined ? MemNumData.mem : ' '} 
                   {/*인원수에 따라 조정될 예정 */}
                 </span>
                 <span className='text-2xl ml-4 mb-3'>
