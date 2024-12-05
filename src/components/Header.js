@@ -6,19 +6,23 @@ import bellIcon from '../assets/bell.png';
 import MyPageModal from '../components/MyPageModal';
 import AlarmModal from '../components/AlarmModal';
 import alarmSSE from '../services/useAlarmSSE';
+import { getUserInfo } from '../services/authService';
 
 const Header = ({ 
   isLoggedIn,
   setIsLoggedIn,
   openLoginModal, 
-  openMyPageModal, 
-  isMyPageModalOpen, 
-  closeMyPageModal, 
+  // openMyPageModal, 
+  // isMyPageModalOpen, 
+  // closeMyPageModal, 
   openCreateStudyModal, 
   openStudyManagementModal,
 }) => {
   const navigate = useNavigate();
 
+  const [isMyPageModalOpen, setIsMyPageModalOpen] = useState(false);  // 마이페이지 모달 상태
+  const [userNickname, setUserNickname] = useState(null);  // 사용자 닉네임 상태
+  const [userImage, setUserImage] = useState(null);  // 사용자 이미지 상태
 
   const [isAlarmModalOpen, setIsAlarmModalOpen] = useState(false); // 알람 모달 상태
   const [alerts, setAlerts] = useState([]); // SSE 관련 알람 상태
@@ -44,6 +48,30 @@ const Header = ({
     }
   }, [isLoggedIn]);
 
+  // 로그인한 사용자 정보 가져오기
+  useEffect(() => {
+    if (isLoggedIn) {
+      const token = localStorage.getItem('access_token');
+      getUserInfo(token)  // getUserInfo API 호출
+        .then(userData => {
+          setUserNickname(userData.nickname);  // 사용자 닉네임
+          setUserImage(userData.image);  // 사용자 이미지
+        })
+        .catch(error => {
+          console.error('사용자 정보 가져오기 실패:', error);
+        });
+    }
+  }, [isLoggedIn]);
+
+  // 마이페이지 모달 열기
+  const openMyPageModal = () => {
+    setIsMyPageModalOpen(true);
+  };
+
+  // 마이페이지 모달 닫기
+  const closeMyPageModal = () => {
+    setIsMyPageModalOpen(false);
+  };
 
   // 메인으로 이동해서 스터디 생성 모달, 로그인 안됐으면 로그인 모달
   const handleCreateStudyClick = () => {
@@ -100,8 +128,8 @@ const Header = ({
       <button onClick={openAlarmModal} className="flex items-center"> {/* 오른쪽: 알람 */}
         <img src={bellIcon} alt="알람" className="w-6 h-6" />
       </button>
-        
-      <MyPageModal isOpen={isMyPageModalOpen} onClose={closeMyPageModal} onLogout={() => setIsLoggedIn(false)} />
+
+      <MyPageModal isOpen={isMyPageModalOpen} onClose={closeMyPageModal} isLoggedIn={isLoggedIn} userNickname={userNickname} userImage={userImage} onLogout={() => setIsLoggedIn(false)} />
       <AlarmModal isOpen={isAlarmModalOpen} onClose={closeAlarmModal} isLoggedIn={isLoggedIn} alerts={alerts} />
       </div>
       </header>
