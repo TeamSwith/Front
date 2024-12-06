@@ -10,7 +10,7 @@ import { createTask } from '../api/Task';
 const CreateSidebar = ({ 
     scheduleData = { time: '', location: '' },
     setScheduleData,
-    tasks, 
+    tasks = [], 
     setTasks,
     setIsCreating, 
     id,
@@ -44,7 +44,7 @@ const CreateSidebar = ({
     ]);
   };
 
-  // 과제 지우기
+  // 작성 중이던 과제 지우기
   const handleRemoveTask = (id) => {
     setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
   };
@@ -92,7 +92,8 @@ const CreateSidebar = ({
         } // 생성한 과제 저장
 
       alert('스터디가 성공적으로 생성되었습니다!');
-      setIsCreating(false); // 편집 모드 종료
+      setIsCreating(false); // 생성 모드 종료
+      //setTasks([]); // 과제 목록 초기화
     } catch (error) {
       console.error('스터디 생성 실패:', error);
       alert('스터디 생성에 실패했습니다. 다시 시도해주세요.');
