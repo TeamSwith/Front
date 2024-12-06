@@ -8,9 +8,6 @@ function useSubscribeSSE () {
 
   useEffect(() => {
     if (!token) { console.log('Access token is missing!'); return; }
-
-    // console.log("SSE 연결 시작");
-    // console.log('token:',token);
     
     const EventSource = EventSourcePolyfill;
     
@@ -26,23 +23,6 @@ function useSubscribeSSE () {
         console.log('SSE 연결 성공!'); 
         // 구독 요청을 서버에 전송 (예: 특정 이벤트 타입)
     };
-
-    // eventSource.onmessage = function(event) {
-    //   try {
-    //     const newEvent = JSON.parse(event.data);
-    //     // setEvents(newEvent);
-
-    //     // event : Alarm일 경우 << 아마 안쓸듯...
-    //     if (newEvent.event == 'Alarm') {
-    //         const { id, content, createdAt, groupId } = newEvent.data;
-    //         // 데이터를 상태에 추가
-    //         setEvents(prevEvents => [...prevEvents, { id, content, createdAt, groupId }]);
-    //         console.log('새로운 일정 알림:', content);
-    //     }
-    //   } catch (err) {
-    //     console.error('Error parsing event data:', err);
-    //   }
-    // };
 
     // 커스텀 이벤트 핸들러
     eventSource.addEventListener('Alarm', function(event) {
