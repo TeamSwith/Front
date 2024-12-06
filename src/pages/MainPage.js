@@ -3,8 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import backgroundImage from '../assets/BackGround.png';
 import Header from '../components/Header';
 import LoginModal from '../components/LoginModal';
-import MyPageModal from '../components/MyPageModal';
-import LogoutConfirmationModal from '../components/LogoutConfirmationModal';
+// import MyPageModal from '../components/MyPageModal';
+// import LogoutConfirmationModal from '../components/LogoutConfirmationModal';
 import CreateStudyModal from '../components/CreateStudyModal';
 import StudyManagementModal from '../components/StudyManagementModal';
 import JoinConfirmationModal from '../components/JoinConfirmationModal';
@@ -12,11 +12,11 @@ import { checkStudyJoin, joinStudy } from '../services/studyJoinService';
 
 //const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-const MainPage = ({ isLoggedIn, setIsLoggedIn, userEmail, handleLogout }) => {
+const MainPage = ({ isLoggedIn, setIsLoggedIn, handleLogout }) => {
   const [isCreateStudyModalOpen, setIsCreateStudyModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [isMyPageModalOpen, setIsMyPageModalOpen] = useState(false); // MyPage 모달 상태
-  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  // const [isMyPageModalOpen, setIsMyPageModalOpen] = useState(false); // MyPage 모달 상태
+  // const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isStudyManagementModalOpen, setIsStudyManagementModalOpen] = useState(false); // Study Management 모달 상태
 
   const [isJoinConfirmationModalOpen, setIsJoinConfirmationModalOpen] = useState(false); // Join Confirmation 모달 상태
@@ -56,16 +56,16 @@ const MainPage = ({ isLoggedIn, setIsLoggedIn, userEmail, handleLogout }) => {
   const closeCreateStudyModal = () => setIsCreateStudyModalOpen(false);
 //  const openLoginModal = () => setIsLoginModalOpen(true);
   const closeLoginModal = () => setIsLoginModalOpen(false);
-  const openMyPageModal = () => setIsMyPageModalOpen(true); // MyPage 모달 열기 함수
-  const closeMyPageModal = () => setIsMyPageModalOpen(false); // MyPage 모달 닫기 함수
-  const closeLogoutConfirmation = () => setIsLogoutModalOpen(false);
+  // const openMyPageModal = () => setIsMyPageModalOpen(true); // MyPage 모달 열기 함수
+  // const closeMyPageModal = () => setIsMyPageModalOpen(false); // MyPage 모달 닫기 함수
+  // const closeLogoutConfirmation = () => setIsLogoutModalOpen(false);
   const closeStudyManagementModal = () => setIsStudyManagementModalOpen(false);
   const closeJoinConfirmationModal = () => setIsJoinConfirmationModalOpen(false);
 
-  const openLogoutConfirmation = () => {
-    setIsMyPageModalOpen(false); // 로그아웃 모달을 열 때 MyPage 모달을 닫음
-    setIsLogoutModalOpen(true); // 로그아웃 모달 열기
-  };
+  // const openLogoutConfirmation = () => {
+  //   setIsMyPageModalOpen(false); // 로그아웃 모달을 열 때 MyPage 모달을 닫음
+  //   setIsLogoutModalOpen(true); // 로그아웃 모달 열기
+  // };
 
   // const handleLoginSuccess = () => {
   //   setIsLoggedIn(true); // 로그인 상태 업데이트
@@ -74,7 +74,6 @@ const MainPage = ({ isLoggedIn, setIsLoggedIn, userEmail, handleLogout }) => {
 
   // const handleLogout = () => {
   //   setIsLoggedIn(false); 
-  //   setUserEmail(null); 
   //   localStorage.removeItem('accessToken');
   //   localStorage.removeItem('refreshToken');
   //   localStorage.removeItem('email');
@@ -95,13 +94,13 @@ const MainPage = ({ isLoggedIn, setIsLoggedIn, userEmail, handleLogout }) => {
       console.log('이미 가입되어 있음, 관리 페이지로 이동');
 
       // redirect URL 추출 (redirect: 뒤에 오는 부분을 URL로 변환)
-      const redirectUrl = response.data.data.redirect.replace("redirect:", "").trim(); // "redirect:" 부분 제거
+      // const redirectUrl = response.data.data.redirect.replace("redirect:", "").trim(); // "redirect:" 부분 제거
       //const fullRedirectUrl = `${API_BASE_URL}/group${redirectUrl}`;
       const groupId = response.data.data.groupId;
       setGroupId(groupId); // groupId 저장
       console.log('groupId:', groupId);
-      console.log('redirectUrl:', redirectUrl);
-      //console.log('리디렉션 URL:', fullRedirectUrl);
+      // console.log('redirectUrl:', redirectUrl);
+      // console.log('리디렉션 URL:', fullRedirectUrl);
       navigate('/manage-study', { state: { id: groupId } });  // 해당 URL로 이동
 
     } else if (response.data.code === 200 && response.data.data.message === "가입 전") {
@@ -111,9 +110,9 @@ const MainPage = ({ isLoggedIn, setIsLoggedIn, userEmail, handleLogout }) => {
       setIsJoinConfirmationModalOpen(true);
       console.log('groupId:', groupId);
 
-    } else if (response.data.code === 404 && response.data.data.message === "정원을 초과했습니다." ) {
-      console.log('정원 초과:', response.data.data.message);
-      alert(response.data.data.message);
+    } else if (response.data.status === 404 && response.data.message === "인원이 가득 찼습니다." ) {
+      console.log('정원 초과:', response.data.message);
+      alert(response.data.message);
 
     } else {
       console.log('오류 발생');
@@ -131,12 +130,12 @@ const MainPage = ({ isLoggedIn, setIsLoggedIn, userEmail, handleLogout }) => {
       console.log(joinResponse);
 
       if (joinResponse.data.success) {
-        console.log('스터디 가입 성공:', joinResponse.data.data.message);
+        // console.log('스터디 가입 성공:', joinResponse.data.data.message);
         //const redirectUrl = joinResponse.data.data.message.split(':')[1].trim();  // 'redirect:URL' 형식에서 URL을 추출
         navigate('/manage-study', { state: { id: groupId } });
       } else {
-        console.log('스터디 가입 실패:', joinResponse.data.data.message);
-        alert(joinResponse.data.data.message || '존재하지 않는 스터디입니다');
+        // console.log('스터디 가입 실패:', joinResponse.data.data.message);
+        alert('존재하지 않는 스터디입니다');
       }
     } catch (error) {
       console.error('스터디 가입 오류:', error);
@@ -154,16 +153,15 @@ const MainPage = ({ isLoggedIn, setIsLoggedIn, userEmail, handleLogout }) => {
     
     <Header 
       isLoggedIn={isLoggedIn} 
-      userEmail={userEmail}  // 이메일 전달
       setIsLoggedIn={setIsLoggedIn} // 로그아웃 시 로그인 상태 업데이트 함수 전달
       handleLogout={handleLogout}
       openLoginModal={() => setIsLoginModalOpen(true)} // 로그인 모달 열기 함수 전달
       openCreateStudyModal={handleCreateStudyClick} // 스터디 생성 모달 핸들러 함수 전달
       openStudyManagementModal={handleManageStudyClick} // 스터디 관리 모달 핸들러 전달
-      openMyPageModal={openMyPageModal} // Header에 MyPage 모달 열기 함수 전달
-      isMyPageModalOpen={isMyPageModalOpen}
-      closeMyPageModal={closeMyPageModal}
-      openLogoutConfirmation={openLogoutConfirmation}
+      // openMyPageModal={openMyPageModal} // Header에 MyPage 모달 열기 함수 전달
+      // isMyPageModalOpen={isMyPageModalOpen}
+      // closeMyPageModal={closeMyPageModal}
+      // openLogoutConfirmation={openLogoutConfirmation}
     />
 
     <div className="pt-[250px] sm:pt-[250px] md:pt-[300px] lg:pt-[330px] pt-mobile text-left 
@@ -211,9 +209,9 @@ const MainPage = ({ isLoggedIn, setIsLoggedIn, userEmail, handleLogout }) => {
       </div>
 
       <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModal} />
-      <LogoutConfirmationModal isOpen={isLogoutModalOpen} onClose={closeLogoutConfirmation} onConfirmLogout={handleLogout} />
+      {/* <LogoutConfirmationModal isOpen={isLogoutModalOpen} onClose={closeLogoutConfirmation} onConfirmLogout={handleLogout} /> */}
       <CreateStudyModal isOpen={isCreateStudyModalOpen} onClose={closeCreateStudyModal} onCreate={handleStudyCreation} />
-      <MyPageModal isOpen={isMyPageModalOpen} onClose={closeMyPageModal} onLogout={openLogoutConfirmation} />
+      {/* <MyPageModal isOpen={isMyPageModalOpen} onClose={closeMyPageModal} onLogout={openLogoutConfirmation} /> */}
       <StudyManagementModal
         isOpen={isStudyManagementModalOpen}
         onClose={closeStudyManagementModal}

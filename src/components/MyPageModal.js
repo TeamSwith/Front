@@ -5,13 +5,13 @@ import grayChatIcon from '../assets/grayChat.png';
 
 Modal.setAppElement('#root'); // 애플리케이션의 루트 요소 설정
 
-const MyPageModal = ({ isOpen, onClose, onLogout }) => {
+const MyPageModal = ({ isOpen, onClose, onLogout, isLoggedIn, userNickname, userImage, openLogoutConfirmation }) => {
 
-  const handleLogout = () => { onLogout(); onClose(); };
+  const handleLogout = () => { openLogoutConfirmation(); onClose(); };
 
   // 로컬 스토리지에서 사용자 닉네임, 이미지 가져오기
-  const userName = localStorage.getItem('nickname') || '오므라이스';  // 기본값 '오므라이스'
-  const userImage = localStorage.getItem('userImage') || profileImage;  // 기본값 '오므라이스'
+  // const userNickname = localStorage.getItem('nickname') || '오므라이스';  // 기본값 '오므라이스'
+  // const userImage = localStorage.getItem('userImage') || profileImage;  // 기본값 '오므라이스'
 
   return (
     <Modal
@@ -22,7 +22,7 @@ const MyPageModal = ({ isOpen, onClose, onLogout }) => {
     >
       <img src={userImage} alt="프로필 이미지" className="mx-auto rounded-full w-32 h-32 mb-4"/>
       <h2 className="text-lg font-bold mb-3">
-        {userName}
+        {userNickname}
         <span className="text-sm text-[#BBBBBB] ml-2">님</span>
       </h2>
       <div className="flex items-center justify-center text-xs text-[#BBBBBB] mb-5">

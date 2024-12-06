@@ -6,6 +6,10 @@ import EyeOffIcon from '../assets/Eyeoff.png';
 import { createStudy } from '../services/studyService'; 
 
 const CreateStudyModal = ({ isOpen, onClose, onCreate }) => {
+  
+  // 스터디 id 상태로 관리
+  // const [id, setId] = useState(null);
+
   const [studyId, setStudyId] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -18,8 +22,8 @@ const CreateStudyModal = ({ isOpen, onClose, onCreate }) => {
   const handleCreateStudy = async () => {
     if (password === confirmPassword) {
       // 로컬 스토리지에 저장
-      localStorage.setItem('groupInsertId', studyId);
-      localStorage.setItem('groupPw', password);
+      // localStorage.setItem('groupInsertId', studyId);
+      // localStorage.setItem('groupPw', password);
 
       // API 요청
       const studyData = {
@@ -30,21 +34,23 @@ const CreateStudyModal = ({ isOpen, onClose, onCreate }) => {
       try {
         const response = await createStudy(studyData); // API 호출 후, 응답 받기
         console.log('스터디 생성 응답:', response);
+
+        // setId(response.data.id);
   
         // API 응답 데이터 로컬 스토리지에 저장
-        localStorage.setItem('createdAt', response.data.createdAt);
-        localStorage.setItem('updatedAt', response.data.updatedAt);
+        // localStorage.setItem('createdAt', response.data.createdAt);
+        // localStorage.setItem('updatedAt', response.data.updatedAt);
         localStorage.setItem('id', response.data.id);
-        localStorage.setItem('groupInsertId', response.data.groupInsertId);
-        localStorage.setItem('groupPw', response.data.groupPw);
-        localStorage.setItem('groupName', response.data.groupName);
-        localStorage.setItem('maxNum', response.data.maxNum);
-        localStorage.setItem('memberNum', response.data.memberNum);
-        localStorage.setItem('subject', response.data.subject);
-        localStorage.setItem('period', response.data.period);
-        localStorage.setItem('communication', response.data.communication);
-        localStorage.setItem('notice', response.data.notice);
-        localStorage.setItem('studies', JSON.stringify(response.data.studies)); // 스터디 일정 저장될 부분
+        // localStorage.setItem('groupInsertId', response.data.groupInsertId);
+        // localStorage.setItem('groupPw', response.data.groupPw);
+        // localStorage.setItem('groupName', response.data.groupName);
+        // localStorage.setItem('maxNum', response.data.maxNum);
+        // localStorage.setItem('memberNum', response.data.memberNum);
+        // localStorage.setItem('subject', response.data.subject);
+        // localStorage.setItem('period', response.data.period);
+        // localStorage.setItem('communication', response.data.communication);
+        // localStorage.setItem('notice', response.data.notice);
+        // localStorage.setItem('studies', JSON.stringify(response.data.studies)); // 스터디 일정 저장될 부분
   
         // 생성 후 페이지 이동
         onCreate(studyId, password); // 필요한 값 넘기기

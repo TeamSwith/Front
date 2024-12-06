@@ -23,7 +23,10 @@ const StudyCreationComplete = () => {
   }, [storedId]); // 스터디 고유 id가 변경될 때마다 호출
 
   // 확인 버튼 누르면 메인 페이지로 이동
-  const handleConfirm = () => { navigate('/'); };
+  const handleConfirm = () => { 
+    localStorage.removeItem('id');
+    navigate('/'); 
+  };
   // // 관리 페이지로 이동 누르면 스터디 관리 페이지로 이동
   // const handleGoToManagement = () => { navigate('/manage-study'); };
 
