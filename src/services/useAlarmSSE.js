@@ -52,7 +52,7 @@ function useAlarmSSE () {
 
     eventSource.onerror = function(err) {
       console.error('EventSource failed:', err);
-      // 여기에 서버의 상태나 응답을 로그로 추가하여 어떤 오류인지 파악할 수 있습니다.
+      // 여기에 서버의 상태나 응답을 로그로 추가하여 어떤 오류인지 파악할 수 있습니다
       if (err.target.readyState === EventSource.CLOSED) {
         console.log("EventSource connection was closed.");
       }
