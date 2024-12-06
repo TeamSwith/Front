@@ -73,6 +73,12 @@ const ManageSidebar = ({
         const progress = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
         setProgressPercentage(progress);
       };
+
+      useEffect(() => {
+        if (Array.isArray(tasks)) {
+          updateProgress(tasks);
+        }
+      }, [tasks]);
     
   return (
 

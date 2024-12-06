@@ -93,3 +93,44 @@ export const deleteSchedule = async (id, studyId, updatedSchedule) => {
       throw error;
     }
   };
+
+  export const updateAttendStatus = async (id, studyId) => {
+    try {
+      const { data } = await axios.patch(
+        `${API_BASE_URL}/group/${id}/study/${studyId}/attend`,
+        {},
+        {
+          headers: getAuthHeader(), // Authorization 헤더 추가
+        }
+      );
+  
+      // 정상적인 응답인 경우
+      if (data.success) {
+        return {
+          success: true,
+          message: `출석 완료되었습니다!`,
+          data: data.data,
+        };
+      }
+  
+      // 이미 출석한 경우 처리
+      if (data.status === 404) {
+        return {
+          success: false,
+          message: "이미 출석하셨습니다.",
+        };
+      }
+  
+      // 그 외의 실패 처리
+      return {
+        success: false,
+        message: '출석 상태 변경 실패',
+      };
+    } catch (error) {
+      console.error('Error updating attend status:', error);
+      return {
+        success: false,
+        message: '이미 출석하셨습니다.',
+      };
+    }
+  };
