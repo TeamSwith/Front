@@ -49,10 +49,7 @@ export const getUserInfo = async (newAccessToken = null) => {
 
       // 데이터 유효성 검증
       if (email && nickname && id && image) {
-        // 로컬 스토리지에 저장
-        // localStorage.setItem('nickname', nickname);
-        // localStorage.setItem('userImage', image);
-        console.log('User data fetched and saved:', { email, nickname, id });
+        // console.log('User data fetched and saved:', { email, nickname, id });
         return userData;  // 사용자 정보 반환
       } else {
         console.warn('Invalid user data structure:', userData);
@@ -81,9 +78,7 @@ export const getUserInfo = async (newAccessToken = null) => {
         const { email, nickname, id, image } = userData;
 
         if (email && nickname && id && image) {
-          // localStorage.setItem('nickname', nickname);
-          // localStorage.setItem('userImage', image);
-          console.log('User data fetched and saved after refresh:', { email, nickname, id });
+          // console.log('User data fetched and saved after refresh:', { email, nickname, id });
         } else {
           console.warn('Invalid user data structure after refresh:', userData);
           throw new Error('사용자 데이터가 유효하지 않습니다');
