@@ -103,6 +103,7 @@ const ManageStudy = () => {
     handleDateChange(date); // 날짜 변경 시 스케줄 데이터 업데이트
   };
 
+
   // 멤버 수 불러오기
   const { data: MemNumData } = useQuery(
     {

@@ -4,10 +4,11 @@ import { fetchTasks, updateTaskStatus } from "../api/Task";
 const ManageTasks = ({ 
   id, 
   studyId, 
-  tasks=[], 
-  setTasks, 
+  //tasks=[], 
+  //setTasks, 
   onTaskUpdate,
   selectedDate }) => {
+    const [tasks, setTasks] = useState([]);
     const [progressPercentage, setProgressPercentage] = useState(0);
 
       // loadTasks 함수 정의
@@ -33,7 +34,7 @@ const ManageTasks = ({
           setTasks([]); // 에러 발생 시 초기화
           updateProgress([]); // 프로그레스바도 초기화
         }
-      }, [id, studyId, setTasks]);
+      }, [id, studyId]);
 
   useEffect(() => {
     loadTasks();
@@ -43,11 +44,13 @@ const ManageTasks = ({
     const handleCheckboxChange = async (taskId, checked) => {
         try {
             const updatedStatus = checked ? "COMPLETED" : "PENDING";
+            console.log("Before update:", tasks);
             const response = await updateTaskStatus(taskId, updatedStatus);
             if (response.success) {
                 const updatedTasks = tasks.map((task) =>
                     task.id === taskId ? { ...task, checked } : task
                 );
+                console.log("Updated tasks:", updatedTasks);
                 setTasks(updatedTasks);
                 updateProgress(updatedTasks); // 업데이트된 `localTasks`로 프로그레스바 업데이트
                 onTaskUpdate(taskId);
