@@ -7,18 +7,17 @@ import MyPageModal from '../components/MyPageModal';
 import LogoutConfirmationModal from '../components/LogoutConfirmationModal';
 import { getUserInfo } from '../services/authService';
 import AlarmModal from '../components/AlarmModal';
-import alarmSSE from '../services/useAlarmSSE';
+import useAlarmSSE from '../services/useAlarmSSE';
+import useSubscribeSSE from '../services/useSubscribeSSE';
 
 const Header = ({ 
   isLoggedIn,
   setIsLoggedIn,
   openLoginModal, 
-  // openMyPageModal, 
-  // isMyPageModalOpen, 
-  // closeMyPageModal, 
-  openCreateStudyModal, 
-  openStudyManagementModal,
 }) => {
+  const [alerts, setAlerts] = useState([]); // SSE 관련 알람 상태
+  const [isAlarmModalOpen, setIsAlarmModalOpen] = useState(false); // 알람 모달 상태
+
   const navigate = useNavigate();
 
   const [isMyPageModalOpen, setIsMyPageModalOpen] = useState(false);  // 마이페이지 모달 상태
@@ -26,32 +25,28 @@ const Header = ({
   const [userImage, setUserImage] = useState(null);  // 사용자 이미지 상태
   const [isLogoutConfirmationOpen, setIsLogoutConfirmationOpen] = useState(false);  // 로그아웃 확인 모달 상태
 
-  const [isAlarmModalOpen, setIsAlarmModalOpen] = useState(false); // 알람 모달 상태
-  const [alerts, setAlerts] = useState([]); // SSE 관련 알람 상태
+  // // 알람이 새로 들어오면 alerts 상태를 업데이트하는 함수
+  // const handleNewAlert = (newAlert) => {
+  //   console.log('새로운 알람:', newAlert);  // 콘솔에 알림 출력
+  //   setAlerts((prevAlerts) => [...prevAlerts, newAlert]);
+  // };
 
-  // 알람이 새로 들어오면 alerts 상태를 업데이트하는 함수
-  const handleNewAlert = (newAlert) => {
-    console.log('새로운 알람:', newAlert);  // 콘솔에 알림 출력
-    setAlerts((prevAlerts) => [...prevAlerts, newAlert]);
-  };
+  // // useAlarmSSE 훅을 호출하여 알람을 받아오고, 새 알림이 오면 handleNewAlert 함수 실행
+  // const events = useAlarmSSE();
 
-  // 로그인된 상태일 때만 알람 SSE 연결
-  useEffect(() => {
-    if (!isLoggedIn) return;
+  // // 알람을 받으면 handleNewAlert로 처리
+  // useEffect(() => {
+  //   if (isLoggedIn) {
+  //     console.log('로그인 상태에서 알림 수신 대기 중...');
+  //     events.forEach((event) => {
+  //       handleNewAlert(event); // 새 알람을 추가
+  //     });
+  //   } else {
+  //     console.log('로그인하지 않음, 알림 수신 중지');
+  //   }
+  // }, [events, isLoggedIn]); // events가 업데이트 될 때마다
 
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      const eventSource = alarmSSE(token, handleNewAlert);
-
-      // 컴포넌트 언마운트 시 eventSource 닫기
-      return () => {
-        eventSource.close();
-      };
-    }
-  }, [isLoggedIn]);
-
-  // 컴포넌트가 마운트될 때 액세스 토큰을 확인하여 사용자 정보를 가져옴
-  useEffect(() => {
+  useEffect(() => {  // 컴포넌트가 마운트될 때 액세스 토큰을 확인하여 사용자 정보를 가져옴
     const accessToken = localStorage.getItem('accessToken');
 
     if (accessToken) {
@@ -62,7 +57,7 @@ const Header = ({
         .then((userData) => {
           setUserNickname(userData.nickname); // 사용자 정보 이름 상태 변경
           setUserImage(userData.image); // 사용자 정보 이미지 상태 변경
-          console.log('사용자 이름', userData.nickname);
+          // console.log('사용자 이름', userData.nickname);
         })
         .catch(async (error) => {
           console.error('사용자 정보 가져오기 실패:', error)
@@ -73,6 +68,33 @@ const Header = ({
       setIsLoggedIn(false); // 액세스 토큰 없으면 로그인 상태 false
     }
   }, [isLoggedIn]);  // 로그인 상태가 변경될 때마다 실행되도록 설정
+
+  // const fetchedAlerts = useAlarmSSE(); // 알림 목록을 받아오는 훅 호출
+  const events = useSubscribeSSE(); // SSE 훅 호출
+
+  // useEffect(() => {
+  //   if (isLoggedIn) {
+  //     console.log('알림 목록:', fetchedAlerts); // 알림 목록 확인
+  //     setAlerts(fetchedAlerts); // 받아온 알림 목록으로 상태 업데이트
+  //   } else {
+  //     console.log('로그인하지 않음, 알림 수신 중지');
+  //     setAlerts([]); // 로그아웃 시 알림 초기화
+  //   }
+  // }, [isLoggedIn, fetchedAlerts]); // 로그인 상태와 알림 목록에 따라 업데이트
+
+  // 알람 수신 처리
+  useEffect(() => {
+    if (isLoggedIn && events.length > 0) {
+      console.log('로그인 상태에서 알림 수신 대기 중...');
+      events.forEach((event) => {
+        const { id, content, createdAt, groupId } = event;
+        setAlerts(prevAlerts => [...prevAlerts, { id, content, createdAt, groupId }]);
+      });
+    } else {
+      console.log('로그인하지 않음, 알림 수신 중지');
+      setAlerts([]); // 로그아웃 시 알람 초기화
+    }
+  }, [events, isLoggedIn]); // events가 업데이트 될 때마다 실행
 
   // 마이페이지 모달 열기
   const openMyPageModal = () => {
