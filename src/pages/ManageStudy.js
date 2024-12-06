@@ -247,7 +247,23 @@ const ManageStudy = () => {
               출석 현황
             </div>
 
-            <div className="bg-[#F7F9F2] w-full max-w-[320px] h-[60px] mb-4 rounded-lg shadow-lg"> </div>
+            {/* 스터디원 프로필 박스 */}
+          <div className="bg-[#F7F9F2] w-full max-w-[320px] h-[70px] mb-4 rounded-lg shadow-lg overflow-x-auto flex items-center gap-3 px-4">
+            {userInfo.length > 0 ? (
+              userInfo.map((user) => (
+                <div key={user.id} className="flex-shrink-0 text-center">
+                  {/* 프로필 이미지 */}
+                  <img
+                    src={user.image}
+                    alt={user.nickname}
+                    className="w-11 h-11 rounded-full border border-[#ccc] object-cover"
+                  />
+                </div>
+          ))
+        ) : (
+          <p className="text-[#999] text-[12px]">스터디원이 없습니다.</p>
+        )}
+      </div>
           
             <div className="flex-shrink-0">
               <Calendar 
