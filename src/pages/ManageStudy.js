@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { useLocation } from 'react-router-dom';
-import { fetchSchedule, getMemNum, deleteSchedule, fetchGroupUsers } from '../api/Study';
+import { fetchSchedule, getMemNum, deleteSchedule, fetchGroupUsers, updateAttendStatus } from '../api/Study';
 import { fetchNotice, updateNotice } from '../api/Notice';
 import { fetchTasks } from '../api/Task';
 import { getStudyDetails } from '../services/studyService';
+import { fetchUserId } from '../services/commentService';
 import Calendar from 'react-calendar';
 import "react-calendar/dist/Calendar.css";
 import ManageSidebar from "../components/ManageSidebar";
@@ -35,6 +36,11 @@ const ManageStudy = () => {
   const [scheduleData, setScheduleData] = useState({time: '', location: ''});
   const { id } = location.state || {};
   const [studyId, setStudyId] = useState(null);
+  const [attendanceStatus, setAttendanceStatus] = useState(null); // 출석 상태
+  const [activeButton, setActiveButton] = useState(false); // 버튼 활성화 여부
+  const [buttonTimer, setButtonTimer] = useState(null); // 버튼 타이머
+  //const [groupId, setGroupId] = useState(null); // 그룹 아이디 추가
+  const [userId, setUserId] = useState(null); // 유저 아이디 추가
 
   // 스터디 세부 정보 불러오기
   useEffect(() => {
@@ -103,7 +109,6 @@ const ManageStudy = () => {
     handleDateChange(date); // 날짜 변경 시 스케줄 데이터 업데이트
   };
 
-
   // 멤버 수 불러오기
   const { data: MemNumData } = useQuery(
     {
@@ -112,6 +117,69 @@ const ManageStudy = () => {
       staleTime: 1000 * 60 * 5,
     }
   );
+
+  // 사용자 ID 조회
+  useEffect(() => {
+    const loadUserId = async () => {
+      try {
+        const updateUserId = await fetchUserId(); // userInfo.token이 필요
+        setUserId(updateUserId);  // userId 상태 설정
+      } catch (error) {
+        console.error('사용자 ID 불러오기 실패:', error);
+      }
+    };
+    loadUserId();
+  }, []);
+
+   // 출석 상태 업데이트 함수
+   const updateAttendStatusHandler = async () => {
+    try {
+      const response = await updateAttendStatus(id, studyId);
+
+      if (response.success) {
+        alert('출석 완료했습니다!');
+        setActiveButton(false); // 5분 후 버튼 비활성화
+      } else {
+        alert('이미 출석하셨습니다.');
+      }
+    } catch (error) {
+      console.error('출석 상태 업데이트 중 오류 발생:', error);
+      alert('이미 출석하셨습니다.');
+    }
+  };
+
+  // 출석 버튼 활성화 시간 계산
+  useEffect(() => {
+    const currentTime = new Date();
+    const scheduleTime = new Date(scheduleData.date + ' ' + scheduleData.time);
+
+    if (currentTime >= scheduleTime) {
+      setActiveButton(true);
+      const timer = setTimeout(() => {
+        setActiveButton(false);
+      }, 5 * 60 * 1000); // 5분 후 비활성화
+
+      setButtonTimer(timer);
+    } else {
+      setActiveButton(false);
+    }
+
+    return () => clearTimeout(buttonTimer); // 컴포넌트 unmount 시 타이머 정리
+  }, [scheduleData]);
+
+ // 출석하기 버튼 컴포넌트
+ const renderAttendanceButton = () => {
+  return (
+    <div
+      className={`bg-[#8CC29E] w-full max-w-[320px] h-[40px] mt-4 rounded-lg shadow-lg flex items-center justify-center cursor-pointer ${!activeButton ? 'opacity-50 cursor-not-allowed' : ''}`}
+      onClick={updateAttendStatusHandler} // 클릭 시 출석 상태 업데이트
+    >
+      <span className='text-[14px] text-white'>
+        출석하기
+      </span>
+    </div>
+  );
+};
 
   // 스터디 일정 생성시 data가 바로 업데이트
   const handleCreateScheduleSuccess = (createdData) => {
@@ -278,11 +346,7 @@ const ManageStudy = () => {
               />
             </div>
 
-            <div className="bg-[#8CC29E] w-full max-w-[320px] h-[40px] mt-4 rounded-lg shadow-lg flex items-center justify-center cursor-pointer"> 
-              <span className='text-[14px] text-white'>
-                출석하기
-              </span>
-            </div>
+            {renderAttendanceButton()}
           </div>
 
           {/*sidebar*/}
