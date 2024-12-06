@@ -3,7 +3,7 @@ import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { useLocation } from 'react-router-dom';
 import { fetchSchedule, getMemNum, deleteSchedule, fetchGroupUsers, updateAttendStatus } from '../api/Study';
 import { fetchNotice, updateNotice } from '../api/Notice';
-import { fetchTasks } from '../api/Task';
+import { fetchTasks, deleteTask } from '../api/Task';
 import { getStudyDetails } from '../services/studyService';
 import { fetchUserId } from '../services/commentService';
 import Calendar from 'react-calendar';
@@ -198,6 +198,19 @@ const ManageStudy = () => {
     if (!confirmDelete) return;
 
     try {
+      // 먼저 과제부터 삭제
+      // 해당 스터디 일정에 존재하는 과제들을 가져옴
+      const taskResponse = await fetchTasks(id, studyId);
+      const tasksToDelete = taskResponse.map(task => task.id);
+
+      // 과제들 삭제
+      for (let taskId of tasksToDelete) {
+        try {
+          await deleteTask(id, studyId, taskId); // 과제 삭제
+        } catch (error) {
+          console.error(`과제 ${taskId} 삭제 실패:`, error);
+        }
+      }
       await deleteSchedule(id, studyId); // API 호출
       alert('스터디 일정이 성공적으로 삭제되었습니다.');
 
