@@ -409,7 +409,7 @@ const ManageStudy = () => {
       
         
     </div>
-    
+  
 
     
   );
