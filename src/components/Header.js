@@ -4,9 +4,10 @@ import logo from '../assets/swithLogo.png';
 import accountIcon from '../assets/account_circle.png'; 
 import bellIcon from '../assets/bell.png'; 
 import MyPageModal from '../components/MyPageModal';
+import LogoutConfirmationModal from '../components/LogoutConfirmationModal';
+import { getUserInfo } from '../services/authService';
 import AlarmModal from '../components/AlarmModal';
 import alarmSSE from '../services/useAlarmSSE';
-import { getUserInfo } from '../services/authService';
 
 const Header = ({ 
   isLoggedIn,
@@ -23,6 +24,7 @@ const Header = ({
   const [isMyPageModalOpen, setIsMyPageModalOpen] = useState(false);  // 마이페이지 모달 상태
   const [userNickname, setUserNickname] = useState(null);  // 사용자 닉네임 상태
   const [userImage, setUserImage] = useState(null);  // 사용자 이미지 상태
+  const [isLogoutConfirmationOpen, setIsLogoutConfirmationOpen] = useState(false);  // 로그아웃 확인 모달 상태
 
   const [isAlarmModalOpen, setIsAlarmModalOpen] = useState(false); // 알람 모달 상태
   const [alerts, setAlerts] = useState([]); // SSE 관련 알람 상태
@@ -48,20 +50,29 @@ const Header = ({
     }
   }, [isLoggedIn]);
 
-  // 로그인한 사용자 정보 가져오기
+  // 컴포넌트가 마운트될 때 액세스 토큰을 확인하여 사용자 정보를 가져옴
   useEffect(() => {
-    if (isLoggedIn) {
-      const token = localStorage.getItem('access_token');
-      getUserInfo(token)  // getUserInfo API 호출
-        .then(userData => {
-          setUserNickname(userData.nickname);  // 사용자 닉네임
-          setUserImage(userData.image);  // 사용자 이미지
+    const accessToken = localStorage.getItem('accessToken');
+
+    if (accessToken) {
+      setIsLoggedIn(true);
+
+      // 사용자 정보를 가져오는 함수 호출
+      getUserInfo(accessToken)
+        .then((userData) => {
+          setUserNickname(userData.nickname); // 사용자 정보 이름 상태 변경
+          setUserImage(userData.image); // 사용자 정보 이미지 상태 변경
+          console.log('사용자 이름', userData.nickname);
         })
-        .catch(error => {
-          console.error('사용자 정보 가져오기 실패:', error);
+        .catch(async (error) => {
+          console.error('사용자 정보 가져오기 실패:', error)
+          setIsLoggedIn(false); // 로그인 상태 false로 설정
         });
+
+    } else {
+      setIsLoggedIn(false); // 액세스 토큰 없으면 로그인 상태 false
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn]);  // 로그인 상태가 변경될 때마다 실행되도록 설정
 
   // 마이페이지 모달 열기
   const openMyPageModal = () => {
@@ -71,6 +82,19 @@ const Header = ({
   // 마이페이지 모달 닫기
   const closeMyPageModal = () => {
     setIsMyPageModalOpen(false);
+  };
+
+  // 로그아웃 확인 모달 열고 닫기
+  const openLogoutConfirmation = () => setIsLogoutConfirmationOpen(true);
+  const closeLogoutConfirmation = () => setIsLogoutConfirmationOpen(false);
+
+  // 로그아웃 후 처리
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    closeLogoutConfirmation();
+    closeMyPageModal();
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
   };
 
   // 메인으로 이동해서 스터디 생성 모달, 로그인 안됐으면 로그인 모달
@@ -129,7 +153,8 @@ const Header = ({
         <img src={bellIcon} alt="알람" className="w-6 h-6" />
       </button>
 
-      <MyPageModal isOpen={isMyPageModalOpen} onClose={closeMyPageModal} isLoggedIn={isLoggedIn} userNickname={userNickname} userImage={userImage} onLogout={() => setIsLoggedIn(false)} />
+      <MyPageModal isOpen={isMyPageModalOpen} onClose={closeMyPageModal} isLoggedIn={isLoggedIn} userNickname={userNickname} userImage={userImage} onLogout={handleLogout} openLogoutConfirmation={openLogoutConfirmation} />
+      <LogoutConfirmationModal isOpen={isLogoutConfirmationOpen} onClose={closeLogoutConfirmation} onLogout={handleLogout} />
       <AlarmModal isOpen={isAlarmModalOpen} onClose={closeAlarmModal} isLoggedIn={isLoggedIn} alerts={alerts} />
       </div>
       </header>

@@ -11,7 +11,7 @@ import Header from './components/Header';
 import Footer from './components/Footer'; 
 import LoginModal from './components/LoginModal';
 // import MyPageModal from './components/MyPageModal';
-import LogoutConfirmationModal from './components/LogoutConfirmationModal';
+// import LogoutConfirmationModal from './components/LogoutConfirmationModal';
 import DeleteAccountModal from './components/DeleteAccountModal';
 import AccountDeletedModal from './components/AccountDeletedModal';
 import LoginCallback from './pages/LoginCallback';

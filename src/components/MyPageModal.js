@@ -5,9 +5,9 @@ import grayChatIcon from '../assets/grayChat.png';
 
 Modal.setAppElement('#root'); // 애플리케이션의 루트 요소 설정
 
-const MyPageModal = ({ isOpen, onClose, onLogout, isLoggedIn, userNickname, userImage }) => {
+const MyPageModal = ({ isOpen, onClose, onLogout, isLoggedIn, userNickname, userImage, openLogoutConfirmation }) => {
 
-  const handleLogout = () => { onLogout(); onClose(); };
+  const handleLogout = () => { openLogoutConfirmation(); onClose(); };
 
   // 로컬 스토리지에서 사용자 닉네임, 이미지 가져오기
   // const userNickname = localStorage.getItem('nickname') || '오므라이스';  // 기본값 '오므라이스'

@@ -10,7 +10,7 @@ const CreateStudy = () => {
 
   // 로컬에서 id와 gropPw를 가져와 사용할 수 있도록 설정
   const storedId = parseInt(localStorage.getItem('id'), 10);
-  console.log('Stored ID:', storedId, 'Type:', typeof storedId);
+  // console.log('Stored ID:', storedId, 'Type:', typeof storedId);
   // const storedPassword = localStorage.getItem('groupPw');
   
   const [studyId, setStudyId] = useState(''); // 스터디 아이디

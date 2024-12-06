@@ -6,11 +6,11 @@ import cancelIcon from '../assets/Cancel.png';
 
 Modal.setAppElement('#root'); // 애플리케이션의 루트 요소 설정
 
-const LogoutConfirmationModal = ({ isOpen, onClose, onConfirmLogout }) => {
+const LogoutConfirmationModal = ({ isOpen, onClose, onLogout }) => {
   const navigate = useNavigate();
   
   // 로그아웃 상태로 변경 후 모달 닫아서 메인으로 이동
-  const handleConfirmLogout = () => { onConfirmLogout(); onClose(); navigate('/'); };
+  const handleConfirmLogout = () => { onLogout(); onClose(); navigate('/'); };
 
   return (
     <Modal
