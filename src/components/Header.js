@@ -47,7 +47,7 @@ const Header = ({
     } else {
       setIsLoggedIn(false); // 액세스 토큰 없으면 로그인 상태 false
     }
-  }, []);  // 로그인 상태가 변경될 때마다 실행되도록 설정
+  }, [isLoggedIn]);  // 로그인 상태가 변경될 때마다 실행되도록 설정
 
   {/*
   useEffect(() => {

@@ -17,6 +17,7 @@ import checkIcon from "../assets/Check.png"
 import personIcon from "../assets/person.png";
 import '../styles/ManageStudy.css';
 import useSubscribeSSE from '../services/useSubscribeSSE';
+import { useUserId } from '../context/UserContext';
 
 const ManageStudy = () => {
   const location = useLocation();
@@ -41,9 +42,11 @@ const ManageStudy = () => {
   const [activeButton, setActiveButton] = useState(false); // 버튼 활성화 여부
   const [buttonTimer, setButtonTimer] = useState(null); // 버튼 타이머
   //const [groupId, setGroupId] = useState(null); // 그룹 아이디 추가
-  const [userId, setUserId] = useState(null); // 유저 아이디 추가
+  const userId = useUserId();
+  //const [userId, setUserId] = useState(null); // 유저 아이디 추가
   //const [events, setEvents] = useState([]);
 
+  {/*
   // 사용자 ID 조회
   useEffect(() => {
     const loadUserId = async () => {
@@ -56,12 +59,17 @@ const ManageStudy = () => {
     };
     loadUserId();
   }, []);
-
+  */}
 
   console.log('user id:', userId);
   const events = useSubscribeSSE(userId);
 
-
+  {/*
+  useEffect(() => {{
+      setEvents(eventsSet); 
+    }
+  }, [userId, events]);
+  */}
 
   // 스터디 세부 정보 불러오기
   useEffect(() => {
