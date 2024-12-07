@@ -56,8 +56,8 @@ function useSubscribeSSE (userId) {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-      withCredentials: true,
-      heartbeatTimeout: 60000, // 끊어지도록...
+      //withCredentials: true,
+      //heartbeatTimeout: 60000, // 끊어지도록...
     });
 
     eventSource.onopen = () => { 
