@@ -32,7 +32,7 @@ const ManageStudy = () => {
   const [isEditingNotice, setIsEditingNotice] = useState(false);
   const [tasks, setTasks] = useState([]);
 
-  const [userInfo, setUserInfo] = useState(null); // 스터디원 정보
+  const [userInfo, setUserInfo] = useState([]); // 스터디원 정보
   const [studyDetails, setStudyDetails] = useState(null); // 스터디 세부 정보
   const [selectedDate, setSelectedDate] = useState(new Date());  //calander 날짜 선택
   const [scheduleData, setScheduleData] = useState({time: '', location: ''});
@@ -43,33 +43,38 @@ const ManageStudy = () => {
   const [buttonTimer, setButtonTimer] = useState(null); // 버튼 타이머
   //const [groupId, setGroupId] = useState(null); // 그룹 아이디 추가
   const userId = useUserId();
+  const [alerts, setAlerts] = useState([]); // SSE 관련 알람 상태
   //const [userId, setUserId] = useState(null); // 유저 아이디 추가
   //const [events, setEvents] = useState([]);
+  const [attendanceStatusMap, setAttendanceStatusMap] = useState({});
 
-  {/*
-  // 사용자 ID 조회
-  useEffect(() => {
-    const loadUserId = async () => {
-      try {
-        const updateUserId = await fetchUserId(); // userInfo.token이 필요
-        setUserId(updateUserId);  // userId 상태 설정
-      } catch (error) {
-        console.error('사용자 ID 불러오기 실패:', error);
-      }
-    };
-    loadUserId();
-  }, []);
-  */}
-
-  console.log('user id:', userId);
   const events = useSubscribeSSE(userId);
 
-  {/*
-  useEffect(() => {{
-      setEvents(eventsSet); 
+  useEffect(() => {
+    const newAlerts = {
+      Alarm: [],
+      'Attend update': [],
+      Notice: []
+    };
+    // 이벤트 배열 처리 (예: 콘솔로 출력)
+    if (events.length > 0) {
+      events.forEach(event => {
+        if (event.type === 'Alarm') {
+          console.log('알람:', event.content);
+          newAlerts.Alarm.push(event);
+        } else if (event.type === 'Attend update') {
+          console.log('출석 상태:', event.attendStatus);
+          newAlerts.Notice.push(event);
+        } else if (event.type === 'Notice') {
+          console.log('공지:', event.content);
+          newAlerts['Attend update'].push(event);
+        }
+      });
+      setAlerts(newAlerts);
     }
-  }, [userId, events]);
-  */}
+  }, [events]); // events 배열이 변경될 때마다 실행
+
+  //console.log('event:', events);
 
   // 스터디 세부 정보 불러오기
   useEffect(() => {
@@ -147,8 +152,6 @@ const ManageStudy = () => {
     }
   );
 
-  
-
    // 출석 상태 업데이트 함수
    const updateAttendStatusHandler = async () => {
     try {
@@ -198,6 +201,33 @@ const ManageStudy = () => {
     </div>
   );
 };
+
+useEffect(() => {
+  // 출석 상태 초기화
+  const initialAttendanceStatus = userInfo.reduce((acc, user) => {
+    acc[user.id] = 'ABSENCE';
+    return acc;
+  }, {});
+
+  setAttendanceStatusMap(initialAttendanceStatus);
+
+  console.log('userinfo:', userInfo);
+}, [userInfo]);
+
+// 출석 상태 처리
+useEffect(() => {
+  if (events.length > 0) {
+    events.forEach((event) => {
+      if (event.type === 'Attend update') {
+        const { userId: eventUserId, attendStatus } = event;
+        setAttendanceStatusMap((prevMap) => ({
+          ...prevMap,
+          [eventUserId]: attendStatus,
+        }));
+      }
+    });
+  }
+}, [events]);
 
   // 스터디 일정 생성시 data가 바로 업데이트
   const handleCreateScheduleSuccess = (createdData) => {
@@ -353,10 +383,14 @@ const ManageStudy = () => {
                 <div key={user.id} className="flex-shrink-0 text-center">
                   {/* 프로필 이미지 */}
                   <img
-                    src={user.image}
-                    alt={user.nickname}
-                    className="w-11 h-11 rounded-full border border-[#ccc] object-cover"
-                  />
+                src={user.image}
+                alt={user.nickname}
+                className={`w-11 h-11 rounded-full border object-cover ${
+                  attendanceStatusMap[user.id] === 'ATTEND'
+                    ? 'border-[#12921E] border-4' // 출석한 사용자
+                    : 'border-[#ccc]' // 출석하지 않은 사용자
+                }`}
+              />
                 </div>
           ))
         ) : (
