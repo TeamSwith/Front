@@ -1,29 +1,69 @@
 import React, { useState, useEffect } from 'react';
 import { EventSourcePolyfill } from 'event-source-polyfill'; // polyfill import
 
-// useSubscribeSSE.js
-function useSubscribeSSE () {
-  const [events, setEvents] = useState([]);
-  const [token, setToken] = useState(localStorage.getItem('accessToken'));
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
+// useSubscribeSSE.js
+function useSubscribeSSE (userId) {
+  const [events, setEvents] = useState([]);
+  //const [userId, setUserId] = useState(null);
+  //const [myUserId, setMyUserId] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem('accessToken'));
+  //const [emitterExists, setEmitterExists] = useState(false); // emitter 존재 여부 상태
+
+  {/*
   useEffect(() => {
     if (!token) { console.log('Access token is missing!'); return; }
-    
+
+    // 로그인한 회원의 emitter 존재 여부 확인
+    const checkEmitterExists = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/sse/checkUserEmitter/${userId}`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = await response.text();
+
+        const regex = new RegExp(`Emitter with userID ${userId} exists`);
+      if (regex.test(data)) {
+        setEmitterExists(true); // emitter가 있으면 상태 변경
+        console.log('이미 emitter 연결됨, 기존 연결 재사용');
+        }
+      else {
+        setEmitterExists(false);
+        console.log('Emitter가 없으므로 새로 연결합니다.');
+        }
+      } catch (err) {
+        console.error('Emitter 확인 실패:', err);
+      }
+    };
+
+    checkEmitterExists();
+
+  }, [token, userId]);
+  */}
+
+  useEffect(() => {
+    console.log('token:', token);
     const EventSource = EventSourcePolyfill;
+
+    //if (emitterExists) return;  // 이미 emitter가 존재하면 SSE 연결하지 않음
     
     // EventSource 설정
-    const eventSource = new EventSource('https://swithweb.com/api/sse/connect', {
+    const eventSource = new EventSource(`${API_BASE_URL}/sse/connect/${userId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-      withCredentials: true,
-      heartbeatTimeout: 30000, // 끊어지도록...
+      //withCredentials: true,
+      //heartbeatTimeout: 60000, // 끊어지도록...
     });
 
     eventSource.onopen = () => { 
         console.log('SSE 연결 성공!'); 
         // 더미 데이터 전송. 첫 번째 이벤트 응답 없을 경우 방지.
-        eventSource.send(JSON.stringify({ message: 'start' }));
+        //eventSource.send(JSON.stringify({ message: 'start' }));
     };
 
     // 'Alarm' 이벤트 핸들러
@@ -84,9 +124,24 @@ function useSubscribeSSE () {
     // SSE 연결 종료는 컴포넌트가 언마운트되거나 로그인 상태가 바뀔 때 처리
     return () => {
       console.log('SSE 연결 종료');
+
+      console.log('my user id:', userId);
+
+      fetch(`${API_BASE_URL}/sse/cleanUserEmitter/${userId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => response.text())  // 응답을 text로 처리
+      .then((data) => {
+        console.log(data);
+      })
+        .catch((err) => console.error('Emitter 삭제 실패:', err));
+
       eventSource.close();
     };
-  }, [token]);
+  }, [token, userId]);
 
   return events; // 이벤트 배열을 반환 (연결만 관리할거면 null 반환)
 };
