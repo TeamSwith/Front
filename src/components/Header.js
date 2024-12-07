@@ -6,9 +6,8 @@ import bellIcon from '../assets/bell.png';
 import MyPageModal from '../components/MyPageModal';
 import LogoutConfirmationModal from '../components/LogoutConfirmationModal';
 import { getUserInfo } from '../services/authService';
-import { fetchUserId } from '../services/commentService';
+//mport { fetchUserId } from '../services/commentService';
 import AlarmModal from '../components/AlarmModal';
-import useSubscribeSSE from '../services/useSubscribeSSE';
 //import useGetAlarm from '../services/alarmService';
 
 const Header = ({ 
@@ -50,6 +49,7 @@ const Header = ({
     }
   }, []);  // 로그인 상태가 변경될 때마다 실행되도록 설정
 
+  {/*
   useEffect(() => {
     const fetchAndSetUserId = async () => {
       try {
@@ -62,9 +62,8 @@ const Header = ({
     };
     fetchAndSetUserId();
   }, []);
-
-  console.log('my user id Header:', userId);
-  const events = useSubscribeSSE(userId); // SSE 훅 호출
+*/}
+  //console.log('my user id Header:', userId);
   
 {/*
   useEffect(() => {

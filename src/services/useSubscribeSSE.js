@@ -6,58 +6,19 @@ const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 // useSubscribeSSE.js
 function useSubscribeSSE (userId) {
   const [events, setEvents] = useState([]);
-  //const [userId, setUserId] = useState(null);
-  //const [myUserId, setMyUserId] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('accessToken'));
-  //const [emitterExists, setEmitterExists] = useState(false); // emitter 존재 여부 상태
-
-  {/*
-  useEffect(() => {
-    if (!token) { console.log('Access token is missing!'); return; }
-
-    // 로그인한 회원의 emitter 존재 여부 확인
-    const checkEmitterExists = async () => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/sse/checkUserEmitter/${userId}`, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const data = await response.text();
-
-        const regex = new RegExp(`Emitter with userID ${userId} exists`);
-      if (regex.test(data)) {
-        setEmitterExists(true); // emitter가 있으면 상태 변경
-        console.log('이미 emitter 연결됨, 기존 연결 재사용');
-        }
-      else {
-        setEmitterExists(false);
-        console.log('Emitter가 없으므로 새로 연결합니다.');
-        }
-      } catch (err) {
-        console.error('Emitter 확인 실패:', err);
-      }
-    };
-
-    checkEmitterExists();
-
-  }, [token, userId]);
-  */}
 
   useEffect(() => {
     console.log('token:', token);
     const EventSource = EventSourcePolyfill;
-
-    //if (emitterExists) return;  // 이미 emitter가 존재하면 SSE 연결하지 않음
     
     // EventSource 설정
     const eventSource = new EventSource(`${API_BASE_URL}/sse/connect/${userId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-      //withCredentials: true,
-      //heartbeatTimeout: 60000, // 끊어지도록...
+      withCredentials: true,
+      heartbeatTimeout: 600000, // 끊어지도록...
     });
 
     eventSource.onopen = () => { 
@@ -141,7 +102,7 @@ function useSubscribeSSE (userId) {
 
       eventSource.close();
     };
-  }, [token, userId]);
+  }, []);
 
   return events; // 이벤트 배열을 반환 (연결만 관리할거면 null 반환)
 };
