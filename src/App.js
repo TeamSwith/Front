@@ -16,6 +16,7 @@ import DeleteAccountModal from './components/DeleteAccountModal';
 import AccountDeletedModal from './components/AccountDeletedModal';
 import LoginCallback from './pages/LoginCallback';
 // import { getUserInfo } from './services/authService';
+import { UserProvider } from './context/UserContext';
 
 Modal.setAppElement('#root');
 
@@ -94,6 +95,7 @@ const App = () => {
   };
 
   return (
+    <UserProvider>
     <Router>
       <div className="flex flex-col min-h-screen">
         <Header 
@@ -134,6 +136,7 @@ const App = () => {
         <AccountDeletedModal isOpen={isAccountDeletedModalOpen} onClose={closeAccountDeletedModal} />
       </div>
     </Router>
+    </UserProvider>
   );
 };
 
