@@ -1,29 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
-import cancelIcon from '../assets/Cancel.png'
+import cancelIcon from '../assets/Cancel.png';
 
 Modal.setAppElement('#root'); // 애플리케이션의 루트 요소 설정
 
-const AlarmModal = ({ isOpen, onClose, isLoggedIn }) => {
+const AlarmModal = ({ isOpen, onClose, isLoggedIn, alerts }) => {
+  const [localAlerts, setLocalAlerts] = useState([]);
 
-  const [alerts, setAlerts] = useState([
-    "알림 내용 1. 텍스트가 길어지면 줄바꿈이 자동으로 됩니다.",
-    "알림 내용 2. 텍스트가 길어지면 줄바꿈이 자동으로 됩니다. 여기서 길어지면 줄바꿈이 될 겁니다.",
-    "알림 내용 3",
-    "알림 내용 4",
-    "알림 내용 5",
-    "알림 내용 6",
-    "알림 내용 7",
-    "알림 내용 8",
-  ]);
+  useEffect(() => {
+    // alerts prop이 변경될 때마다 로컬 상태를 업데이트
+    setLocalAlerts(alerts);
+  }, [alerts]);
 
   const handleRemoveAlert = (index) => {
-    const newAlerts = alerts.filter((_, i) => i !== index);
-    setAlerts(newAlerts);
+    const newAlerts = localAlerts.filter((_, i) => i !== index);
+    setLocalAlerts(newAlerts);
   };
-
   // 로그인되지 않았을 때 모달을 열지 않도록 조건 추가
   if (!isLoggedIn) { return null; }
+
+  const formatAlertContent = (alert) => {
+    // alert.content에서 날짜, 시간, 장소 추출
+    const parts = alert.content.split(': ')[1].split(','); // 콜론(:) 뒤의 내용을 콤마(,)로 분리
+    const studyDate = parts[0]; // 첫 번째 요소: 날짜
+    const studyTime = parts[1]; // 두 번째 요소: 시간
+    const location = parts.slice(2).join(',').trim(); // 세 번째 이후: 장소 (여러 부분이 있을 수 있음)
+
+    return (
+        <div className="text-sm flex-1">
+          <p className="font-bold">새로운 스터디 일정</p>
+          <p>날짜 | <span>{studyDate}</span></p>
+          <p>시간 | <span>{studyTime}</span></p>
+          <p>장소 | <span>{location}</span></p>
+        </div>
+      );
+    };
 
   return (
     <Modal
@@ -35,19 +46,20 @@ const AlarmModal = ({ isOpen, onClose, isLoggedIn }) => {
     >
       <h2 className="text-lg font-bold mt-1 mb-4 ml-1">알림</h2>
 
-      {alerts.length === 0 ? (
+      {localAlerts.length === 0 ? (
         <div className="flex justify-center items-center h-full">
             <p className="text-gray-500 mt-4 mb-10">알림이 없습니다</p>
         </div>
       ) : (
         <div className="max-h-80 overflow-y-auto">
-            {alerts.map((alert, index) => (
+            {localAlerts.map((alert, index) => (
             <div
                 key={index}
                 className="flex justify-between items-center p-3 mb-3 rounded-lg shadow-lg shadow-gray-400/30 break-words"
                 style={{ background: "linear-gradient(to right, #DDFAE6, #A2F6BF)" }}
             >
-                <p className="text-sm flex-1">{alert}</p>
+                {formatAlertContent(alert)}
+                {/*<p className="text-sm flex-1">{alert.content}</p>*/}
                 <button onClick={() => handleRemoveAlert(index)} className="ml-2">
                 <img src={cancelIcon} alt="삭제" className="w-3 h-3" />
                 </button>

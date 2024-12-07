@@ -7,44 +7,23 @@ import MyPageModal from '../components/MyPageModal';
 import LogoutConfirmationModal from '../components/LogoutConfirmationModal';
 import { getUserInfo } from '../services/authService';
 import AlarmModal from '../components/AlarmModal';
-import useAlarmSSE from '../services/useAlarmSSE';
 import useSubscribeSSE from '../services/useSubscribeSSE';
+import useGetAlarm from '../services/alarmService';
 
 const Header = ({ 
   isLoggedIn,
   setIsLoggedIn,
   openLoginModal, 
 }) => {
+  const navigate = useNavigate();
+
   const [alerts, setAlerts] = useState([]); // SSE 관련 알람 상태
   const [isAlarmModalOpen, setIsAlarmModalOpen] = useState(false); // 알람 모달 상태
-
-  const navigate = useNavigate();
 
   const [isMyPageModalOpen, setIsMyPageModalOpen] = useState(false);  // 마이페이지 모달 상태
   const [userNickname, setUserNickname] = useState(null);  // 사용자 닉네임 상태
   const [userImage, setUserImage] = useState(null);  // 사용자 이미지 상태
   const [isLogoutConfirmationOpen, setIsLogoutConfirmationOpen] = useState(false);  // 로그아웃 확인 모달 상태
-
-  // // 알람이 새로 들어오면 alerts 상태를 업데이트하는 함수
-  // const handleNewAlert = (newAlert) => {
-  //   console.log('새로운 알람:', newAlert);  // 콘솔에 알림 출력
-  //   setAlerts((prevAlerts) => [...prevAlerts, newAlert]);
-  // };
-
-  // // useAlarmSSE 훅을 호출하여 알람을 받아오고, 새 알림이 오면 handleNewAlert 함수 실행
-  // const events = useAlarmSSE();
-
-  // // 알람을 받으면 handleNewAlert로 처리
-  // useEffect(() => {
-  //   if (isLoggedIn) {
-  //     console.log('로그인 상태에서 알림 수신 대기 중...');
-  //     events.forEach((event) => {
-  //       handleNewAlert(event); // 새 알람을 추가
-  //     });
-  //   } else {
-  //     console.log('로그인하지 않음, 알림 수신 중지');
-  //   }
-  // }, [events, isLoggedIn]); // events가 업데이트 될 때마다
 
   useEffect(() => {  // 컴포넌트가 마운트될 때 액세스 토큰을 확인하여 사용자 정보를 가져옴
     const accessToken = localStorage.getItem('accessToken');
@@ -67,20 +46,18 @@ const Header = ({
     } else {
       setIsLoggedIn(false); // 액세스 토큰 없으면 로그인 상태 false
     }
-  }, [isLoggedIn]);  // 로그인 상태가 변경될 때마다 실행되도록 설정
+  }, []);  // 로그인 상태가 변경될 때마다 실행되도록 설정
 
-  // const fetchedAlerts = useAlarmSSE(); // 알림 목록을 받아오는 훅 호출
   const events = useSubscribeSSE(); // SSE 훅 호출
+  const fetchedAlerts = useGetAlarm(); // 기존 알림 목록을 API로 가져오기
 
-  // useEffect(() => {
-  //   if (isLoggedIn) {
-  //     console.log('알림 목록:', fetchedAlerts); // 알림 목록 확인
-  //     setAlerts(fetchedAlerts); // 받아온 알림 목록으로 상태 업데이트
-  //   } else {
-  //     console.log('로그인하지 않음, 알림 수신 중지');
-  //     setAlerts([]); // 로그아웃 시 알림 초기화
-  //   }
-  // }, [isLoggedIn, fetchedAlerts]); // 로그인 상태와 알림 목록에 따라 업데이트
+  // 기존 알림 목록을 가져오기
+  useEffect(() => {
+    if (isLoggedIn && fetchedAlerts && fetchedAlerts.length > 0) {
+      console.log('기존 알림 목록:', fetchedAlerts);
+      setAlerts(fetchedAlerts); // 알림 목록 상태 업데이트
+    }
+  }, [isLoggedIn, fetchedAlerts]);
 
   // 알람 수신 처리
   useEffect(() => {
@@ -88,7 +65,10 @@ const Header = ({
       console.log('로그인 상태에서 알림 수신 대기 중...');
       events.forEach((event) => {
         const { id, content, createdAt, groupId } = event;
-        setAlerts(prevAlerts => [...prevAlerts, { id, content, createdAt, groupId }]);
+        // 중복 알림 방지
+        if (!alerts.some(alert => alert.id === id)) {
+          setAlerts(prevAlerts => [...prevAlerts, { id, content, createdAt, groupId }]);
+        }
       });
     } else {
       console.log('로그인하지 않음, 알림 수신 중지');
