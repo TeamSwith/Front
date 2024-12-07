@@ -51,14 +51,6 @@ const Header = ({
   const events = useSubscribeSSE(); // SSE 훅 호출
   const fetchedAlerts = useGetAlarm(); // 기존 알림 목록을 API로 가져오기
 
-  // 기존 알림 목록을 가져오기
-  useEffect(() => {
-    if (isLoggedIn && fetchedAlerts && fetchedAlerts.length > 0) {
-      console.log('기존 알림 목록:', fetchedAlerts);
-      setAlerts(fetchedAlerts); // 알림 목록 상태 업데이트
-    }
-  }, [isLoggedIn, fetchedAlerts]);
-
   // 알람 수신 처리
   useEffect(() => {
     if (isLoggedIn && events.length > 0) {
@@ -75,6 +67,14 @@ const Header = ({
       setAlerts([]); // 로그아웃 시 알람 초기화
     }
   }, [events, isLoggedIn]); // events가 업데이트 될 때마다 실행
+
+  // 기존 알림 목록을 가져오기
+  useEffect(() => {
+    if (isLoggedIn && fetchedAlerts && fetchedAlerts.length > 0) {
+      console.log('기존 알림 목록:', fetchedAlerts);
+      setAlerts(fetchedAlerts); // 알림 목록 상태 업데이트
+    }
+  }, [isLoggedIn, fetchedAlerts]);
 
   // 마이페이지 모달 열기
   const openMyPageModal = () => {
