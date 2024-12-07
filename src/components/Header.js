@@ -6,9 +6,10 @@ import bellIcon from '../assets/bell.png';
 import MyPageModal from '../components/MyPageModal';
 import LogoutConfirmationModal from '../components/LogoutConfirmationModal';
 import { getUserInfo } from '../services/authService';
+import { fetchUserId } from '../services/commentService';
 import AlarmModal from '../components/AlarmModal';
 import useSubscribeSSE from '../services/useSubscribeSSE';
-import useGetAlarm from '../services/alarmService';
+//import useGetAlarm from '../services/alarmService';
 
 const Header = ({ 
   isLoggedIn,
@@ -24,6 +25,7 @@ const Header = ({
   const [userNickname, setUserNickname] = useState(null);  // 사용자 닉네임 상태
   const [userImage, setUserImage] = useState(null);  // 사용자 이미지 상태
   const [isLogoutConfirmationOpen, setIsLogoutConfirmationOpen] = useState(false);  // 로그아웃 확인 모달 상태
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {  // 컴포넌트가 마운트될 때 액세스 토큰을 확인하여 사용자 정보를 가져옴
     const accessToken = localStorage.getItem('accessToken');
@@ -48,9 +50,50 @@ const Header = ({
     }
   }, []);  // 로그인 상태가 변경될 때마다 실행되도록 설정
 
-  const events = useSubscribeSSE(); // SSE 훅 호출
-  const fetchedAlerts = useGetAlarm(); // 기존 알림 목록을 API로 가져오기
+  useEffect(() => {
+    const fetchAndSetUserId = async () => {
+      try {
+        const createUserId = await fetchUserId();
+        setUserId(createUserId);
+        //console.log('my user id:', myUserId);
+      } catch (error) {
+        console.error('Error fetching userId:', error);
+      }
+    };
+    fetchAndSetUserId();
+  }, []);
 
+  console.log('my user id Header:', userId);
+  const events = useSubscribeSSE(userId); // SSE 훅 호출
+  
+{/*
+  useEffect(() => {
+    const updatedAlerts = {
+      Alarm: [],
+      'Attend update': [],
+      Notice: [],
+    };
+
+    // 이벤트 배열 처리
+    if (events.length > 0) {
+      events.forEach(event => {
+        if (event.type === 'Alarm') {
+          console.log('알람:', event.content);
+          updatedAlerts.Alarm.push(event);
+        } else if (event.type === 'Attend update') {
+          console.log('출석 상태:', event.attendStatus);
+          updatedAlerts.Notice.push(event);
+        } else if (event.type === 'Notice') {
+          console.log('공지:', event.content);
+          updatedAlerts['Attend update'].push(event);
+        }
+      });
+      setAlerts(updatedAlerts);
+    }
+  }, [events]); // events 배열이 변경될 때마다 실행
+*/}
+  //const fetchedAlerts = useGetAlarm(); // 기존 알림 목록을 API로 가져오기
+{/*
   // 알람 수신 처리
   useEffect(() => {
     if (isLoggedIn && events.length > 0) {
@@ -75,6 +118,7 @@ const Header = ({
       setAlerts(fetchedAlerts); // 알림 목록 상태 업데이트
     }
   }, [isLoggedIn, fetchedAlerts]);
+*/}
 
   // 마이페이지 모달 열기
   const openMyPageModal = () => {
