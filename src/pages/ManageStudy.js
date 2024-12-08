@@ -226,19 +226,57 @@ const ManageStudy = () => {
 
  // 출석하기 버튼 컴포넌트
  const renderAttendanceButton = () => {
-  if (!scheduleData.time || !scheduleData.location) return null;
+  if (!scheduleData.time || !scheduleData.location) return null; // 일정이 없으면 렌더링하지 않음
+
+  const userAttendStatus = attendanceStatusMap[userId]; // 현재 사용자 출석 상태 확인
+  const currentTime = new Date();
+  const scheduleTime = new Date(`${scheduleData.date} ${scheduleData.time}`);
+  const isWithin5Minutes =
+    currentTime >= scheduleTime && currentTime <= new Date(scheduleTime.getTime() + 5 * 60 * 1000); // 시작 시간 후 5분 내
+
+  const isDisabled =
+    userAttendStatus === 'ATTEND' || // 이미 출석한 경우
+    currentTime < scheduleTime || // 시작 시간 이전인 경우
+    !isWithin5Minutes; // 시작 시간 후 5분이 지난 경우
 
   return (
     <div
-      className={`bg-[#8CC29E] w-full max-w-[320px] h-[40px] mt-4 rounded-lg shadow-lg flex items-center justify-center cursor-pointer ${!activeButton ? 'opacity-50 cursor-not-allowed' : ''}`}
-      onClick={updateAttendStatusHandler} // 클릭 시 출석 상태 업데이트
+      className={`bg-[#8CC29E] w-full max-w-[320px] h-[40px] mt-4 rounded-lg shadow-lg flex items-center justify-center ${
+        isDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+      }`}
+      onClick={!isDisabled ? updateAttendStatusHandler : undefined} // 비활성화 시 클릭 이벤트 제거
     >
-      <span className='text-[14px] text-white'>
-        출석하기
+      <span className="text-[14px] text-white">
+        {userAttendStatus === 'ATTEND'
+          ? '출석 완료'
+          : currentTime > scheduleTime && !isWithin5Minutes && userAttendStatus !== 'ATTEND'
+          ? '결석'
+          : '출석하기'}
       </span>
     </div>
   );
 };
+//  const renderAttendanceButton = () => {
+//   if (!scheduleData.time || !scheduleData.location) return null;
+//   // 현재 사용자의 출석 상태 확인
+//   const userAttendStatus = attendanceStatusMap[userId]; // userId는 현재 로그인한 사용자 ID
+
+//   // 버튼이 비활성화되어야 하는 경우
+//   const isDisabled = !activeButton || userAttendStatus === 'ATTEND'; // 출석 완료 상태일 경우 비활성화
+
+//   return (
+//     <div
+//     className={`bg-[#8CC29E] w-full max-w-[320px] h-[40px] mt-4 rounded-lg shadow-lg flex items-center justify-center cursor-pointer ${
+//       isDisabled ? 'opacity-50 cursor-not-allowed' : ''
+//     }`}
+//     onClick={!isDisabled ? updateAttendStatusHandler : undefined} // 클릭 이벤트 비활성화
+//   >
+//     <span className="text-[14px] text-white">
+//       {userAttendStatus === 'ATTEND' ? '출석 완료' : '출석하기'}
+//     </span>
+//   </div>
+// );
+// };
 
 // 출석 상태 처리 로직 수정
 useEffect(() => {
