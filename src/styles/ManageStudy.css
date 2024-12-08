@@ -60,7 +60,7 @@
 
 .react-calendar__tile--active {
   background-color: #12921E; /* 선택 날짜 색상 */
-  color: white; /* 글자 색상 */
+  color: white!important; /* 글자 색상 */
   border-radius: 50%;
 }
 
@@ -86,7 +86,7 @@
 }
 
 .saturday {
-  color: black !important; /* 검정색으로 변경 */
+  color: black; /* 검정색으로 변경 */
 }
 
 .react-calendar__tile:hover {
@@ -107,4 +107,9 @@
   height: 8px;  /* 동그라미 크기 */
   border-radius: 50%;  /* 동그라미 모양 */
   background-color: #12921E;  /* 동그라미 색상 */
+}
+
+/* 일정이 있는 토요일에 대해 텍스트 색상이 검정색 유지 */
+.react-calendar__tile.study-scheduled.saturday {
+  color: black !important; /* 일정이 있는 토요일 글씨 색상 */
 }
