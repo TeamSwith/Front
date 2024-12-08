@@ -91,12 +91,12 @@ const CreateSidebar = ({
           await handleSaveTask({ ...task, studyId: createdStudyId });
         } // 생성한 과제 저장
 
-      alert('스터디가 성공적으로 생성되었습니다!');
+      //alert('스터디가 성공적으로 생성되었습니다!');
       setIsCreating(false); // 생성 모드 종료
       //setTasks([]); // 과제 목록 초기화
     } catch (error) {
       console.error('스터디 생성 실패:', error);
-      alert('스터디 생성에 실패했습니다. 다시 시도해주세요.');
+      //alert('스터디 생성에 실패했습니다. 다시 시도해주세요.');
     } finally {
       setIsSaving(false); // 저장 중 상태 해제
     }
