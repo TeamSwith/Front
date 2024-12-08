@@ -86,13 +86,13 @@ const App = () => {
   };
 
   // 로그인 필수 컴포넌트: 로그인되지 않으면 로그인 모달 열기
-  const RequireLogin = ({ children }) => {
-    const location = useLocation();
-    useEffect(() => {
-      if (!isLoggedIn) { openLoginModalHandler(); }
-    }, [location]);
-    return isLoggedIn ? children : <Navigate to="/" replace />;
-  };
+  //const RequireLogin = ({ children }) => {
+  //  const location = useLocation();
+  //  useEffect(() => {
+  //    if (!isLoggedIn) { openLoginModalHandler(); }
+  //  }, [location]);
+  //  return isLoggedIn ? children : <Navigate to="/" replace />;
+  //};
 
   return (
     <UserProvider>
@@ -111,18 +111,14 @@ const App = () => {
             <Route 
               path="/create-study" 
               element={
-                  <RequireLogin>
                     <CreateStudy />
-                  </RequireLogin>
                 }  
             />
             <Route path="/study-creation-complete" element={<StudyCreationComplete />} />
             <Route 
               path="/manage-study" 
               element={
-                  <RequireLogin>
                     <ManageStudy />
-                  </RequireLogin>
                 } 
             />
           </Routes>

@@ -76,7 +76,7 @@ const CreateStudyModal = ({ isOpen, onClose, onCreate }) => {
           <input
             type="text"
             placeholder="스터디 아이디"
-            className="text-sm sm:text-base border border-green-400 w-11/12 p-2 sm:p-3 rounded-lg mb-4"
+            className="font-bold font-sans text-sm sm:text-base border border-green-400 w-11/12 p-2 sm:p-3 rounded-lg mb-4"
             value={studyId}
             onChange={(e) => setStudyId(e.target.value)}
           />
@@ -84,7 +84,7 @@ const CreateStudyModal = ({ isOpen, onClose, onCreate }) => {
             <input
               type={showPassword ? 'text' : 'password'}
               placeholder="스터디 비밀번호"
-              className="text-sm sm:text-base border border-green-400 w-11/12 p-2 sm:p-3 rounded-lg"
+              className="font-bold font-sans text-sm sm:text-base border border-green-400 w-11/12 p-2 sm:p-3 rounded-lg"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -100,7 +100,7 @@ const CreateStudyModal = ({ isOpen, onClose, onCreate }) => {
             <input
               type={showConfirmPassword ? 'text' : 'password'}
               placeholder="비밀번호 확인"
-              className="text-sm sm:text-base border border-green-400 w-11/12 p-2 sm:p-3 rounded-lg"
+              className="font-bold font-sans text-sm sm:text-base border border-green-400 w-11/12 p-2 sm:p-3 rounded-lg"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
