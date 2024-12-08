@@ -137,6 +137,7 @@ const ManageStudy = () => {
           setScheduleData({ date: formattedDate, time: '', location: '' });
           setStudyId(null);
           setTasks([]);
+          setAttendanceStatusMap({}); // 출석 상태 초기화
         }
       } catch (error) {
         console.error('스터디 데이터를 불러오는 중 오류 발생:', error);
@@ -225,6 +226,8 @@ const ManageStudy = () => {
 
  // 출석하기 버튼 컴포넌트
  const renderAttendanceButton = () => {
+  if (!scheduleData.time || !scheduleData.location) return null;
+
   return (
     <div
       className={`bg-[#8CC29E] w-full max-w-[320px] h-[40px] mt-4 rounded-lg shadow-lg flex items-center justify-center cursor-pointer ${!activeButton ? 'opacity-50 cursor-not-allowed' : ''}`}
