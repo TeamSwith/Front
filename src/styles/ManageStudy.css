@@ -85,7 +85,9 @@
   box-shadow: none; /* 클릭 시 그림자 제거 */
 }
 
-
+.saturday {
+  color: black !important; /* 검정색으로 변경 */
+}
 
 .react-calendar__tile:hover {
     background-color: #12921E; /* 호버 시 색상 */

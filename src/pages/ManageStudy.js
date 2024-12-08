@@ -5,7 +5,6 @@ import { fetchSchedule, getMemNum, deleteSchedule, fetchGroupUsers, updateAttend
 import { fetchNotice, updateNotice } from '../api/Notice';
 import { fetchTasks, deleteTask } from '../api/Task';
 import { getStudyDetails } from '../services/studyService';
-import { fetchUserId } from '../services/commentService';
 import Calendar from 'react-calendar';
 import "react-calendar/dist/Calendar.css";
 import ManageSidebar from "../components/ManageSidebar";
@@ -15,11 +14,13 @@ import speakerIcon from "../assets/speaker.png";
 import editIcon from "../assets/edit.png";
 import checkIcon from "../assets/Check.png"
 import personIcon from "../assets/person.png";
+import alarmCheckIcon from "../assets/AlarmCheck.png";
 import '../styles/ManageStudy.css';
 import useSubscribeSSE from '../services/useSubscribeSSE';
 import { useUserId } from '../context/UserContext';
 
 const ManageStudy = () => {
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const location = useLocation();
   const queryClient = useQueryClient();
   const marqueeTextRef = useRef(null);
@@ -31,6 +32,8 @@ const ManageStudy = () => {
   const [newNotice, setNewNotice] = useState('');
   const [isEditingNotice, setIsEditingNotice] = useState(false);
   const [tasks, setTasks] = useState([]);
+  const [datesWithSchedules, setDatesWithSchedules] = useState([]);
+  const [showPopup, setShowPopup] = useState(false);
 
   const [userInfo, setUserInfo] = useState([]); // 스터디원 정보
   const [studyDetails, setStudyDetails] = useState(null); // 스터디 세부 정보
@@ -38,41 +41,17 @@ const ManageStudy = () => {
   const [scheduleData, setScheduleData] = useState({time: '', location: ''});
   const { id } = location.state || {};
   const [studyId, setStudyId] = useState(null);
-  const [attendanceStatus, setAttendanceStatus] = useState(null); // 출석 상태
   const [activeButton, setActiveButton] = useState(false); // 버튼 활성화 여부
   const [buttonTimer, setButtonTimer] = useState(null); // 버튼 타이머
   //const [groupId, setGroupId] = useState(null); // 그룹 아이디 추가
   const userId = useUserId();
   const [alerts, setAlerts] = useState([]); // SSE 관련 알람 상태
-  //const [userId, setUserId] = useState(null); // 유저 아이디 추가
-  //const [events, setEvents] = useState([]);
   const [attendanceStatusMap, setAttendanceStatusMap] = useState({});
+  const prevAlarmEventsRef = useRef([]);
 
-  const events = useSubscribeSSE(userId);
 
-  useEffect(() => {
-    const newAlerts = {
-      Alarm: [],
-      'Attend update': [],
-      Notice: []
-    };
-    // 이벤트 배열 처리 (예: 콘솔로 출력)
-    if (events.length > 0) {
-      events.forEach(event => {
-        if (event.type === 'Alarm') {
-          console.log('알람:', event.content);
-          newAlerts.Alarm.push(event);
-        } else if (event.type === 'Attend update') {
-          console.log('출석 상태:', event.attendStatus);
-          newAlerts.Notice.push(event);
-        } else if (event.type === 'Notice') {
-          console.log('공지:', event.content);
-          newAlerts['Attend update'].push(event);
-        }
-      });
-      setAlerts(newAlerts);
-    }
-  }, [events]); // events 배열이 변경될 때마다 실행
+
+  const { alarmEvents, attendanceEvents, noticeEvents } = useSubscribeSSE(userId);
 
   //console.log('event:', events);
 
@@ -120,7 +99,11 @@ const ManageStudy = () => {
           id: task.id,
           label: task.content,
           checked: task.taskStatus === 'COMPLETED', // 상태 기반으로 체크 여부 설정
+          
         })));
+
+        setDatesWithSchedules((prevDates) => [...prevDates, formattedDate]);
+
         } else {
           setScheduleData({ date: formattedDate, time: '', location: '' });
           setStudyId(null);
@@ -135,7 +118,7 @@ const ManageStudy = () => {
 
   useEffect(() => {
     handleDateChange(selectedDate); // selectedDate가 변경될 때 데이터 업데이트
-  }, []);
+  }, [selectedDate]);
 
   // 날짜를 선택할 경우 실행되는 함수
   const onDateChange = (date) => {
@@ -202,32 +185,18 @@ const ManageStudy = () => {
   );
 };
 
+// 출석 상태 처리 로직 수정
 useEffect(() => {
-  // 출석 상태 초기화
-  const initialAttendanceStatus = userInfo.reduce((acc, user) => {
-    acc[user.id] = 'ABSENCE';
-    return acc;
-  }, {});
-
-  setAttendanceStatusMap(initialAttendanceStatus);
-
-  console.log('userinfo:', userInfo);
-}, [userInfo]);
-
-// 출석 상태 처리
-useEffect(() => {
-  if (events.length > 0) {
-    events.forEach((event) => {
-      if (event.type === 'Attend update') {
-        const { userId: eventUserId, attendStatus } = event;
-        setAttendanceStatusMap((prevMap) => ({
-          ...prevMap,
-          [eventUserId]: attendStatus,
-        }));
-      }
+  if (attendanceEvents.length > 0) {
+    attendanceEvents.forEach((event) => {
+      const { userId: eventUserId, attendStatus } = event;
+      setAttendanceStatusMap((prevMap) => ({
+        ...prevMap,
+        [eventUserId]: attendStatus,
+      }));
     });
   }
-}, [events]);
+}, [attendanceEvents]);
 
   // 스터디 일정 생성시 data가 바로 업데이트
   const handleCreateScheduleSuccess = (createdData) => {
@@ -276,6 +245,65 @@ useEffect(() => {
     }
   };
 
+  useEffect(() => {
+    if (alarmEvents.length > prevAlarmEventsRef.current.length) {
+      const latestAlarm = alarmEvents[alarmEvents.length - 1];
+      if (latestAlarm) {
+        setShowPopup(true);
+        console.log('새로운 알림:', latestAlarm.content);
+
+        setTimeout(() => {
+          setShowPopup(false);
+        }, 3000);
+      }
+    }
+
+    // 현재 alarmEvents를 prevAlarmEventsRef에 저장
+    prevAlarmEventsRef.current = alarmEvents;
+
+  }, [alarmEvents]);
+
+
+  const fetchSchedulesForMonth = async (year, month) => {
+    try {
+      // API 호출 후 응답을 JSON으로 변환
+      const response = await fetch(`${API_BASE_URL}/group/${id}/study?year=${year}&month=${month}`);
+      const data = await response.json(); // 응답을 JSON으로 변환
+  
+      if (data.success) {
+        return data.data.dayList; // dayList만 반환
+      } else {
+        console.error("일정을 불러오는 데 실패했습니다.");
+        return [];
+      }
+    } catch (error) {
+      console.error('일정을 불러오는 중 오류 발생:', error);
+      return [];
+    }
+  };
+
+  const onMonthChange = (date) => {
+    setSelectedDate(date); // 새로운 달로 변경
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1; // getMonth()는 0부터 시작하므로 1을 더해줌
+    fetchSchedulesForMonth(year, month); // 해당 월의 일정 데이터 불러오기
+  };
+  
+  useEffect(() => {
+    const year = selectedDate.getFullYear();
+    const month = selectedDate.getMonth() + 1; // getMonth()는 0부터 시작하므로 1을 더해줌
+  
+    const loadSchedules = async () => {
+      const dayList = await fetchSchedulesForMonth(year, month); // API에서 데이터 받아옴
+      const formattedDates = dayList.map(day => {
+        const date = new Date(year, month - 1, day); // 날짜 객체 생성
+        return date.toLocaleDateString('en-CA'); // YYYY-MM-DD 형식으로 변환
+      });
+      setDatesWithSchedules(formattedDates); // 상태 업데이트
+    };
+    loadSchedules(); // 일정 데이터 불러오기
+  }, [selectedDate.getMonth()]); // selectedDate가 변경될 때마다 실행
+
   //Notice
   const { data: noticeData, isLoading: isNoticeLoading, isError: isNoticeError } = useQuery(
     {
@@ -284,6 +312,8 @@ useEffect(() => {
       staleTime: 1000 * 60 * 5,
     }
   );
+
+  const [realTimeNotice, setRealTimeNotice] = useState(noticeData?.data?.notice || '');
 
   //update Notice
   const { mutate: updateNoticeMutation } = useMutation({
@@ -295,14 +325,25 @@ useEffect(() => {
 
   const handleEditNoticeClick = () => {
     setIsEditingNotice(true);
-    setNewNotice(noticeData?.data?.notice || '');
+    setNewNotice(noticeData?.data?.content || '');
   };
 
   const handleSaveNotice = () => {
     updateNoticeMutation({ id, notice: newNotice }); // `id`와 `notice`를 전달
     setIsEditingNotice(false); // 수정 모드 종료
+    setRealTimeNotice(newNotice);
   };
 
+  // 공지사항 실시간 업데이트
+  useEffect(() => {
+    if (noticeEvents.length > 0) {
+      const latestNotice = noticeEvents[noticeEvents.length - 1]; // 가장 최근 공지사항
+      if (!isEditingNotice) {
+        setRealTimeNotice(latestNotice.content); // 실시간 공지사항 업데이트
+      }
+    }
+  }, [noticeEvents, isEditingNotice]);
+  
   //공지사항 애니메이션
   useEffect(() => {
     if (marqueeTextRef.current && marqueeContainerRef.current && noticeData?.data) {
@@ -318,6 +359,15 @@ useEffect(() => {
   if (!studyDetails) { return <div>Loading...</div>; }
 
   return (
+    <div>
+      {showPopup && (
+        <div className="fixed top-0 left-0 w-full h-full flex items-start justify-center z-50">
+        <div className="w-[1000px] p-4 mt-[85px] bg-white bg-opacity-80 shadow-lg flex justify-center rounded-lg border border-gray-100 border-lg">
+        <img src={alarmCheckIcon} alt="alarm Icon" className="w-7 h-7 mr-3 ml-4" />
+          <p className="mt-1 text-lg text-center text-black">스터디 일정이 생성되었습니다!</p>
+        </div>
+      </div>
+      )}
     <div className="sm:px-12 md:px-20 lg:px-30 xl:px-[300px] px-[30px] py-[90px] pb-[200px]">
       {/*반응형에서 패딩 손봐야함*/}
       <div className="w-full bg-[#F2F2F2] text-[#4B4B4B] text-[14px] py-2 mb-4 flex items-center justify-between rounded-2xl overflow-hidden relative">
@@ -337,7 +387,7 @@ useEffect(() => {
                 className={`marquee-text ${isOverflowing ? 'animate-marquee' : ''}`}
                 ref={marqueeTextRef}
               >
-                {noticeData?.data?.notice || '공지사항이 없습니다.'}
+                {realTimeNotice || noticeData?.data?.notice || '공지사항이 없습니다.'}
               </span>
             )}
           </div>
@@ -373,7 +423,7 @@ useEffect(() => {
             </div>
 
             <div className="flex justify-start text-[13px] ml-3 mb-2 text-[#4B4B4B]">
-              출석 현황
+              오늘의 출석 현황
             </div>
 
             {/* 스터디원 프로필 박스 */}
@@ -400,6 +450,7 @@ useEffect(() => {
           
             <div className="flex-shrink-0">
               <Calendar 
+                onActiveDateChange={onMonthChange}
                 onChange={onDateChange}
                 value={selectedDate}
                 className="p-6" 
@@ -408,6 +459,26 @@ useEffect(() => {
                 minDetail={null}
                 next2Label={null}
                 prev2Label={null}
+                onActiveStartDateChange={({ activeStartDate }) => onMonthChange(activeStartDate)}
+                tileClassName={({ date }) => {
+                  // 현재 달인지 여부 확인
+                  const isCurrentMonth = date.getMonth() === new Date().getMonth();
+          
+                  // 토요일은 검정색으로
+                  if (date.getDay() === 6 && isCurrentMonth) {
+                    return 'saturday';
+                  }
+                  if (!isCurrentMonth) {
+                    return 'next-month';
+                  }
+                  
+                  const formattedDate = date.toLocaleDateString('en-CA');
+                  if (datesWithSchedules.includes(formattedDate)) {
+                    return 'study-scheduled'; // 일정이 있는 날짜에 대한 클래스
+                  }
+          
+                  return null;
+                }}
               />
             </div>
 
@@ -460,6 +531,7 @@ useEffect(() => {
       </div>
       
         
+    </div>
     </div>
     
 

@@ -155,14 +155,14 @@ const Header = ({
   };
 
   // 알람 모달 열기
-  const openAlarmModal = () => {
-    setIsAlarmModalOpen(true);
-  };
+  //const openAlarmModal = () => {
+  //  setIsAlarmModalOpen(true);
+  //};
 
   // 알람 모달 닫기
-  const closeAlarmModal = () => {
-    setIsAlarmModalOpen(false);
-  };
+  //const closeAlarmModal = () => {
+  //  setIsAlarmModalOpen(false);
+  //};
 
   return (
       <header className="fixed top-0 left-0 w-full z-10 bg-[#8CC29E] text-white p-4 flex justify-between items-center px-4 sm:px-10">
@@ -194,13 +194,11 @@ const Header = ({
         </button>
       )}
 
-      <button onClick={openAlarmModal} className="flex items-center"> {/* 오른쪽: 알람 */}
-        <img src={bellIcon} alt="알람" className="w-6 h-6" />
-      </button>
+
 
       <MyPageModal isOpen={isMyPageModalOpen} onClose={closeMyPageModal} isLoggedIn={isLoggedIn} userNickname={userNickname} userImage={userImage} onLogout={handleLogout} openLogoutConfirmation={openLogoutConfirmation} />
       <LogoutConfirmationModal isOpen={isLogoutConfirmationOpen} onClose={closeLogoutConfirmation} onLogout={handleLogout} />
-      <AlarmModal isOpen={isAlarmModalOpen} onClose={closeAlarmModal} isLoggedIn={isLoggedIn} alerts={alerts} />
+ 
       </div>
       </header>
   );
