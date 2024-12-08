@@ -19,6 +19,7 @@ import '../styles/ManageStudy.css';
 import useSubscribeSSE from '../services/useSubscribeSSE';
 import { useUserId } from '../context/UserContext';
 import { fetchAttendanceStatus } from '../api/Attendance'; // 출석 상태 API import
+import AttendanceTimer from '../components/AttendanceTimer'; // 파일 경로에 맞게 수정
 
 const ManageStudy = () => {
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -256,27 +257,6 @@ const ManageStudy = () => {
     </div>
   );
 };
-//  const renderAttendanceButton = () => {
-//   if (!scheduleData.time || !scheduleData.location) return null;
-//   // 현재 사용자의 출석 상태 확인
-//   const userAttendStatus = attendanceStatusMap[userId]; // userId는 현재 로그인한 사용자 ID
-
-//   // 버튼이 비활성화되어야 하는 경우
-//   const isDisabled = !activeButton || userAttendStatus === 'ATTEND'; // 출석 완료 상태일 경우 비활성화
-
-//   return (
-//     <div
-//     className={`bg-[#8CC29E] w-full max-w-[320px] h-[40px] mt-4 rounded-lg shadow-lg flex items-center justify-center cursor-pointer ${
-//       isDisabled ? 'opacity-50 cursor-not-allowed' : ''
-//     }`}
-//     onClick={!isDisabled ? updateAttendStatusHandler : undefined} // 클릭 이벤트 비활성화
-//   >
-//     <span className="text-[14px] text-white">
-//       {userAttendStatus === 'ATTEND' ? '출석 완료' : '출석하기'}
-//     </span>
-//   </div>
-// );
-// };
 
 // 출석 상태 처리 로직 수정
 useEffect(() => {
@@ -515,14 +495,20 @@ useEffect(() => {
                 </span>
             </div>
 
-            <div className="flex justify-start text-[13px] ml-3 mb-2 text-[#4B4B4B]">
+            {/* <div className="flex justify-start text-[13px] ml-3 mb-2 text-[#4B4B4B]">
               오늘의 출석 현황
+            </div> */}
+            <div className="flex justify-start text-[13px] ml-3 mb-2 text-[#4B4B4B]">
+              {scheduleData.date
+                ? `${new Date(scheduleData.date).toLocaleDateString('ko-KR')} 출석 현황`
+                : '출석 현황'}
             </div>
-
+            
             {/* 스터디원 프로필 박스 */}
           <div className="bg-[#F7F9F2] w-full max-w-[320px] h-[70px] mb-4 rounded-lg shadow-lg overflow-x-auto flex items-center gap-3 px-4">
             {userInfo.length > 0 ? (
               userInfo.map((user) => (
+                
                 <div key={user.id} className="flex-shrink-0 text-center">
                   {/* 프로필 이미지 */}
                   <img
@@ -575,6 +561,10 @@ useEffect(() => {
               />
             </div>
 
+            {/* 타이머 컴포넌트 */}
+            {scheduleData.time && (
+              <AttendanceTimer scheduleTime={`${scheduleData.date} ${scheduleData.time}`} />
+            )}
             {renderAttendanceButton()}
             {/* <div className="bg-[#F7F9F2] w-full max-w-[320px] h-[70px] mb-4 rounded-lg shadow-lg overflow-x-auto flex items-center gap-3 px-4">
                {renderAttendanceStatus()}
