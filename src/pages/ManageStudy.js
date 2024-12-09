@@ -402,7 +402,7 @@ useEffect(() => {
   if (!studyDetails) { return <div>Loading...</div>; }
 
   return (
-    <div>
+    <div className="overflow-x-auto"> {/* 가로 스크롤 활성화 */}
       {showPopup && (
         <div className="fixed top-0 left-0 w-full h-full flex items-start justify-center z-50">
         <div className="w-[1000px] p-4 mt-[85px] bg-white bg-opacity-80 shadow-lg flex justify-center rounded-lg border border-gray-100 border-lg">
