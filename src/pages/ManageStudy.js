@@ -314,12 +314,23 @@ useEffect(() => {
         location: '',
       }));
       setStudyId(null);
-      queryClient.invalidateQueries(['schedule', id]);
-    } catch (error) {
-      console.error('스터디 일정 삭제 실패:', error);
-      alert('스터디 일정 삭제에 실패했습니다. 다시 시도해주세요.');
-    }
-  };
+
+      const updatedDate = new Date(selectedDate); // 현재 selectedDate 복사
+      updatedDate.setDate(updatedDate.getDate()); // 하루를 더하여 날짜 변경
+      setSelectedDate(updatedDate); // selectedDate 변경으로 useEffect 재실행
+
+      //queryClient.invalidateQueries(['fetchSchedulesForMonth', selectedYear, selectedMonth]);
+      const year = updatedDate.getFullYear();
+      const month = updatedDate.getMonth() + 1;
+      fetchSchedulesForMonth(year, month);
+
+
+        queryClient.invalidateQueries(['schedule', id]);
+      } catch (error) {
+        console.error('스터디 일정 삭제 실패:', error);
+        alert('스터디 일정 삭제에 실패했습니다. 다시 시도해주세요.');
+      }
+    };
 
     // 스터디 생성 알람
   useEffect(() => {
@@ -402,7 +413,7 @@ useEffect(() => {
       setDatesWithSchedules(formattedDates); // 상태 업데이트
     };
     loadSchedules(); // 일정 데이터 불러오기
-  }, [selectedDate.getMonth()]); // selectedDate가 변경될 때마다 실행
+  }, [selectedDate]); // selectedDate가 변경될 때마다 실행
 
   //Notice
   const { data: noticeData, isLoading: isNoticeLoading, isError: isNoticeError } = useQuery(
@@ -569,7 +580,7 @@ useEffect(() => {
                 tileClassName={({ date }) => {
                   // 현재 달인지 여부 확인
                   const isCurrentMonth = date.getMonth() === new Date().getMonth();
-          
+                  {/*
                   // 토요일은 검정색으로
                   if (date.getDay() === 6 && isCurrentMonth) {
                     return 'saturday';
@@ -577,6 +588,7 @@ useEffect(() => {
                   if (!isCurrentMonth) {
                     return 'next-month';
                   }
+                    */}
                   
                   const formattedDate = date.toLocaleDateString('en-CA');
                   if (datesWithSchedules.includes(formattedDate)) {
