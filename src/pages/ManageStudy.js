@@ -49,6 +49,9 @@ const ManageStudy = () => {
   const userId = useUserId();
   const [alerts, setAlerts] = useState([]); // SSE 관련 알람 상태
   const prevAlarmEventsRef = useRef([]);
+  const [alarmStudyDetails, setAlarmStudyDetails] = useState(null);
+  const [newAlarmGroup, setNewAlarmgroup] = useState(null);
+  const [newAlarm, setNewAlarm] = useState(null);
   const [attendanceStatusMap, setAttendanceStatusMap] = useState({}); // 출석 상태 저장
 
 
@@ -318,9 +321,11 @@ useEffect(() => {
     }
   };
 
+    // 스터디 생성 알람
   useEffect(() => {
     if (alarmEvents.length > prevAlarmEventsRef.current.length) {
       const latestAlarm = alarmEvents[alarmEvents.length - 1];
+      setNewAlarmgroup(latestAlarm.groupId);
       if (latestAlarm) {
         setShowPopup(true);
         console.log('새로운 알림:', latestAlarm.content);
@@ -335,7 +340,29 @@ useEffect(() => {
     prevAlarmEventsRef.current = alarmEvents;
 
   }, [alarmEvents]);
+  //console.log("newAlarmGroup", newAlarmGroup);
 
+  //알람 스터디 이름 가져오기
+  useEffect(() => {
+    if (newAlarmGroup) {
+      getStudyDetails(newAlarmGroup)
+        .then((response) => {
+          console.log('알람 스터디!:', response.data);
+          const groupName = response.data.groupName;
+          setNewAlarm(groupName);
+          
+          console.log("studyDetails", newAlarm);
+        })
+        .catch((error) => { console.error('스터디 정보 가져오기 실패:', error); });
+    }
+  }, [newAlarmGroup]);
+  //console.log("studyDetails", newAlarm);
+  
+  useEffect(() => {
+    if (newAlarm) {
+      //console.log("업데이트된 studyDetails:", newAlarm);
+    }
+  }, [newAlarm]);
 
   const fetchSchedulesForMonth = async (year, month) => {
     try {
@@ -437,7 +464,7 @@ useEffect(() => {
         <div className="fixed top-0 left-0 w-full h-full flex items-start justify-center z-50">
         <div className="w-[1000px] p-4 mt-[85px] bg-white bg-opacity-80 shadow-lg flex justify-center rounded-lg border border-gray-100 border-lg">
         <img src={alarmCheckIcon} alt="alarm Icon" className="w-7 h-7 mr-3 ml-4" />
-          <p className="mt-1 text-lg text-center text-black">스터디 일정이 생성되었습니다!</p>
+          <p className="mt-1 text-lg text-center text-black">{newAlarm}의 스터디 일정이 생성되었습니다!</p>
         </div>
       </div>
       )}
